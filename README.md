@@ -1,1 +1,1 @@
-A repository.
+Repository for my masters thesis in collaboration with OUH.
