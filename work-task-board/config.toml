@@ -1,0 +1,5 @@
+[settings]
+url_login = "https://login.altiplan.dk/webmodul/"
+url_schedule = "https://login.altiplan.dk/webmodul/ugeplan/"
+path_html_output = "data/html/altiplan_ugeplan.html"
+
