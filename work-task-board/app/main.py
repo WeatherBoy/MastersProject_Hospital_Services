@@ -13,15 +13,12 @@ path_html_output = config["settings"]["path_html_output"]
 # Get cookies and headers from .env file
 load_dotenv()  # Lads the .env file
 cookies, headers = load_altiplan_cookies_headers()
-print(type(cookies), type(headers))
 
 response = requests.get(url_schedule, cookies=cookies, headers=headers)
 
 # NOTE: NOT FINAL! - Save the HTML content to a file
 with open(path_html_output, "w", encoding="utf-8") as file:
     file.write(response.text)
-
-webbrowser.open(path_html_output)
 
 # Parse the page content
 soup = BeautifulSoup(response.content, "html.parser")
