@@ -2,7 +2,6 @@ import json
 
 
 def load_altiplan_cookies_headers() -> tuple[dict, dict]:
-    """ """
     secrets = None
 
     with open("secrets.json", "r") as file:
