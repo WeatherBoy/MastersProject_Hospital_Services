@@ -1,7 +1,7 @@
 import json
 
 
-def load_altiplan_cookies_headers():
+def load_altiplan_cookies_headers() -> tuple[dict, dict]:
     """ """
     secrets = None
 
