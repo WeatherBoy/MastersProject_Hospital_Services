@@ -4,3 +4,4 @@ Notes/
 work-task-board/data/
 venvs/ 
 *.env
+secrets.json
