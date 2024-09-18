@@ -102,6 +102,8 @@ for indx, cell in enumerate(data):
     function_indx = indx // NUM_WEEKDAYS
     
     if function_indx == ERGO_AKTIVITETER:
+        # Currently I skip 'Ergo aktiviteter' as, as far as I can see, they seem to be an outlier.
+        # NOTE: Mention this for nurse.
         print(f"Ergo aktiviteter: {cell.text.split('\n')}")
         continue
     
