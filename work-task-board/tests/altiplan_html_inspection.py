@@ -1,9 +1,11 @@
 import toml
 import re
+import pandas as pd
 from bs4 import BeautifulSoup
 
 NUM_WEEKDAYS = 7
 ERGO_AKTIVITETER = 65 
+BARN_SYG_AND_FERIE = 74
 
 # Get configs from config file
 config = toml.load("config.toml")
@@ -107,6 +109,10 @@ for indx, cell in enumerate(data):
         print(f"Ergo aktiviteter: {cell.text.split('\n')}")
         continue
     
+    if function_indx >= BARN_SYG_AND_FERIE:
+        # Just skip all on vacation and sick leave
+        break
+    
 
     cell_splits = cell.text.split("\n")
     print(f"Cell_splits: {cell_splits}")
@@ -116,6 +122,7 @@ for indx, cell in enumerate(data):
             continue
 
         name_formatted, data_formatted = regex_formatting_time_name(cell_split)
+        data_formatted["Function"] = functions[function_indx].text
         if format_name is None or data_formatted is None:
             raise Exception("Placeholder error: U done goofed, Boyoh!")
 
@@ -126,3 +133,30 @@ for indx, cell in enumerate(data):
                 days[day_indx][name_formatted].append(data_formatted)
             else:
                 days[day_indx][name_formatted] = [data_formatted]
+
+print(f"\n\n**Looking at some entries**\n{days[3]}")
+dataframes_days = []
+for day in days:
+    if day is None:
+        dataframes_days.append(None)
+        continue
+    
+    dataframe = {"Name": [], "Time": [], "Function": [], "Extra": []}
+    day_sorted = dict(sorted(day.items()))
+    for name, data in day_sorted.items():
+        for entry in data:
+            dataframe["Name"].append(name)
+            dataframe["Time"].append(entry["Time"])
+            dataframe["Function"].append(entry["Function"])
+            dataframe["Extra"].append(entry["Extra"])
+    
+    dataframes_days.append(pd.DataFrame(dataframe))
+
+print("\n\n**Looking at some dataframes**")
+for indx, dataframe in enumerate(dataframes_days):
+    if dataframe is not None:
+        print(f"Day {indx + 1}:\n{dataframe}")
+    else:
+        print(f"Day {indx + 1}: No data!")
+    
+    
