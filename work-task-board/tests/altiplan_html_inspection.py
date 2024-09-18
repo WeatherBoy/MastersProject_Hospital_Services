@@ -28,11 +28,11 @@ def format_name(name: str) -> str:
     if "_" in name:
         first_name, initials = name.split("_", 1)  # <-- Split string into first name and initials
 
-        formatted_first_name = first_name.capitalize()
+        first_name_formatted = first_name.capitalize()
 
-        formatted_initials = " ".join([initial.upper() + "." for initial in initials])  # <-- add a period after each letter
+        initials_formatted = " ".join([initial.upper() + "." for initial in initials])  # <-- add a period after each letter
 
-        return f"{formatted_first_name} {formatted_initials}"
+        return f"{first_name_formatted} {initials_formatted}"
 
     else:
         return name.capitalize()
@@ -44,25 +44,25 @@ def regex_formatting_time_name(cell_split: str) -> tuple[str, dict[str, str]] | 
     I don't believe regex formatting is very robust, but the alternative was using an NLP,
     and that would be complete overkill.
 
-    This function is supposed to take a string and split it into `formatted_name`, "Time", and "Extra".
+    This function is supposed to take a string and split it into `name_formatted`, "Time", and "Extra".
 
     :param cell_split: A string that is supposed to be a split of the original cell value.
 
-    :return: The `formatted_name` (a string) and a dictionary with the keys "Time", and "Extra" or None if an error occured.
+    :return: The `name_formatted` (a string) and a dictionary with the keys "Time", and "Extra" or None if an error occured.
     """
     pattern = r"([A-Z_]+)\s*(\(([\d: -]+)\))?\s*(.*)?"
 
     match = re.match(pattern, cell_split)
     if match:
-        raw_name = match.group(1)
+        name_raw = match.group(1)
         time_slot = match.group(3)
         extra_info = match.group(4)
         time_slot = time_slot if time_slot else None  # <-- If time_slot is an empty string, set it to None
         extra_info = extra_info if extra_info else None  # <-- If extra_info is an empty string, set it to None
 
-        formatted_name = format_name(raw_name)
+        name_formatted = format_name(name_raw)
 
-        return formatted_name, {"Time": time_slot, "Extra": extra_info}
+        return name_formatted, {"Time": time_slot, "Extra": extra_info}
     else:
         # NOTE: This is poor error handling - placeholder
         return None, None
@@ -115,14 +115,14 @@ for indx, cell in enumerate(data):
         if empty_cell(cell_split):
             continue
 
-        formatted_name, formatted_data = regex_formatting_time_name(cell_split)
-        if format_name is None or formatted_data is None:
+        name_formatted, data_formatted = regex_formatting_time_name(cell_split)
+        if format_name is None or data_formatted is None:
             raise Exception("Placeholder error: U done goofed, Boyoh!")
 
         if days[day_indx] is None:
-            days[day_indx] = {formatted_name: [formatted_data]}
+            days[day_indx] = {name_formatted: [data_formatted]}
         else:
-            if formatted_name in days[day_indx]:
-                days[day_indx][formatted_name].append(formatted_data)
+            if name_formatted in days[day_indx]:
+                days[day_indx][name_formatted].append(data_formatted)
             else:
-                days[day_indx][formatted_name] = [formatted_data]
+                days[day_indx][name_formatted] = [data_formatted]
