@@ -1,6 +1,7 @@
 import toml
 import requests
 from utils.load_secrets import load_altiplan_cookies_headers
+from utils.string_process import soup_to_weekly_taskboards
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 
@@ -26,3 +27,6 @@ if __name__ == "__main__":
 
     # Parse the page content
     soup = BeautifulSoup(response.content, "html.parser")
+
+    skipable_funcs = [ERGO_AKTIVITETER, *BARN_SYG_AND_FERIE]
+    wekly_taskboards = soup_to_weekly_taskboards(soup, skipable_funcs, NUM_WEEKDAYS)
