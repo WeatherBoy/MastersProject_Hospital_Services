@@ -26,15 +26,3 @@ if __name__ == "__main__":
 
     # Parse the page content
     soup = BeautifulSoup(response.content, "html.parser")
-
-    """
-    data = soup.find_all("div", class_="single-description")
-    print("**Here comes the data!**")
-    for indx, item in enumerate(data):
-        if item.text == "":  # <-- Empty string
-            print(f"Item {indx}: No data!")
-        elif item.text.strip() == "":  # <-- Whitespace
-            print(f"Item {indx}:  Whitespace!")
-        else:
-            print(f"Item {indx}: {item.text}")
-    """
