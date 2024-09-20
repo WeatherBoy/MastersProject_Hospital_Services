@@ -3,6 +3,7 @@ TODOs/
 Notes/Personal
 work-task-board/data/
 venvs/ 
+results/
 *.env
 secrets.json
 **/__pycache__/
