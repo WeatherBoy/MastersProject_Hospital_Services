@@ -47,11 +47,10 @@ class Nurse:
 
 
 class FunctionAssignment:
-    def __init__(self, function_name: str, time: str = None, external: str = None, extras: str = None):
+    def __init__(self, function_name: str, time: str = None, extras: str = None):
         self.function_name = function_name
         self.time = time
-        self.external = external
         self.extras = extras
 
     def to_dict(self, nurse_name: str) -> dict[str, str]:
-        return {"Nurse": nurse_name, "Function": self.function_name, "Time": self.time, "External": self.external, "Extras": self.extras}
+        return {"Nurse": nurse_name, "Function": self.function_name, "Time": self.time, "Extras": self.extras}
