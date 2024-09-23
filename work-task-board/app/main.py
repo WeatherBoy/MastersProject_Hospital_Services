@@ -1,6 +1,9 @@
 import toml
 import requests
 from utils.load_secrets import load_altiplan_cookies_headers
+from utils.string_process import soup_to_weekly_taskboards
+from utils.os_structure import save_weekly_taskboards
+from utils.internal_dev import print_TaskBoards
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 
@@ -27,14 +30,7 @@ if __name__ == "__main__":
     # Parse the page content
     soup = BeautifulSoup(response.content, "html.parser")
 
-    """
-    data = soup.find_all("div", class_="single-description")
-    print("**Here comes the data!**")
-    for indx, item in enumerate(data):
-        if item.text == "":  # <-- Empty string
-            print(f"Item {indx}: No data!")
-        elif item.text.strip() == "":  # <-- Whitespace
-            print(f"Item {indx}:  Whitespace!")
-        else:
-            print(f"Item {indx}: {item.text}")
-    """
+    skipable_funcs = [ERGO_AKTIVITETER, *BARN_SYG_AND_FERIE]
+    weekly_taskboards = soup_to_weekly_taskboards(soup, skipable_funcs, NUM_WEEKDAYS)
+    print_TaskBoards(weekly_taskboards, config)
+    save_weekly_taskboards(weekly_taskboards, NUM_WEEKDAYS)

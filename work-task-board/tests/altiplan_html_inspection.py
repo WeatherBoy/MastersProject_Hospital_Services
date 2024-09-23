@@ -158,5 +158,7 @@ for indx, dataframe in enumerate(dataframes_days):
         print(f"Day {indx + 1}:\n{dataframe}")
     else:
         print(f"Day {indx + 1}: No data!")
+
+print(f"Whats the type of soup?: {type(soup)}")
     
     
