@@ -1,35 +1,38 @@
 import toml
 import requests
-import os
 import json
-from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 import webbrowser
+import datetime
 
-# Get configs from config file
-config = toml.load("config.toml")
-url_schedule = config["settings"]["url_schedule"]
-path_html_output = config["settings"]["path_html_output"]
+SAVE_ALTIPLAN_AS_HTML = True
 
-# Get cookies and headers from .json file
-secrets = None
 
-with open("secrets.json", "r") as file:
-    secrets = json.load(file)
+def get_html_save_path() -> str:
+    year, week, _ = datetime.date.today().isocalendar()
 
-cookies = secrets["ALTIPLAN_COOKIES"]
-headers = secrets["ALTIPLAN_HEADERS"]
+    dir_path = f"data/html/"
 
-response = requests.get(url_schedule, cookies=cookies, headers=headers)
+    return dir_path + f"ALTIPLAN_{year}_Week_{week}.html"
 
-# NOTE: NOT FINAL! - Save the HTML content to a file
-with open(path_html_output, "w", encoding="utf-8") as file:
-    file.write(response.text)
 
-webbrowser.open(path_html_output)
+if __name__ == "__main__":
+    # Get configs from config file
+    config = toml.load("config.toml")
+    url_schedule = config["settings"]["url_schedule"]
 
-# Parse the page content
-soup = BeautifulSoup(response.content, "html.parser")
+    # Get cookies and headers from .json file
+    secrets = None
+    with open("secrets.json", "r") as file:
+        secrets = json.load(file)
 
-# Optionally, print the entire HTML for inspection
-print(soup.prettify())
+    response = requests.get(url_schedule, cookies=cookies, headers=headers)
+
+    if SAVE_ALTIPLAN_AS_HTML:
+        path_html_output = get_html_save_path()
+        with open(path_html_output, "w", encoding="utf-8") as file:
+            file.write(response.text)
+        webbrowser.open(path_html_output)
+
+    # Parse the page content
+    soup = BeautifulSoup(response.content, "html.parser")
