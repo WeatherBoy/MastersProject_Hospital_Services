@@ -46,10 +46,7 @@ if __name__ == "__main__":
     driver = webdriver.Chrome(options=options)
 
     try:
-        driver.get(url_login)
-
-        # Open the login page
-        driver.get(url_login)
+        driver.get(url_login)  # <-- open login page
 
         # Wait until the input fields are present
         wait = WebDriverWait(driver, 10)
