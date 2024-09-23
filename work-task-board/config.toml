@@ -1,11 +1,13 @@
 [settings]
+save_html = true
+run_headless = true
 url_login = "https://login.altiplan.dk/webmodul/"
 url_schedule = "https://login.altiplan.dk/webmodul/ugeplan/"
 path_html_output = "data/html/altiplan_ugeplan.html"
 js_ID_department = "Afdeling-form"
 js_ID_username = "Brugernavn-form"
 js_ID_password = "Password-form"
-js_XPATH_unique_post_login_elem = "//*[@id='dashboard-container']/div[2]"
+js_XPATH_unique_afterlogin_elem = "//*[@id='dashboard-container']/div[2]"
 NUM_WEEKDAYS = 7
 ERGO_AKTIVITETER = 65 
 BARN_SYG_AND_FERIE = [74, 75]
