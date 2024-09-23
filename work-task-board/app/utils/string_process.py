@@ -71,8 +71,8 @@ def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, skipable_funcs: list[int]
     """
     days = [None] * num_weekdays
 
-    functions = soup.find_all("div", class_="single-function")
-    data = soup.find_all("div", class_="single-description")
+    functions = soup.find_all("div", class_="single-function")  # <-- functions (funktioner)/ rows on Altiplan
+    data = soup.find_all("div", class_="single-description")  # <-- cells in the "grid" on Altiplan
 
     for indx, cell in enumerate(data):
         if empty_cell(cell.text):

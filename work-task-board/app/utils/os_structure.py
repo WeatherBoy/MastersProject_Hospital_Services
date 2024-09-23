@@ -29,6 +29,19 @@ def save_weekly_taskboards(weekly_taskboards: list[TaskBoard], num_weekdays: int
             continue
         name = str(week_dates[i])
         df = weekly_taskboards[i].to_dataframe()
-        df.to_excel(dir_path + name + ".csv", index=False, engine="openpyxl")
-        print(f"Saved {i + 1}th TaskBoard of the week succesfully as: {dir_path + name}.csv")
+        df.to_excel(dir_path + name + ".xlsx", index=False, engine="openpyxl")
+        print(f"Saved {i + 1}th TaskBoard of the week succesfully as: {dir_path + name}.xlsx")
         print(f"DataFrame:\n{df}\n")
+
+
+def get_html_save_path() -> str:
+    """
+    A path for saving the current week's HTML file from Altiplan.
+
+    :return: A string with the path to save the HTML file.
+    """
+    year, week, _ = datetime.date.today().isocalendar()
+
+    dir_path = f"data/html/"
+
+    return dir_path + f"ALTIPLAN_{year}_Week_{week}.html"
