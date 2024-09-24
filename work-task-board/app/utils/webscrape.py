@@ -34,7 +34,7 @@ def get_soup_from_altiplan(config: dict[str, any] = None) -> bs4.BeautifulSoup |
     JS_ID_PASSWORD = config["settings"]["js_ID_password"]
     JS_XPATH_UNIQE_AFTERLOGIN_ELEM = config["settings"]["js_XPATH_unique_afterlogin_elem"]
     RUN_HEADLESS = config["settings"]["run_headless"]
-    RUN_SELENIUM_REGARDLESS = config["settings"]["run_selenium_regardless"]  # <-- run `selenium` even if already fetched?
+    RUN_SELENIUM_REGARDLESS = config["settings"]["run_selenium_regardless"]  # <-- togleable: run `selenium` if already fetched?
     ###############################################################################################
 
     html_save_path = get_html_save_path()
