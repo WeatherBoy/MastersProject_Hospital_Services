@@ -34,7 +34,14 @@ def get_soup_from_altiplan(config: dict[str, any] = None) -> bs4.BeautifulSoup |
     JS_ID_PASSWORD = config["settings"]["js_ID_password"]
     JS_XPATH_UNIQE_AFTERLOGIN_ELEM = config["settings"]["js_XPATH_unique_afterlogin_elem"]
     RUN_HEADLESS = config["settings"]["run_headless"]
+    RUN_SELENIUM_REGARDLESS = config["settings"]["run_selenium_regardless"]  # <-- run `selenium` even if already fetched?
     ###############################################################################################
+
+    html_save_path = get_html_save_path()
+    if not RUN_SELENIUM_REGARDLESS and os.path.exists(html_save_path):
+        print("HTML already fetched.")
+        with open(html_save_path, "r", encoding="utf-8") as file:
+            return bs4.BeautifulSoup(file.read(), "html.parser")
 
     # Get credentials from .env file
     load_dotenv()  # <-- loads the .env file
@@ -83,8 +90,7 @@ def get_soup_from_altiplan(config: dict[str, any] = None) -> bs4.BeautifulSoup |
         soup = bs4.BeautifulSoup(driver.page_source, "html.parser")
 
         if SAVE_HTML:
-            path_html_output = get_html_save_path()
-            with open(path_html_output, "w", encoding="utf-8") as file:
+            with open(html_save_path, "w", encoding="utf-8") as file:
                 file.write(str(soup))
 
     except Exception as e:
