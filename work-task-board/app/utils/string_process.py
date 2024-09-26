@@ -10,6 +10,27 @@ def empty_cell(cell_value: str) -> bool:
     return cell_value == "" or cell_value.strip() == ""
 
 
+def handle_initials(initials: str) -> str:
+    """
+    Sometimes the initials aren't initials, but in fact monikers instead.
+    This function handles those edge cases.
+
+    :param initials: A string of initials.
+
+    :return: A string of initials formatted as initials or a moniker.
+    """
+    edge_case_last_names = ["elev", "stud"]
+
+    formatted_initials = " ".join([initial.upper() + "." for initial in initials])  # <-- add a period after each letter
+
+    for edge_case_name in edge_case_last_names:
+        if edge_case_name in initials.lower():
+            formatted_initials = f"({initials.capitalize()})"
+            break
+
+    return formatted_initials
+
+
 def format_name(name: str) -> str:
     """
     Split name into first name and initials and format and capitalize them.
@@ -19,7 +40,7 @@ def format_name(name: str) -> str:
 
         formatted_first_name = first_name.capitalize()
 
-        formatted_initials = " ".join([initial.upper() + "." for initial in initials])  # <-- add a period after each letter
+        formatted_initials = handle_initials(initials)
 
         return f"{formatted_first_name} {formatted_initials}"
 
@@ -39,13 +60,13 @@ def regex_formatting_time_name(cell_split: str) -> tuple[str, dict[str, str]] | 
 
     :return: The `name_formatted` (a string) and a dictionary with the keys "Time", and "Extra" or None if an error occured.
     """
-    pattern = r"([A-Z_]+)\s*(\(([\d: -]+)\))?\s*(.*)?"
+    pattern = r"^([^\s(]+(?:_[^\s(]+)?)\s*(?:\(([^)]+)\))?\s*(.*)$"
 
     match = re.match(pattern, cell_split)
     if match:
-        name_raw = match.group(1)
-        time_slot = match.group(3)
-        extra_info = match.group(4)
+        name_raw = match.group(1).strip()
+        time_slot = match.group(2) or ""
+        extra_info = match.group(3).strip()
         time_slot = time_slot if time_slot else None  # <-- If time_slot is an empty string, set it to None
         extra_info = extra_info if extra_info else None  # <-- If extra_info is an empty string, set it to None
 
