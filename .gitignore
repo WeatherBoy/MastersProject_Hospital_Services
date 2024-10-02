@@ -1,10 +1,13 @@
 .vscode/
 TODOs/
 Notes/Personal
-work-task-board/data/
 venvs/ 
-results/
 *.env
 secrets.json
 **/__pycache__/
 **/.pytest_cache/
+
+schedule-planning/data/
+
+work-task-board/data/
+work-task-board/results/
