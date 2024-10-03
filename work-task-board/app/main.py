@@ -15,6 +15,6 @@ if __name__ == "__main__":
     soup = get_soup_from_altiplan(config)
 
     skipable_funcs = [ERGO_AKTIVITETER, *BARN_SYG_AND_FERIE]
-    weekly_taskboards = soup_to_weekly_taskboards(soup, skipable_funcs, NUM_WEEKDAYS)
+    weekly_taskboards = soup_to_weekly_taskboards(soup, skipable_funcs, config, NUM_WEEKDAYS)
     print_TaskBoards(weekly_taskboards, config)
     save_weekly_taskboards(weekly_taskboards, NUM_WEEKDAYS)

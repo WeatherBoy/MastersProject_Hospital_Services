@@ -10,7 +10,7 @@ def empty_cell(cell_value: str) -> bool:
     return cell_value == "" or cell_value.strip() == ""
 
 
-def handle_initials(initials: str) -> str:
+def handle_initials(initials: str, config: dict[str, any]) -> str:
     """
     Sometimes the initials aren't initials, but in fact monikers instead.
     This function handles those edge cases.
@@ -19,7 +19,7 @@ def handle_initials(initials: str) -> str:
 
     :return: A string of initials formatted as initials or a moniker.
     """
-    edge_case_last_names = ["elev", "stud"]
+    edge_case_last_names = config["settings"]["valid_monikers"]
 
     formatted_initials = " ".join([initial.upper() + "." for initial in initials])  # <-- add a period after each letter
 
@@ -31,7 +31,7 @@ def handle_initials(initials: str) -> str:
     return formatted_initials
 
 
-def format_name(name: str) -> str:
+def format_name(name: str, config: dict[str, any]) -> str:
     """
     Split name into first name and initials and format and capitalize them.
     """
@@ -40,7 +40,7 @@ def format_name(name: str) -> str:
 
         formatted_first_name = first_name.capitalize()
 
-        formatted_initials = handle_initials(initials)
+        formatted_initials = handle_initials(initials, config)
 
         return f"{formatted_first_name} {formatted_initials}"
 
@@ -48,7 +48,7 @@ def format_name(name: str) -> str:
         return name.capitalize()
 
 
-def regex_formatting_time_name(cell_split: str) -> tuple[str, dict[str, str]] | tuple[None, None]:
+def regex_formatting_time_name(cell_split: str, config: dict[str, any]) -> tuple[str, dict[str, str]] | tuple[None, None]:
     """
     NOTE: This is really just in the attempt of accomplishing a MVP.
     I don't believe regex formatting is very robust, but the alternative was using an NLP,
@@ -70,7 +70,7 @@ def regex_formatting_time_name(cell_split: str) -> tuple[str, dict[str, str]] | 
         time_slot = time_slot if time_slot else None  # <-- If time_slot is an empty string, set it to None
         extra_info = extra_info if extra_info else None  # <-- If extra_info is an empty string, set it to None
 
-        name_formatted = format_name(name_raw)
+        name_formatted = format_name(name_raw, config)
 
         return name_formatted, {"Time": time_slot, "Extra": extra_info}
     else:
@@ -79,7 +79,9 @@ def regex_formatting_time_name(cell_split: str) -> tuple[str, dict[str, str]] | 
         return None, None
 
 
-def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, skipable_funcs: list[int], num_weekdays: int = 7) -> list[TaskBoard]:
+def soup_to_weekly_taskboards(
+    soup: bs4.BeautifulSoup, skipable_funcs: list[int], config: dict[str, any], num_weekdays: int = 7
+) -> list[TaskBoard]:
     """
     This utilizes the `TaskBoard` and `FunctionAssignment` classes to create a list of `TaskBoard` objects, based on the parsed HTML content.
     This serves to yield a representation of the task board for each day of the week.
@@ -113,7 +115,7 @@ def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, skipable_funcs: list[int]
             if empty_cell(cell_split):
                 continue
 
-            name_formatted, data_formatted = regex_formatting_time_name(cell_split)
+            name_formatted, data_formatted = regex_formatting_time_name(cell_split, config)
             if format_name is None or data_formatted is None:
                 raise Exception(
                     "If `regex_formatting_time_name( )` returns None, then there is no match for the regex pattern. And you should update approach."
