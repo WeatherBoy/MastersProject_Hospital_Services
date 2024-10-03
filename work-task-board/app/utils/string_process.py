@@ -79,20 +79,22 @@ def regex_formatting_time_name(cell_split: str, config: dict[str, any]) -> tuple
         return None, None
 
 
-def soup_to_weekly_taskboards(
-    soup: bs4.BeautifulSoup, skipable_funcs: list[int], config: dict[str, any], num_weekdays: int = 7
-) -> list[TaskBoard]:
+def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -> list[TaskBoard]:
     """
     This utilizes the `TaskBoard` and `FunctionAssignment` classes to create a list of `TaskBoard` objects, based on the parsed HTML content.
     This serves to yield a representation of the task board for each day of the week.
 
     :param soup: The parsed HTML content.
-    :param skipable_funcs: A list of function indices that should be skipped.
-    :param num_weekdays: The number of weekdays in the schedule. Default is 7.
 
     :return: A list of `TaskBoard` objects, each representing a day of the week.
     """
+    ## Preliminary ***********************************************************************************************
+    # Unpack the configuration settings
+    num_weekdays = config["settings"]["NUM_WEEKDAYS"]  # <-- A list of function indices that should be skipped.
+    skipable_funcs = config["settings"]["skippable_funcs"]
+
     days = [None] * num_weekdays
+    ## ***********************************************************************************************************
 
     functions = soup.find_all("div", class_="single-function")  # <-- functions (funktioner)/ rows on Altiplan
     data = soup.find_all("div", class_="single-description")  # <-- cells in the "grid" on Altiplan
