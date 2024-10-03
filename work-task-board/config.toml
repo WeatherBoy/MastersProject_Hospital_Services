@@ -1,7 +1,8 @@
 [settings]
 save_html = true
 run_headless = true
-run_selenium_regardless = false
+run_selenium_regardless = true
+
 url_login = "https://login.altiplan.dk/webmodul/"
 url_schedule = "https://login.altiplan.dk/webmodul/ugeplan/"
 path_html_output = "data/html/altiplan_ugeplan.html"
@@ -13,3 +14,4 @@ NUM_WEEKDAYS = 7
 ERGO_AKTIVITETER = 65 
 BARN_SYG_AND_FERIE = [74, 75]
 WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+valid_monikers = ["elev", "stud"]
