@@ -1,4 +1,9 @@
+import toml
 import re
+
+# Valid monikers
+config = toml.load("config.toml")
+monikers = config["settings"]["valid_monikers"]
 
 data = [
     "Laura K. A.",
@@ -15,8 +20,6 @@ data = [
 # Updated regex pattern
 pattern = r"^([A-Za-zÆØÅæøå]+(?:\s[A-Za-zÆØÅæøå]\.)*)\s*(?:\(([^)]+)\))?$"
 
-# Valid monikers
-monikers = {"elev", "stud", "stud1"}
 
 for entry in data:
     match = re.match(pattern, entry)
@@ -27,7 +30,10 @@ for entry in data:
         is_moniker = None
         if parentheses_content is not None:
             # Detect if initials_or_moniker is a known moniker
-            is_moniker = parentheses_content.lower() in monikers
+            for moniker in monikers:
+                if moniker.lower() in parentheses_content.lower():
+                    is_moniker = True
+                    break
 
         print(f"Entry: {entry}")
         print(f"Full Name: {name}")
