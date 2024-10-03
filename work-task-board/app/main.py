@@ -9,12 +9,9 @@ if __name__ == "__main__":
     # Get configs from config file
     config = toml.load("config.toml")
     NUM_WEEKDAYS = config["settings"]["NUM_WEEKDAYS"]
-    ERGO_AKTIVITETER = config["settings"]["ERGO_AKTIVITETER"]
-    BARN_SYG_AND_FERIE = config["settings"]["BARN_SYG_AND_FERIE"]
 
     soup = get_soup_from_altiplan(config)
 
-    skipable_funcs = [ERGO_AKTIVITETER, *BARN_SYG_AND_FERIE]
-    weekly_taskboards = soup_to_weekly_taskboards(soup, skipable_funcs, config, NUM_WEEKDAYS)
+    weekly_taskboards = soup_to_weekly_taskboards(soup, config)
     print_TaskBoards(weekly_taskboards, config)
     save_weekly_taskboards(weekly_taskboards, NUM_WEEKDAYS)
