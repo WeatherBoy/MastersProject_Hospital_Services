@@ -123,7 +123,7 @@ for indx, cell in enumerate(data):
 
         name_formatted, data_formatted = regex_formatting_time_name(cell_split)
         data_formatted["Function"] = functions[function_indx].text
-        if format_name is None or data_formatted is None:
+        if name_formatted is None or data_formatted is None:
             raise Exception("Placeholder error: U done goofed, Boyoh!")
 
         if days[day_indx] is None:
