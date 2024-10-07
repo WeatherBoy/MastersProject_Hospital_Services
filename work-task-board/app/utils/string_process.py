@@ -106,7 +106,7 @@ def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -
         day_indx = indx % num_weekdays
         function_indx = indx // num_weekdays
 
-        if function_indx in skipable_funcs:
+        if functions[function_indx].text in skipable_funcs:
             # Currently I skip 'Ergo aktiviteter' as, as far as I can see, they seem to be an outlier.
             # Also, I skip 'Børn syg og ferie' as they are not relevant for the task board.
             # NOTE: Mention this for nurse.
