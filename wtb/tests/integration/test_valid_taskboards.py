@@ -1,9 +1,10 @@
 import os
 
 import toml
+from bs4 import BeautifulSoup
+
 from app.utils.os_structure import get_html_save_path
 from app.utils.string_process import soup_to_weekly_taskboards
-from bs4 import BeautifulSoup
 from tests.utils.valid_cells import valid_name_cell, valid_time_cell
 
 
@@ -23,7 +24,7 @@ def test_valid_formatting_from_html():
     soup = BeautifulSoup(html_content, "html.parser")
 
     weekly_taskboards = soup_to_weekly_taskboards(soup, config)
-    weekly_dataframes = [tb.to_dataframe() for tb in weekly_taskboards]
+    weekly_dataframes = [tb.to_dataframe() for tb in weekly_taskboards if tb is not None]  # <-- TaskBoard might be none - HosInfo shennanigans
 
     # Check if the cells are formatted correctly
     for df in weekly_dataframes:
