@@ -8,7 +8,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
-from utils.os_structure import get_html_save_path
+
+from app.utils.os_structure import get_html_save_path
 
 
 def get_soup_from_altiplan(config: dict[str, any] = None) -> bs4.BeautifulSoup | None:

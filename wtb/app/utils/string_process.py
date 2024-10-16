@@ -1,7 +1,8 @@
 import re
 
 import bs4
-from data_structures.taskboard import FunctionAssignment, TaskBoard
+
+from app.data_structures.taskboard import FunctionAssignment, TaskBoard
 
 
 def empty_cell(cell_value: str) -> bool:

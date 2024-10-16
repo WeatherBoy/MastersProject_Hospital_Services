@@ -1,8 +1,9 @@
 import toml
-from utils.internal_dev import print_taskboards
-from utils.os_structure import save_weekly_taskboards
-from utils.string_process import soup_to_weekly_taskboards
-from utils.webscrape import get_soup_from_altiplan
+
+from app.utils.internal_dev import print_taskboards
+from app.utils.os_structure import save_weekly_taskboards
+from app.utils.string_process import soup_to_weekly_taskboards
+from app.utils.webscrape import get_soup_from_altiplan
 
 if __name__ == "__main__":
     # Get configs from config file

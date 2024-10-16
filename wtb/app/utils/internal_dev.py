@@ -1,4 +1,4 @@
-from data_structures.taskboard import TaskBoard
+from app.data_structures.taskboard import TaskBoard
 
 
 def print_taskboards(weekly_taskboards: list[TaskBoard], config: dict[str, any] = None) -> None:

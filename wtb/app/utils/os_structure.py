@@ -1,7 +1,7 @@
 import datetime
 import os
 
-from data_structures.taskboard import TaskBoard
+from app.data_structures.taskboard import TaskBoard
 
 
 def get_week_dates_from_today(today: datetime.date, weekday: int) -> list[datetime.date]:
