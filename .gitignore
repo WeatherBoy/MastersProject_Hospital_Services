@@ -2,12 +2,9 @@
 TODOs/
 Notes/Personal
 venvs/ 
+data/
 *.env
 secrets.json
 **/__pycache__/
 **/.pytest_cache/
-
-schedule-planning/data/
-
-work-task-board/data/
-work-task-board/results/
+**/.ruff_cache/
