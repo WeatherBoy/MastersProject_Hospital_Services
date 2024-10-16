@@ -17,7 +17,7 @@ def save_weekly_taskboards(weekly_taskboards: list[TaskBoard], num_weekdays: int
     today = datetime.date.today()
     year, week, weekday = today.isocalendar()
 
-    dir_path = f"results/{year}_Week_{week}/"
+    dir_path = f"data/results/{year}_Week_{week}/"
 
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
