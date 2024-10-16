@@ -1,11 +1,10 @@
-import toml
 import os
 
-from bs4 import BeautifulSoup
-
-from tests.utils.valid_cells import valid_name_cell, valid_time_cell
-from app.utils.string_process import soup_to_weekly_taskboards
+import toml
 from app.utils.os_structure import get_html_save_path
+from app.utils.string_process import soup_to_weekly_taskboards
+from bs4 import BeautifulSoup
+from tests.utils.valid_cells import valid_name_cell, valid_time_cell
 
 
 def test_valid_formatting_from_html():

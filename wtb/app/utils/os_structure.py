@@ -1,6 +1,7 @@
 import datetime
 import os
-from data_structures.TaskBoard import TaskBoard
+
+from data_structures.task_board import TaskBoard
 
 
 def get_week_dates_from_today(today: datetime.date, weekday: int) -> list[datetime.date]:
@@ -42,6 +43,6 @@ def get_html_save_path() -> str:
     """
     year, week, _ = datetime.date.today().isocalendar()
 
-    dir_path = f"data/html/"
+    dir_path = "data/html/"
 
     return dir_path + f"ALTIPLAN_{year}_Week_{week}.html"

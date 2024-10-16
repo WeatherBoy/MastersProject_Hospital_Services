@@ -11,7 +11,7 @@ def valid_time_cell(cell_value: str) -> bool:
     valid_symbols = [":", "-", " "]
 
     for char in cell_value:
-        if not char.isdigit() and not char in valid_symbols:
+        if not char.isdigit() and char not in valid_symbols:
             return False
 
     return True
@@ -27,7 +27,7 @@ def valid_name(name: str) -> bool:
     valid_symbols = [" ", "."]
 
     for char in name:
-        if not char.isalpha() and not char in valid_symbols:
+        if not char.isalpha() and char not in valid_symbols:
             return False
     return True
 

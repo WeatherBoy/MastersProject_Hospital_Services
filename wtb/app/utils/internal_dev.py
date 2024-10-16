@@ -1,7 +1,7 @@
-from data_structures.TaskBoard import TaskBoard
+from data_structures.task_board import TaskBoard
 
 
-def print_TaskBoards(weekly_taskboards: list[TaskBoard], config: dict[str, any] = None) -> None:
+def print_taskboards(weekly_taskboards: list[TaskBoard], config: dict[str, any] = None) -> None:
     """
     Meant only for internal development.
 
