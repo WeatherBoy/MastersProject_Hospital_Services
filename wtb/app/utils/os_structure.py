@@ -1,6 +1,7 @@
 import datetime
 import os
-from data_structures.TaskBoard import TaskBoard
+
+from app.data_structures.taskboard import TaskBoard
 
 
 def get_week_dates_from_today(today: datetime.date, weekday: int) -> list[datetime.date]:
@@ -16,7 +17,7 @@ def save_weekly_taskboards(weekly_taskboards: list[TaskBoard], num_weekdays: int
     today = datetime.date.today()
     year, week, weekday = today.isocalendar()
 
-    dir_path = f"results/{year}_Week_{week}/"
+    dir_path = f"data/results/{year}_Week_{week}/"
 
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
@@ -42,6 +43,6 @@ def get_html_save_path() -> str:
     """
     year, week, _ = datetime.date.today().isocalendar()
 
-    dir_path = f"data/html/"
+    dir_path = "data/html/"
 
     return dir_path + f"ALTIPLAN_{year}_Week_{week}.html"

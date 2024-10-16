@@ -1,6 +1,8 @@
 import re
+
 import bs4
-from data_structures.TaskBoard import TaskBoard, FunctionAssignment
+
+from app.data_structures.taskboard import FunctionAssignment, TaskBoard
 
 
 def empty_cell(cell_value: str) -> bool:
@@ -120,7 +122,7 @@ def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -
             name_formatted, data_formatted = regex_formatting_time_name(cell_split, config)
             if format_name is None or data_formatted is None:
                 raise Exception(
-                    "If `regex_formatting_time_name( )` returns None, then there is no match for the regex pattern. And you should update approach."
+                    "If `regex_formatting_time_name( )` returns None, then there is no match for the regex pattern. You should update approach."
                 )
 
             function_assignment = FunctionAssignment(

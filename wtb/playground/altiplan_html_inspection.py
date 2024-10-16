@@ -1,10 +1,11 @@
-import toml
 import re
+
 import pandas as pd
+import toml
 from bs4 import BeautifulSoup
 
 NUM_WEEKDAYS = 7
-ERGO_AKTIVITETER = 65 
+ERGO_AKTIVITETER = 65
 BARN_SYG_AND_FERIE = 74
 
 # Get configs from config file
@@ -32,7 +33,9 @@ def format_name(name: str) -> str:
 
         first_name_formatted = first_name.capitalize()
 
-        initials_formatted = " ".join([initial.upper() + "." for initial in initials])  # <-- add a period after each letter
+        initials_formatted = " ".join(
+            [initial.upper() + "." for initial in initials]  # <-- add a period after each letter
+        )
 
         return f"{first_name_formatted} {initials_formatted}"
 
@@ -85,7 +88,7 @@ test_indx = 0
 print(f"Functions type: {type(functions)}")
 print(f"Functions[{test_indx}]: {functions[test_indx].text}")
 print("\n**Here comes the functions!**")
-for indx, func in enumerate(functions):
+for _, func in enumerate(functions):
     num_functions += 1
     print(f"Function {func["data-index"]}: {func.text}")
     # access "data-index" attribute of *div element* "single-function"
@@ -99,20 +102,19 @@ data = soup.find_all("div", class_="single-description")
 for indx, cell in enumerate(data):
     if empty_cell(cell.text):
         continue
-    
+
     day_indx = indx % NUM_WEEKDAYS
     function_indx = indx // NUM_WEEKDAYS
-    
+
     if function_indx == ERGO_AKTIVITETER:
         # Currently I skip 'Ergo aktiviteter' as, as far as I can see, they seem to be an outlier.
         # NOTE: Mention this for nurse.
         print(f"Ergo aktiviteter: {cell.text.split('\n')}")
         continue
-    
+
     if function_indx >= BARN_SYG_AND_FERIE:
         # Just skip all on vacation and sick leave
         break
-    
 
     cell_splits = cell.text.split("\n")
     print(f"Cell_splits: {cell_splits}")
@@ -140,7 +142,7 @@ for day in days:
     if day is None:
         dataframes_days.append(None)
         continue
-    
+
     dataframe = {"Name": [], "Time": [], "Function": [], "Extra": []}
     day_sorted = dict(sorted(day.items()))
     for name, data in day_sorted.items():
@@ -149,7 +151,7 @@ for day in days:
             dataframe["Time"].append(entry["Time"])
             dataframe["Function"].append(entry["Function"])
             dataframe["Extra"].append(entry["Extra"])
-    
+
     dataframes_days.append(pd.DataFrame(dataframe))
 
 print("\n\n**Looking at some dataframes**")
@@ -160,5 +162,3 @@ for indx, dataframe in enumerate(dataframes_days):
         print(f"Day {indx + 1}: No data!")
 
 print(f"Whats the type of soup?: {type(soup)}")
-    
-    

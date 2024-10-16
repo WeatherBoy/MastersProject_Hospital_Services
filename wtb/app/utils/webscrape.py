@@ -2,15 +2,14 @@ import os
 
 import bs4
 import toml
-
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from dotenv import load_dotenv
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.ui import WebDriverWait
 
-from utils.os_structure import get_html_save_path
+from app.utils.os_structure import get_html_save_path
 
 
 def get_soup_from_altiplan(config: dict[str, any] = None) -> bs4.BeautifulSoup | None:
@@ -26,19 +25,19 @@ def get_soup_from_altiplan(config: dict[str, any] = None) -> bs4.BeautifulSoup |
     if config is None:
         config = config = toml.load("config.toml")
 
-    SAVE_HTML = config["settings"]["save_html"]
-    URL_LOGIN = config["settings"]["url_login"]
-    URL_SCHEDULE = config["settings"]["url_schedule"]
-    JS_ID_DEPARTMENT = config["settings"]["js_ID_department"]
-    JS_ID_USERNAME = config["settings"]["js_ID_username"]
-    JS_ID_PASSWORD = config["settings"]["js_ID_password"]
-    JS_XPATH_UNIQE_AFTERLOGIN_ELEM = config["settings"]["js_XPATH_unique_afterlogin_elem"]
-    RUN_HEADLESS = config["settings"]["run_headless"]
-    RUN_SELENIUM_REGARDLESS = config["settings"]["run_selenium_regardless"]  # <-- togleable: run `selenium` if already fetched?
+    save_html = config["settings"]["save_html"]
+    url_login = config["settings"]["url_login"]
+    url_schedule = config["settings"]["url_schedule"]
+    js_id_department = config["settings"]["js_ID_department"]
+    js_id_username = config["settings"]["js_ID_username"]
+    js_id_password = config["settings"]["js_ID_password"]
+    js_xpath_unique_afterlogin_elem = config["settings"]["js_XPATH_unique_afterlogin_elem"]
+    run_headless = config["settings"]["run_headless"]
+    run_selenium_regardless = config["settings"]["run_selenium_regardless"]  # <-- togleable: run `selenium` if already fetched?
     ###############################################################################################
 
     html_save_path = get_html_save_path()
-    if not RUN_SELENIUM_REGARDLESS and os.path.exists(html_save_path):
+    if not run_selenium_regardless and os.path.exists(html_save_path):
         print("HTML already fetched.")
         with open(html_save_path, "r", encoding="utf-8") as file:
             return bs4.BeautifulSoup(file.read(), "html.parser")
@@ -52,19 +51,19 @@ def get_soup_from_altiplan(config: dict[str, any] = None) -> bs4.BeautifulSoup |
 
     # Initialize Chrome options (optional: run in headless mode)
     options = Options()
-    options.headless = RUN_HEADLESS
+    options.headless = run_headless
 
     # Initialize the WebDriver
     driver = webdriver.Chrome(options=options)
 
     try:
-        driver.get(URL_LOGIN)  # <-- open login page
+        driver.get(url_login)  # <-- open login page
 
         # Wait until the input fields are present
         wait = WebDriverWait(driver, 10)
-        afd_input = wait.until(EC.presence_of_element_located((By.ID, JS_ID_DEPARTMENT)))
-        brugernavn_input = driver.find_element(By.ID, JS_ID_USERNAME)
-        password_input = driver.find_element(By.ID, JS_ID_PASSWORD)
+        afd_input = wait.until(ec.presence_of_element_located((By.ID, js_id_department)))
+        brugernavn_input = driver.find_element(By.ID, js_id_username)
+        password_input = driver.find_element(By.ID, js_id_password)
 
         # Input your credentials
         afd_input.send_keys(department)
@@ -76,22 +75,24 @@ def get_soup_from_altiplan(config: dict[str, any] = None) -> bs4.BeautifulSoup |
         submit_button.click()
 
         # Wait for the login process to complete
-        wait.until(EC.presence_of_element_located((By.XPATH, JS_XPATH_UNIQE_AFTERLOGIN_ELEM)))
+        wait.until(ec.presence_of_element_located((By.XPATH, js_xpath_unique_afterlogin_elem)))
 
         print("Login successful.")
 
         # Navigate to the target page
-        driver.get(URL_SCHEDULE)
+        driver.get(url_schedule)
 
         # Wait until the target page loads
-        wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+        wait.until(ec.presence_of_element_located((By.TAG_NAME, "body")))
 
         # Scrape the required data
         soup = bs4.BeautifulSoup(driver.page_source, "html.parser")
 
-        if SAVE_HTML:
+        if save_html:
             with open(html_save_path, "w", encoding="utf-8") as file:
                 file.write(str(soup))
+
+        return soup
 
     except Exception as e:
         driver.quit()
@@ -101,4 +102,3 @@ def get_soup_from_altiplan(config: dict[str, any] = None) -> bs4.BeautifulSoup |
     finally:
         # Close the browser
         driver.quit()
-        return soup

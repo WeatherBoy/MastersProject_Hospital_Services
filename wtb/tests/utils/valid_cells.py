@@ -7,14 +7,17 @@ def valid_time_cell(cell_value: str) -> bool:
 
     :param cell_value: A string that is supposed to be a split of the original cell value.
     """
-
     valid_symbols = [":", "-", " "]
 
-    for char in cell_value:
-        if not char.isdigit() and not char in valid_symbols:
-            return False
+    if cell_value is None:
+        # None is a valid time, they might not have a time-frame.
+        return True
+    else:
+        for char in cell_value:
+            if not char.isdigit() and char not in valid_symbols:
+                return False
 
-    return True
+        return True
 
 
 def valid_name(name: str) -> bool:
@@ -27,7 +30,7 @@ def valid_name(name: str) -> bool:
     valid_symbols = [" ", "."]
 
     for char in name:
-        if not char.isalpha() and not char in valid_symbols:
+        if not char.isalpha() and char not in valid_symbols:
             return False
     return True
 
@@ -44,6 +47,7 @@ def valid_moniker(parentheses_content: str, config: dict[str, any]) -> bool:
     valid_monikers = config["settings"]["valid_monikers"]
 
     if parentheses_content is None:
+        # None is valid, they might not have a "moniker".
         return True
     else:
         # Detect if parentheses_content is a known moniker
@@ -61,8 +65,6 @@ def valid_name_cell(cell_value: str, config: dict[str, any]) -> bool:
     :param cell_value: A string that is supposed to be a split of the original cell value.
     :config: A dictionary with the configuration settings.
     """
-    valid_name = False
-
     pattern = r"^([A-Za-zÆØÅæøå]+(?:\s[A-Za-zÆØÅæøå]\.)*)\s*(?:\(([^)]+)\))?$"
 
     match = re.match(pattern, cell_value)
