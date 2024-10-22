@@ -28,13 +28,13 @@ def read_tasks(path: str) -> tuple[list[str], dict[str, list[int]]]:
     return tasks, task_schedules
 
 
-def read_agents(path: str) -> list[Agent]:
+def read_agents(path: str) -> dict[str, Agent]:
     """ """
 
     # Read the Excel file, without enumerating the rows, first column as index
     df = pd.read_excel(path, index_col=0)
 
-    agents = []
+    agents = {}
     for indx, row in df.iterrows():
         agent = Agent(name=indx)
         qualifications = {}
@@ -45,12 +45,32 @@ def read_agents(path: str) -> list[Agent]:
                 qualifications[task] = False
 
         agent.add_qualifications(qualifications)
-        agents.append(agent)
+        agents[agent.name] = agent
 
     return agents
 
 
-def read_rolling_chart():
+def read_rolling_chart(path: str, agents: dict[str, Agent]) -> dict[str, Agent]:
     """
     Preferences for 'Rygvagten'.
     """
+    df = pd.read_excel(path, index_col=1)
+
+    col = df.columns[1]
+    schedule_horizon = len(df.index)
+    task_preferences = {name: [0 for _ in range(schedule_horizon)] for name in agents.keys()}
+    for indx, day in enumerate(df.index):
+        agent_name = df[col][day]
+        # TODO: Handle case for neuro-surgeons
+        if agent_name in ["TSJ", "MA", "AJ"]:
+            continue
+        task_preferences[agent_name][indx] = 1
+
+    for agent in agents.values():
+        agent.add_task_preferences(task_preferences[agent.name])
+
+    return agents
+
+
+def parse_agents():
+    pass
