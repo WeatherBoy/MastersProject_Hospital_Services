@@ -75,5 +75,21 @@ def read_rolling_chart(
     return agents, task_schedules
 
 
+def read_agents(path: str, agents: dict[str, Agent]) -> dict[str, Agent]:
+    """ """
+    df = pd.read_excel(path, index_col=0, sheet_name="doctor_charts")
+
+    # Iterate through cols (tasks) in dataframe
+    for agent in df.columns:
+        days_off = []
+        for indx, day in enumerate(df.index):
+            cell = df[agent][day]
+            if type(cell) is str and cell in ["ønskefridag", "afspadsere", "ønskefri"]:
+                days_off.append(indx)
+        agents[agent].add_days_off(days_off)
+
+    return agents
+
+
 def parse_agents():
     pass
