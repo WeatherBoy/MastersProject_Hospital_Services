@@ -50,7 +50,9 @@ def read_agents(path: str) -> dict[str, Agent]:
     return agents
 
 
-def read_rolling_chart(path: str, agents: dict[str, Agent]) -> dict[str, Agent]:
+def read_rolling_chart(
+    path: str, agents: dict[str, Agent], task_schedules: dict[str : list[int]]
+) -> tuple[dict[str, Agent], dict[str : list[int]]]:
     """
     Preferences for 'Rygvagten'.
     """
@@ -61,15 +63,16 @@ def read_rolling_chart(path: str, agents: dict[str, Agent]) -> dict[str, Agent]:
     task_preferences = {name: [0 for _ in range(schedule_horizon)] for name in agents.keys()}
     for indx, day in enumerate(df.index):
         agent_name = df[col][day]
-        # TODO: Handle case for neuro-surgeons
+        # Handling the neuro-surgeons
         if agent_name in ["TSJ", "MA", "AJ"]:
-            continue
-        task_preferences[agent_name][indx] = 1
+            task_schedules["Rygvagt"].remove(indx)
+        else:
+            task_preferences[agent_name][indx] = 1
 
     for agent in agents.values():
         agent.add_task_preferences(task_preferences[agent.name])
 
-    return agents
+    return agents, task_schedules
 
 
 def parse_agents():
