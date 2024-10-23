@@ -50,6 +50,22 @@ def read_agent_qualifications(path: str) -> dict[str, Agent]:
     return agents
 
 
+def read_agents(path: str, agents: dict[str, Agent]) -> dict[str, Agent]:
+    """ """
+    df = pd.read_excel(path, index_col=0, sheet_name="doctor_charts")
+
+    # Iterate through cols (tasks) in dataframe
+    for agent in df.columns:
+        days_off = []
+        for indx, day in enumerate(df.index):
+            cell = df[agent][day]
+            if type(cell) is str and cell in ["ønskefridag", "afspadsere", "ønskefri", "FU-dag"]:
+                days_off.append(indx)
+        agents[agent].add_days_off(days_off)
+
+    return agents
+
+
 def read_rolling_chart(
     path: str, agents: dict[str, Agent], task_schedules: dict[str : list[int]]
 ) -> tuple[dict[str, Agent], dict[str : list[int]]]:
@@ -75,21 +91,13 @@ def read_rolling_chart(
     return agents, task_schedules
 
 
-def read_agents(path: str, agents: dict[str, Agent]) -> dict[str, Agent]:
+def parse_constraints(path: str, agents: dict[str, Agent]) -> tuple[list[str], dict[str, list[int]], list[str], dict[str, Agent]]:
     """ """
-    df = pd.read_excel(path, index_col=0, sheet_name="doctor_charts")
+    tasks, task_schedules = read_tasks(path)
+    agents = read_agent_qualifications(path)
+    agents = read_agents(path, agents)
+    agents, task_schedules = read_rolling_chart(path, agents, task_schedules)
 
-    # Iterate through cols (tasks) in dataframe
-    for agent in df.columns:
-        days_off = []
-        for indx, day in enumerate(df.index):
-            cell = df[agent][day]
-            if type(cell) is str and cell in ["ønskefridag", "afspadsere", "ønskefri", "FU-dag"]:
-                days_off.append(indx)
-        agents[agent].add_days_off(days_off)
+    agent_names = list(agents.keys())
 
-    return agents
-
-
-def parse_agents():
-    pass
+    return tasks, task_schedules, agent_names, agents
