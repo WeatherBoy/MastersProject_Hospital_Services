@@ -11,7 +11,7 @@ def read_tasks(path: str) -> tuple[list[str], dict[str, list[int]]]:
     """ """
 
     # Read the Excel file, without enumerating the rows, first column as index
-    df = pd.read_excel(path, index_col=0)
+    df = pd.read_excel(path, index_col=0, sheet_name="tasks")
 
     tasks = []
     task_schedules = {}
@@ -28,11 +28,11 @@ def read_tasks(path: str) -> tuple[list[str], dict[str, list[int]]]:
     return tasks, task_schedules
 
 
-def read_agents(path: str) -> dict[str, Agent]:
+def read_agent_qualifications(path: str) -> dict[str, Agent]:
     """ """
 
     # Read the Excel file, without enumerating the rows, first column as index
-    df = pd.read_excel(path, index_col=0)
+    df = pd.read_excel(path, index_col=0, sheet_name="doctors")
 
     agents = {}
     for indx, row in df.iterrows():
@@ -56,7 +56,7 @@ def read_rolling_chart(
     """
     Preferences for 'Rygvagten'.
     """
-    df = pd.read_excel(path, index_col=1)
+    df = pd.read_excel(path, index_col=1, sheet_name="rolling_chart")
 
     col = df.columns[1]
     schedule_horizon = len(df.index)
