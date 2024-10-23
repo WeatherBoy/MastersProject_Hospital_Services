@@ -84,7 +84,7 @@ def read_agents(path: str, agents: dict[str, Agent]) -> dict[str, Agent]:
         days_off = []
         for indx, day in enumerate(df.index):
             cell = df[agent][day]
-            if type(cell) is str and cell in ["ønskefridag", "afspadsere", "ønskefri"]:
+            if type(cell) is str and cell in ["ønskefridag", "afspadsere", "ønskefri", "FU-dag"]:
                 days_off.append(indx)
         agents[agent].add_days_off(days_off)
 
