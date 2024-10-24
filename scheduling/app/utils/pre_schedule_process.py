@@ -91,13 +91,13 @@ def read_rolling_chart(
     return agents, task_schedules
 
 
-def parse_constraints(path: str, agents: dict[str, Agent]) -> tuple[list[str], dict[str, list[int]], list[str], dict[str, Agent]]:
+def parse_constraints(path: str) -> tuple[list[str], dict[str, list[int]], list[Agent]]:
     """ """
     tasks, task_schedules = read_tasks(path)
     agents = read_agent_qualifications(path)
     agents = read_agents(path, agents)
     agents, task_schedules = read_rolling_chart(path, agents, task_schedules)
 
-    agent_names = list(agents.keys())
+    agents = list(agents.values())  # <-- convert agents to list
 
-    return tasks, task_schedules, agent_names, agents
+    return tasks, task_schedules, agents
