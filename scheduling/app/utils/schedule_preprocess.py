@@ -35,7 +35,13 @@ def read_tasks(path: str) -> tuple[list[str], dict[str, list[int]]]:
 
 
 def read_agent_qualifications(path: str) -> dict[str, Agent]:
-    """ """
+    """
+    Read the 'doctors' sheet from the 'data-file'.
+
+    :param path: Path to the Excel file.
+
+    :return: Dictionary (name to Agent) of Agent objects.
+    """
 
     # Read the Excel file, without enumerating the rows, first column as index
     df = pd.read_excel(path, index_col=0, sheet_name="doctors")
