@@ -118,7 +118,15 @@ def read_rolling_chart(
 
 
 def parse_constraints(path: str) -> tuple[list[str], dict[str, list[int]], list[Agent]]:
-    """ """
+    """
+    Gather all functions for reading input into one.
+    Parse all constraints for the back-scheduling problem.
+
+    :param path: Path to the Excel file (data-file/ input).
+
+    :return: Tuple of tasks (list of task names), task schedules (dictionary of which days each task is scheduled),
+    and list of Agent objects.
+    """
     tasks, task_schedules = read_tasks(path)
     agents = read_agent_qualifications(path)
     agents = read_agents(path, agents)
