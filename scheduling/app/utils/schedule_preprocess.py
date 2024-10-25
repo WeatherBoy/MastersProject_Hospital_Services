@@ -13,7 +13,7 @@ def read_tasks(path: str) -> tuple[list[str], dict[str, list[int]]]:
 
     :param path: Path to the Excel file.
 
-    :return: Tuple of tasks (list of task names) and task schedules (which days each task is scheduled).
+    :return: Tuple of tasks (list of task names) and task schedules (dictionary of which days each task is scheduled).
     """
 
     # Read the Excel file, without enumerating the rows, first column as index
@@ -89,7 +89,14 @@ def read_rolling_chart(
     path: str, agents: dict[str, Agent], task_schedules: dict[str : list[int]]
 ) -> tuple[dict[str, Agent], dict[str : list[int]]]:
     """
-    Preferences for 'Rygvagten'.
+    Read the 'rolling_chart' sheet from the 'data-file'. The preferences for the 'rygvagt' task.
+
+    :param path: Path to the Excel file.
+    :param agents: Dictionary (name to Agent) of Agent objects.
+    :param task_schedules: Dictionary of task schedules (which days each task is scheduled).
+
+    :return: Tuple of updated dictionary (name to Agent) of Agent objects
+    and updated dictionary of task schedules (which days each task is scheduled)..
     """
     df = pd.read_excel(path, index_col=1, sheet_name="rolling_chart")
 
