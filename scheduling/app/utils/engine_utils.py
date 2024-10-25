@@ -1,5 +1,13 @@
 def rygvagt_mandatory_leave_info(num_days: int, all_days: list[int]) -> tuple[dict[int, int], list[dict[str, int]]]:
-    """ """
+    """
+    Utility for the constraint regarding how the 'rygvagt' task is scheduled on weekends.
+
+    :param num_days: Number of days in the scheduling horizon.
+    :param all_days: List of all days in the scheduling horizon.
+
+    :return: Tuple of a dictionary mapping each day to the day of the week (0=Monday, ..., 6=Sunday)
+    and a list of dictionaries with information about the weekend constraints.
+    """
     # NOTE: This is horrendous and need to be fixed:
     # Offset to align index 0 with Wednesday (0=Monday, ..., 6=Sunday)
     day_offset = 2
