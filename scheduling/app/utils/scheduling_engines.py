@@ -7,7 +7,16 @@ from app.utils.engine_utils import rygvagt_mandatory_leave_info
 def back_scheduling(
     tasks: list[str], task_schedules: dict[str, list[int]], agents: list[Agent]
 ) -> tuple[list[dict[str, int | str]], dict[str, int]] | None:
-    """ """
+    """
+    Engine for scheduling the 'back' (ryg) sector.
+
+    :param tasks: List of task names
+    :param task_schedules: Dictionary of task schedules (which days each task is scheduled)
+    :param agents: List of Agent objects
+
+    :return: Tuple of assignments (agent assigned to task on given day) and agent assignments (total assignments for each),
+    or None if no feasible solution is found.
+    """
     num_tasks = len(tasks)
 
     num_days = 0
