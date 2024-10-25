@@ -1,7 +1,11 @@
 def rygvagt_mandatory_leave_info(num_days: int, all_days: list[int]) -> tuple[dict[int, int], list[dict[str, int]]]:
     """ """
-    # Map each day to the day of the week (0=Monday, ..., 6=Sunday)
-    day_of_week = {day: day % 7 for day in all_days}
+    # NOTE: This is horrendous and need to be fixed:
+    # Offset to align index 0 with Wednesday (0=Monday, ..., 6=Sunday)
+    day_offset = 2
+
+    # Map each day to the day of the week (0=Monday, ..., 6=Sunday), with offset
+    day_of_week = {day: (day + day_offset) % 7 for day in all_days}
 
     # Identify weekends and their corresponding Mondays
     weekend_info = []
