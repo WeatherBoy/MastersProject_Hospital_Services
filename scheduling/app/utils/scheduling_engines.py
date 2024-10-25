@@ -4,7 +4,9 @@ from app.data_structures.agent import Agent
 from app.utils.engine_utils import rygvagt_mandatory_leave_info
 
 
-def back_scheduling(tasks: list[str], task_schedules: dict[str, list[int]], agents: list[Agent]):
+def back_scheduling(
+    tasks: list[str], task_schedules: dict[str, list[int]], agents: list[Agent]
+) -> tuple[list[dict[str, int | str]], dict[str, int]] | None:
     """ """
     num_tasks = len(tasks)
 
@@ -97,25 +99,20 @@ def back_scheduling(tasks: list[str], task_schedules: dict[str, list[int]], agen
     solver.parameters.max_time_in_seconds = 300.0  # Optional time limit
     status = solver.Solve(model)
 
-    # Display the solution
+    # Initialize a list to store the assignments
+    assignments = []
+
     if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-        print("Solution:")
         for day in all_days:
-            print(f"Day {day} (Day of Week: {day_of_week[day]})")
             for task in tasks:
                 if day in task_schedules[task]:
                     assigned_agents = [agent.name for agent in agents if solver.Value(x[(agent.name, task, day)]) == 1]
-                    if assigned_agents:
-                        print(f'  Task {task}: Assigned to {", ".join(assigned_agents)}')
-            print()
-        for agent in agents:
-            print(f"{agent.name} total assignments: {solver.Value(total_assignments[agent.name])}")
-        print(f"Maximum assignments per agent: {solver.Value(max_assignments)}")
+                    for agent_name in assigned_agents:
+                        assignments.append({"Day": day, "Task": task, "Agent": agent_name})
+        # Optionally, collect total assignments per agent
+        agent_assignments = {agent.name: solver.Value(total_assignments[agent.name]) for agent in agents}
+
+        return assignments, agent_assignments
     else:
         print("No feasible solution found.")
-
-    # Statistics
-    print("\nStatistics")
-    print(f"  - Conflicts: {solver.NumConflicts()}")
-    print(f"  - Branches : {solver.NumBranches()}")
-    print(f"  - Wall time: {solver.WallTime()} s")
+        return  # Exit the function if no solution is found
