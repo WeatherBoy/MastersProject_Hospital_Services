@@ -8,7 +8,13 @@ def str_and_x(cell: any) -> bool:
 
 
 def read_tasks(path: str) -> tuple[list[str], dict[str, list[int]]]:
-    """ """
+    """
+    Read the 'tasks' sheet from the 'data-file'.
+
+    :param path: Path to the Excel file.
+
+    :return: Tuple of tasks (list of task names) and task schedules (dictionary of which days each task is scheduled).
+    """
 
     # Read the Excel file, without enumerating the rows, first column as index
     df = pd.read_excel(path, index_col=0, sheet_name="tasks")
@@ -29,7 +35,13 @@ def read_tasks(path: str) -> tuple[list[str], dict[str, list[int]]]:
 
 
 def read_agent_qualifications(path: str) -> dict[str, Agent]:
-    """ """
+    """
+    Read the 'doctors' sheet from the 'data-file'.
+
+    :param path: Path to the Excel file.
+
+    :return: Dictionary (name to Agent) of Agent objects.
+    """
 
     # Read the Excel file, without enumerating the rows, first column as index
     df = pd.read_excel(path, index_col=0, sheet_name="doctors")
@@ -51,7 +63,14 @@ def read_agent_qualifications(path: str) -> dict[str, Agent]:
 
 
 def read_agents(path: str, agents: dict[str, Agent]) -> dict[str, Agent]:
-    """ """
+    """
+    Read the 'doctor_charts' sheet from the 'data-file'.
+
+    :param path: Path to the Excel file.
+    :param agents: Dictionary (name to Agent) of Agent objects.
+
+    :return: Updated dictionary (name to Agent) of Agent objects.
+    """
     df = pd.read_excel(path, index_col=0, sheet_name="doctor_charts")
 
     # Iterate through cols (tasks) in dataframe
@@ -70,7 +89,14 @@ def read_rolling_chart(
     path: str, agents: dict[str, Agent], task_schedules: dict[str : list[int]]
 ) -> tuple[dict[str, Agent], dict[str : list[int]]]:
     """
-    Preferences for 'Rygvagten'.
+    Read the 'rolling_chart' sheet from the 'data-file'. The preferences for the 'rygvagt' task.
+
+    :param path: Path to the Excel file.
+    :param agents: Dictionary (name to Agent) of Agent objects.
+    :param task_schedules: Dictionary of task schedules (which days each task is scheduled).
+
+    :return: Tuple of updated dictionary (name to Agent) of Agent objects
+    and updated dictionary of task schedules (which days each task is scheduled)..
     """
     df = pd.read_excel(path, index_col=1, sheet_name="rolling_chart")
 
@@ -92,7 +118,15 @@ def read_rolling_chart(
 
 
 def parse_constraints(path: str) -> tuple[list[str], dict[str, list[int]], list[Agent]]:
-    """ """
+    """
+    Gather all functions for reading input into one.
+    Parse all constraints for the back-scheduling problem.
+
+    :param path: Path to the Excel file (data-file/ input).
+
+    :return: Tuple of tasks (list of task names), task schedules (dictionary of which days each task is scheduled),
+    and list of Agent objects.
+    """
     tasks, task_schedules = read_tasks(path)
     agents = read_agent_qualifications(path)
     agents = read_agents(path, agents)
