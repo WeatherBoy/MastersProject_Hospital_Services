@@ -8,7 +8,13 @@ def str_and_x(cell: any) -> bool:
 
 
 def read_tasks(path: str) -> tuple[list[str], dict[str, list[int]]]:
-    """ """
+    """
+    Read the 'tasks' sheet from the 'data-file'.
+
+    :param path: Path to the Excel file.
+
+    :return: Tuple of tasks (list of task names) and task schedules (which days each task is scheduled).
+    """
 
     # Read the Excel file, without enumerating the rows, first column as index
     df = pd.read_excel(path, index_col=0, sheet_name="tasks")
