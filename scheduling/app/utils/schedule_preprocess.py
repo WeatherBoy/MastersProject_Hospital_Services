@@ -63,7 +63,14 @@ def read_agent_qualifications(path: str) -> dict[str, Agent]:
 
 
 def read_agents(path: str, agents: dict[str, Agent]) -> dict[str, Agent]:
-    """ """
+    """
+    Read the 'doctor_charts' sheet from the 'data-file'.
+
+    :param path: Path to the Excel file.
+    :param agents: Dictionary (name to Agent) of Agent objects.
+
+    :return: Updated dictionary (name to Agent) of Agent objects.
+    """
     df = pd.read_excel(path, index_col=0, sheet_name="doctor_charts")
 
     # Iterate through cols (tasks) in dataframe
