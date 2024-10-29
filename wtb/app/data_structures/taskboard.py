@@ -19,10 +19,10 @@ class TaskBoard:
             self.function_to_nurse[func_name] = set()
         self.function_to_nurse[func_name].add(nurse_name)
 
-    def get_nurses_by_function(self, function_name) -> None:
+    def get_nurses_by_function(self, function_name: str) -> None:
         return self.function_to_nurse.get(function_name, set())
 
-    def get_functions_by_nurse(self, nurse_name) -> list[str] | list[None]:
+    def get_functions_by_nurse(self, nurse_name: str) -> list[str] | list[None]:
         if nurse_name in self.nurses:
             return [f.function_name for f in self.nurses[nurse_name].functions]
         return []
