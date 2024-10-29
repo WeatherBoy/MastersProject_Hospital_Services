@@ -31,9 +31,11 @@ class TaskBoard:
         data = []
         for nurse in self.nurses.values():
             for func in nurse.functions:
-                data.append(func.to_dict(nurse.name))
+                func_dict = func.to_dict()  # <-- Dictionary of FunctionAssignment objects
+                func_dict["Nurse"] = nurse.name
+                data.append(func_dict)
 
-        df = pd.DataFrame(data)
+        df = pd.DataFrame(data, columns=["Nurse", "Function", "Time", "Extras"])
         return df
 
 
@@ -52,5 +54,5 @@ class FunctionAssignment:
         self.time = time
         self.extras = extras
 
-    def to_dict(self, nurse_name: str) -> dict[str, str]:
-        return {"Nurse": nurse_name, "Function": self.function_name, "Time": self.time, "Extras": self.extras}
+    def to_dict(self) -> dict[str, str]:
+        return {"Function": self.function_name, "Time": self.time, "Extras": self.extras}
