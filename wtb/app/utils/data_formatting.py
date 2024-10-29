@@ -15,8 +15,8 @@ def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -
     """
     ## Preliminary ***********************************************************************************************
     # Unpack the configuration settings
-    num_weekdays = config["settings"]["NUM_WEEKDAYS"]  # <-- A list of function indices that should be skipped.
-    skipable_funcs = config["settings"]["skippable_funcs"]
+    num_weekdays = config["settings"]["NUM_WEEKDAYS"]
+    skipable_funcs = config["settings"]["skippable_funcs"]  # <-- A list of function indices that should be skipped.
 
     days = [None] * num_weekdays
     ## ***********************************************************************************************************
