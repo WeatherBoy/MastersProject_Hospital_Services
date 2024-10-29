@@ -120,7 +120,7 @@ def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -
                 continue
 
             name_formatted, data_formatted = regex_formatting_time_name(cell_split, config)
-            if format_name is None or data_formatted is None:
+            if name_formatted is None or data_formatted is None:
                 raise Exception(
                     "If `regex_formatting_time_name( )` returns None, then there is no match for the regex pattern. You should update approach."
                 )
