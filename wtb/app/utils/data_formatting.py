@@ -18,7 +18,7 @@ def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -
     num_weekdays = config["settings"]["NUM_WEEKDAYS"]
     skipable_funcs = config["settings"]["skippable_funcs"]  # <-- A list of function indices that should be skipped.
 
-    days = [None] * num_weekdays
+    weekly_taskboards = [None] * num_weekdays
     ## ***********************************************************************************************************
 
     functions = soup.find_all("div", class_="single-function")  # <-- functions (funktioner)/ rows on Altiplan
@@ -54,10 +54,10 @@ def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -
                 extras=data_formatted["Extra"],
             )
 
-            if days[day_indx] is None:
+            if weekly_taskboards[day_indx] is None:
                 taskboard = TaskBoard()
-                days[day_indx] = taskboard
+                weekly_taskboards[day_indx] = taskboard
 
-            days[day_indx].add_function_to_nurse(name_formatted, function_assignment)
+            weekly_taskboards[day_indx].add_function_to_nurse(name_formatted, function_assignment)
 
-    return days
+    return weekly_taskboards
