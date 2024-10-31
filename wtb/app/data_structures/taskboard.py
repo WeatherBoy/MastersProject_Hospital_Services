@@ -84,9 +84,7 @@ class FunctionAssignment:
         self.doctor = doctor
         self.extras = extras
 
-    def update(self, me: str = None, location: str = None, time: str = None, doctor: str = None, extras: str = None):
-        if me is not None:
-            self.name = me
+    def update(self, location: str = None, time: str = None, doctor: str = None, extras: str = None):
         if location is not None:
             self.location = location
         if time is not None:
