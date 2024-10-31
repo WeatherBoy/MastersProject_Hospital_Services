@@ -14,7 +14,7 @@ class TaskBoard:
             self.add_nurse(Nurse(nurse_name))
         self.nurses[nurse_name].add_function(function_assignment)
         # Update bidirectional mapping
-        func_name = function_assignment.function_name
+        func_name = function_assignment.name
         if func_name not in self.function_to_nurse:
             self.function_to_nurse[func_name] = set()
         self.function_to_nurse[func_name].add(nurse_name)
@@ -61,6 +61,18 @@ class FunctionAssignment:
         self.time = time
         self.doctor = doctor
         self.extras = extras
+
+    def update(self, me: str = None, location: str = None, time: str = None, doctor: str = None, extras: str = None):
+        if me:
+            self.name = me
+        if location:
+            self.location = location
+        if time:
+            self.time = time
+        if doctor:
+            self.doctor = doctor
+        if extras:
+            self.extras = extras
 
     def to_dict(self) -> dict[str, str]:
         return {"Function": self.name, "Location": self.location, "Time": self.time, "Doctor": self.doctor, "Extras": self.extras}
