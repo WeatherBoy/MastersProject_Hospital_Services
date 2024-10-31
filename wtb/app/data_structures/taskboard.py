@@ -27,6 +27,16 @@ class TaskBoard:
             return [function.name for function in self.nurses[nurse_name].get_functions()]
         return []
 
+    def update_function_assignments(
+        self, function_name: str, location: str = None, time: str = None, doctor: str = None, extras: str = None
+    ) -> None:
+        """
+        Finds the nurses that have a function with the given name and updates the function with the new information.
+        """
+        nurses = self.get_nurses_by_function(function_name)
+        for nurse_name in nurses:
+            self.nurses[nurse_name].update_function(function_name, location, time, doctor, extras)
+
     def to_dataframe(self) -> pd.DataFrame:
         data = []
         for nurse in self.nurses.values():
@@ -52,6 +62,18 @@ class Nurse:
         This technically doesn't return a `list` but a `dict_values` object. It is still iterable, though.
         """
         return self.functions.values()
+
+    def update_function(self, function_name: str, location: str = None, time: str = None, doctor: str = None, extras: str = None) -> None:
+        """
+        Updates a function with new information, given the function name.
+
+        NOTE: This function cannot at the moment update the name of the function.
+        This is because it doesn't seem necessary for the current use case.
+        """
+        if function_name in self.functions:
+            self.functions[function_name].update(location=location, time=time, doctor=doctor, extras=extras)
+        else:
+            raise ValueError(f"Function {function_name} not found in nurse {self.name}.")
 
 
 class FunctionAssignment:
