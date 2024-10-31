@@ -24,13 +24,13 @@ class TaskBoard:
 
     def get_functions_by_nurse(self, nurse_name: str) -> list[str] | list[None]:
         if nurse_name in self.nurses:
-            return [f.function_name for f in self.nurses[nurse_name].functions]
+            return [function.name for function in self.nurses[nurse_name].get_functions()]
         return []
 
     def to_dataframe(self) -> pd.DataFrame:
         data = []
         for nurse in self.nurses.values():
-            for func in nurse.functions:
+            for func in nurse.get_functions():
                 func_dict = func.to_dict()  # <-- Dictionary of FunctionAssignment objects
                 func_dict["Nurse"] = nurse.name
                 data.append(func_dict)
@@ -42,19 +42,25 @@ class TaskBoard:
 class Nurse:
     def __init__(self, name: str):
         self.name = name
-        self.functions = []  # List of FunctionAssignment objects
+        self.functions = {}  # Dictionary of FunctionAssignment objects
 
     def add_function(self, function_assignment: "FunctionAssignment") -> None:
         self.functions.append(function_assignment)
 
+    def get_functions(self) -> list["FunctionAssignment"]:
+        """
+        This technically doesn't return a `list` but a `dict_values` object. It is still iterable, though.
+        """
+        return self.functions.values()
+
 
 class FunctionAssignment:
-    def __init__(self, function_name: str, location: str = None, time: str = None, doctor: str = None, extras: str = None):
-        self.function_name = function_name
+    def __init__(self, name: str, location: str = None, time: str = None, doctor: str = None, extras: str = None):
+        self.name = name
         self.location = location
         self.time = time
         self.doctor = doctor
         self.extras = extras
 
     def to_dict(self) -> dict[str, str]:
-        return {"Function": self.function_name, "Location": self.location, "Time": self.time, "Doctor": self.doctor, "Extras": self.extras}
+        return {"Function": self.name, "Location": self.location, "Time": self.time, "Doctor": self.doctor, "Extras": self.extras}
