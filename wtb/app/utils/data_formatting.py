@@ -49,7 +49,7 @@ def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -
                 )
 
             function_assignment = FunctionAssignment(
-                function_name=functions[function_indx].text,
+                name=functions[function_indx].text,
                 time=data_formatted["Time"],
                 extras=data_formatted["Extra"],
             )
