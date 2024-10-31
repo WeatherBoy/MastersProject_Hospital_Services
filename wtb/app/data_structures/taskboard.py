@@ -63,15 +63,15 @@ class FunctionAssignment:
         self.extras = extras
 
     def update(self, me: str = None, location: str = None, time: str = None, doctor: str = None, extras: str = None):
-        if me:
+        if me is not None:
             self.name = me
-        if location:
+        if location is not None:
             self.location = location
-        if time:
+        if time is not None:
             self.time = time
-        if doctor:
+        if doctor is not None:
             self.doctor = doctor
-        if extras:
+        if extras is not None:
             self.extras = extras
 
     def to_dict(self) -> dict[str, str]:
