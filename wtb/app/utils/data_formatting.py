@@ -3,7 +3,7 @@ import pandas as pd
 
 from app.data_structures.taskboard import FunctionAssignment, TaskBoard
 from app.utils.os_structure import get_current_stuefordeling_path
-from app.utils.string_process import empty_cell, regex_formatting_time_name
+from app.utils.string_process import empty_cell, regex_formatting_time_name, str_and_non_empty
 
 
 def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -> list[TaskBoard]:
@@ -65,7 +65,7 @@ def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -
     return weekly_taskboards
 
 
-def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> list[TaskBoard]:
+def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> tuple[list[TaskBoard], list[list[str]]]:
     """
     Make a new list of `TaskBoard` objects, where the functions are updated with the information from the stuefordeling.
 
@@ -74,6 +74,7 @@ def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> 
     :return: A list of `TaskBoard` objects, each representing a day of the week, with updated function assignments.
     """
     updated_weekly_taskboards = [None] * len(weekly_taskboards)
+    non_matching_functions = [None] * len(weekly_taskboards)
 
     stuefordeling_path = get_current_stuefordeling_path()
 
@@ -86,6 +87,8 @@ def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> 
         taskboard = weekly_taskboards[indx]
         if taskboard is None:
             continue
+        function_names = taskboard.get_function_names()
+        function_names = [name.lower() for name in function_names]
 
         # Column names
         day_column = df.columns[col]
@@ -94,13 +97,19 @@ def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> 
         # Loop through each row in this 'Dag' and 'Læge' pair
         for _, row in df.iterrows():
             location = row[0]  # The first column as location
-            function = row[day_column]
-            doctor = row[doctor_column] if pd.notna(row[doctor_column]) else None
+            function = row[day_column].lower() if str_and_non_empty(row[day_column]) else None
+            doctor = row[doctor_column] if str_and_non_empty(row[doctor_column]) else None
 
             # Only add rows with a valid function (ignore empty cells)
             if pd.notna(function):
-                taskboard.update_function_assignments(function_name=function, location=location, doctor=doctor)
+                if function not in function_names:
+                    print(f"Function '{function}' not found in the taskboard  {indx}.")
+                    if non_matching_functions[indx] is None:
+                        non_matching_functions[indx] = []
+                    non_matching_functions[indx].append(function)
+                else:
+                    taskboard.update_function_assignments(function_name=function, location=location, doctor=doctor)
 
         updated_weekly_taskboards[indx] = taskboard
 
-    return updated_weekly_taskboards
+    return updated_weekly_taskboards, non_matching_functions
