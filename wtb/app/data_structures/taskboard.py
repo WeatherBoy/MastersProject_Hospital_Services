@@ -14,7 +14,7 @@ class TaskBoard:
             self.add_nurse(Nurse(nurse_name))
         self.nurses[nurse_name].add_function(function_assignment)
         # Update bidirectional mapping
-        func_name = function_assignment.name.lower()
+        func_name = function_assignment.name
         if func_name not in self.function_to_nurse:
             self.function_to_nurse[func_name] = set()
         self.function_to_nurse[func_name].add(nurse_name)
