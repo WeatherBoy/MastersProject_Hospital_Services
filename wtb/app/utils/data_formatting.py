@@ -1,6 +1,8 @@
 import bs4
+import pandas as pd
 
 from app.data_structures.taskboard import FunctionAssignment, TaskBoard
+from app.utils.os_structure import get_current_stuefordeling_path
 from app.utils.string_process import empty_cell, regex_formatting_time_name
 
 
@@ -61,3 +63,44 @@ def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -
             weekly_taskboards[day_indx].add_function_to_nurse(name_formatted, function_assignment)
 
     return weekly_taskboards
+
+
+def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> list[TaskBoard]:
+    """
+    Make a new list of `TaskBoard` objects, where the functions are updated with the information from the stuefordeling.
+
+    :param weekly_taskboards: A list of `TaskBoard` objects, each representing a day of the week.
+
+    :return: A list of `TaskBoard` objects, each representing a day of the week, with updated function assignments.
+    """
+    updated_weekly_taskboards = [None] * len(weekly_taskboards)
+
+    stuefordeling_path = get_current_stuefordeling_path()
+
+    # Read in the file, skipping the first row
+    df = pd.read_excel(stuefordeling_path, sheet_name="Læge", skiprows=1)
+
+    # Loop through columns in pairs
+    # `range(1, df.shape[1], 2)` <- Starts at 1, ends at the last column, stepsize 2: (1, 3, 5, ...)
+    for indx, col in enumerate(range(1, df.shape[1], 2)):
+        taskboard = weekly_taskboards[indx]
+        if taskboard is None:
+            continue
+
+        # Column names
+        day_column = df.columns[col]
+        doctor_column = df.columns[col + 1]
+
+        # Loop through each row in this 'Dag' and 'Læge' pair
+        for _, row in df.iterrows():
+            location = row[0]  # The first column as location
+            function = row[day_column]
+            doctor = row[doctor_column] if pd.notna(row[doctor_column]) else None
+
+            # Only add rows with a valid function (ignore empty cells)
+            if pd.notna(function):
+                taskboard.update_function_assignments(function_name=function, location=location, doctor=doctor)
+
+        updated_weekly_taskboards[indx] = taskboard
+
+    return updated_weekly_taskboards
