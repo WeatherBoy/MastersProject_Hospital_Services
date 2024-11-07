@@ -27,6 +27,9 @@ class TaskBoard:
             return [function.name for function in self.nurses[nurse_name].get_functions()]
         return []
 
+    def get_function_names(self) -> list[str]:
+        return list(self.function_to_nurse.keys())
+
     def update_function_assignments(
         self, function_name: str, location: str = None, time: str = None, doctor: str = None, extras: str = None
     ) -> None:
