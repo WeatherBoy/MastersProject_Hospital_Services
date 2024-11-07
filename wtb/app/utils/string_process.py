@@ -1,6 +1,13 @@
 import re
 
 
+def str_and_non_empty(cell: str) -> bool:
+    """
+    Check if a cell is valid.
+    """
+    return type(cell) is str and cell.strip() != ""
+
+
 def empty_cell(cell_value: str) -> bool:
     """
     Check if a cell is empty/ only contains whitespace.
