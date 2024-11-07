@@ -96,7 +96,7 @@ def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> 
 
         # Loop through each row in this 'Dag' and 'Læge' pair
         for _, row in df.iterrows():
-            location = row[0]  # The first column as location
+            location = row.iloc[0]  # The first column as location
             function = row[day_column].lower() if str_and_non_empty(row[day_column]) else None
             doctor = row[doctor_column] if str_and_non_empty(row[doctor_column]) else None
 
