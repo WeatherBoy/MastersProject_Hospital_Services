@@ -3,7 +3,7 @@ import pandas as pd
 
 from app.data_structures.taskboard import FunctionAssignment, TaskBoard
 from app.utils.os_structure import get_current_stuefordeling_path
-from app.utils.string_process import empty_cell, regex_formatting_time_name, str_and_non_empty
+from app.utils.string_process import regex_formatting_time_name, str_and_non_empty
 
 
 def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -> list[TaskBoard]:
@@ -27,7 +27,7 @@ def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -
     data = soup.find_all("div", class_="single-description")  # <-- cells in the "grid" on Altiplan
 
     for indx, cell in enumerate(data):
-        if empty_cell(cell.text):
+        if cell.text.strip() == "":
             continue
 
         day_indx = indx % num_weekdays
@@ -41,7 +41,7 @@ def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -
 
         cell_splits = cell.text.split("\n")
         for cell_split in cell_splits:
-            if empty_cell(cell_split):
+            if cell_split.strip() == "":
                 continue
 
             name_formatted, data_formatted = regex_formatting_time_name(cell_split, config)

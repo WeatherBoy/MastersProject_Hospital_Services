@@ -8,13 +8,6 @@ def str_and_non_empty(cell: str) -> bool:
     return type(cell) is str and cell.strip() != ""
 
 
-def empty_cell(cell_value: str) -> bool:
-    """
-    Check if a cell is empty/ only contains whitespace.
-    """
-    return cell_value == "" or cell_value.strip() == ""
-
-
 def handle_initials(initials: str, config: dict[str, any]) -> str:
     """
     Sometimes the initials aren't initials, but in fact monikers instead.
