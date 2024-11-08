@@ -88,7 +88,7 @@ def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> 
         if taskboard is None:
             continue
         function_names = taskboard.get_function_names()
-        function_names = [name.lower() for name in function_names]
+        function_names_stripped = [name.lower().strip() for name in function_names]
 
         # Column names
         day_column = df.columns[col]
@@ -97,18 +97,23 @@ def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> 
         # Loop through each row in this 'Dag' and 'Læge' pair
         for _, row in df.iterrows():
             location = row.iloc[0]  # The first column as location
-            function = row[day_column].lower() if str_and_non_empty(row[day_column]) else None
+            function = row[day_column] if str_and_non_empty(row[day_column]) else None
             doctor = row[doctor_column] if str_and_non_empty(row[doctor_column]) else None
 
             # Only add rows with a valid function (ignore empty cells)
             if pd.notna(function):
-                if function not in function_names:
+                function_stripped = function.lower().strip()
+
+                if function_stripped not in function_names_stripped:  # <-- NOTE: make search on stripped, lower-case name
                     print(f"Function '{function}' not found in the taskboard  {indx}.")
                     if non_matching_functions[indx] is None:
                         non_matching_functions[indx] = []
                     non_matching_functions[indx].append(function)
+
                 else:
-                    taskboard.update_function_assignments(function_name=function, location=location, doctor=doctor)
+                    function_indx = function_names_stripped.index(function_stripped)  # <-- NOTE: find corresponding index, use for update
+                    function_name = function_names[function_indx]
+                    taskboard.update_function_assignments(function_name=function_name, location=location, doctor=doctor)
 
         updated_weekly_taskboards[indx] = taskboard
 
