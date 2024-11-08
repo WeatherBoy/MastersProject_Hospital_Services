@@ -58,8 +58,7 @@ class Nurse:
         self.functions = {}  # Dictionary of FunctionAssignment objects
 
     def add_function(self, function_assignment: "FunctionAssignment") -> None:
-        func_name = function_assignment.name.lower()
-        self.functions[func_name] = function_assignment
+        self.functions[function_assignment.name] = function_assignment
 
     def get_functions(self) -> list["FunctionAssignment"]:
         """
