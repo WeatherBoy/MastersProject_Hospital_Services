@@ -73,6 +73,8 @@ def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> 
 
     :return: A list of `TaskBoard` objects, each representing a day of the week, with updated function assignments.
     """
+    # This initializations makes these None, if there is no data for the day. It is nicer than, say having
+    # an empty list, at a random index.
     updated_weekly_taskboards = [None] * len(weekly_taskboards)
     non_matching_functions = [None] * len(weekly_taskboards)
 
