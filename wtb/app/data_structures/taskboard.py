@@ -99,3 +99,6 @@ class FunctionAssignment:
 
     def to_dict(self) -> dict[str, str]:
         return {"Function": self.name, "Location": self.location, "Time": self.time, "Doctor": self.doctor, "Extras": self.extras}
+
+    def to_list(self) -> list[str]:
+        return [self.name, self.location, self.time, self.doctor, self.extras]
