@@ -3,7 +3,7 @@ import pandas as pd
 
 from app.data_structures.taskboard import FunctionAssignment, TaskBoard
 from app.utils.os_structure import get_current_stuefordeling_path
-from app.utils.string_process import regex_formatting_time_name, str_and_non_empty
+from app.utils.string_process import regex_formatting_time_name, str_and_non_empty, strip_str
 
 
 def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -> list[TaskBoard]:
@@ -88,7 +88,7 @@ def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> 
         if taskboard is None:
             continue
         function_names = taskboard.get_function_names()
-        function_names_stripped = [name.lower().strip() for name in function_names]
+        function_names_stripped = [strip_str(name) for name in function_names]
 
         # Column names
         day_column = df.columns[col]
@@ -102,7 +102,7 @@ def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> 
 
             # Only add rows with a valid function (ignore empty cells)
             if pd.notna(function):
-                function_stripped = function.lower().strip()
+                function_stripped = strip_str(function)
 
                 if function_stripped not in function_names_stripped:  # <-- NOTE: make search on stripped, lower-case name
                     print(f"Function '{function}' not found in the taskboard  {indx}.")
