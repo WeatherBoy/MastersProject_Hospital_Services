@@ -51,6 +51,18 @@ class TaskBoard:
         df = pd.DataFrame(data, columns=["Nurse", "Function", "Location", "Time", "Doctor", "Extras"])
         return df
 
+    def to_matrix(self) -> list[list[str]]:
+        """
+        Returns a matrix representation of the TaskBoard.
+        """
+        matrix = []
+        for nurse in self.nurses.values():
+            for func in nurse.get_functions():
+                nurse_row = [nurse.name]
+                nurse_row.extend(func.to_list())
+                matrix.append(nurse_row)
+        return matrix
+
 
 class Nurse:
     def __init__(self, name: str):
