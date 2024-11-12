@@ -46,3 +46,16 @@ def get_html_save_path() -> str:
     dir_path = "data/html/"
 
     return dir_path + f"ALTIPLAN_{year}_Week_{week}.html"
+
+
+def get_current_stuefordeling_path() -> str:
+    """
+    A path for the current (when run) week's Stuefordeling Excel file.
+
+    :return: A string with the path to the Stuefordeling Excel file.
+    """
+    year, week, _ = datetime.date.today().isocalendar()
+
+    dir_path = "data/stuefordelinger/"
+
+    return dir_path + f"STUE-AMBULATORIEOVERSIGT UGE {week}-{year}.xlsx"

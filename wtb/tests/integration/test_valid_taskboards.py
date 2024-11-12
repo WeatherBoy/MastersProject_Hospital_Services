@@ -3,8 +3,8 @@ import os
 import toml
 from bs4 import BeautifulSoup
 
+from app.utils.data_formatting import soup_to_weekly_taskboards
 from app.utils.os_structure import get_html_save_path
-from app.utils.string_process import soup_to_weekly_taskboards
 from tests.utils.valid_cells import valid_name_cell, valid_time_cell
 
 
@@ -27,13 +27,13 @@ def test_valid_formatting_from_html():
     weekly_dataframes = [tb.to_dataframe() for tb in weekly_taskboards if tb is not None]  # <-- TaskBoard might be none - HosInfo shennanigans
 
     # Check if the cells are formatted correctly
-    for df in weekly_dataframes:
+    for indx, df in enumerate(weekly_dataframes):
         for column in df.columns:
             if column == "Nurse":
                 for name in df[column]:
-                    assert valid_name_cell(name, config), f"Invalid name: {name}"
+                    assert valid_name_cell(name, config), f"Invalid name: {name} - in dataframe {indx + 1}"
             elif column == "Time":
                 for time in df[column]:
-                    assert valid_time_cell(time), f"Invalid time: {time}"
+                    assert valid_time_cell(time), f"Invalid time: {time} - in dataframe {indx + 1}"
             else:
                 continue
