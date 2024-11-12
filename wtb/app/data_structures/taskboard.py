@@ -41,6 +41,9 @@ class TaskBoard:
             self.nurses[nurse_name].update_function(function_name, location, time, doctor, extras)
 
     def to_dataframe(self) -> pd.DataFrame:
+        """
+        Returns a dataframe representation of the TaskBoard.
+        """
         data = []
         for nurse in self.nurses.values():
             for func in nurse.get_functions():
