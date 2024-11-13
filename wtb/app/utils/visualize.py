@@ -8,7 +8,13 @@ from app.utils.os_structure import get_week_dates_from_today
 
 
 def save_taskboards_as_png(weekly_taskboards: list[TaskBoard], verbose: bool = True, config: dict[str, any] = None) -> None:
-    """ """
+    """
+    Saves the TaskBoards of the week as PNG images.
+
+    :param weekly_taskboards: A list of TaskBoard objects. Ordered by day of the week.
+    :param verbose: A boolean to control the print statements. Default is True.
+    :param config: (optional) A dictionary with the configuration settings. Default is None.
+    """
     width, height = 19.2, 10.8
     header_dict = {"Nurse": "Navn", "Function": "Funktion", "Location": "Lokation", "Time": "Tid", "Doctor": "Læge", "Extras": "Extra"}
     today = datetime.date.today()
