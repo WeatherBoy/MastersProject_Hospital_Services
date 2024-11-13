@@ -7,7 +7,7 @@ from app.data_structures.taskboard import TaskBoard
 from app.utils.os_structure import get_week_dates_from_today
 
 
-def save_taskboards_as_pdf(weekly_taskboards: list[TaskBoard], verbose: bool = True, config: dict[str, any] = None) -> None:
+def save_taskboards_as_png(weekly_taskboards: list[TaskBoard], verbose: bool = True, config: dict[str, any] = None) -> None:
     """ """
     width, height = 19.2, 10.8
     header_dict = {"Nurse": "Navn", "Function": "Funktion", "Location": "Lokation", "Time": "Tid", "Doctor": "Læge", "Extras": "Extra"}
