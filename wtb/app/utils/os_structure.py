@@ -14,7 +14,13 @@ def get_week_dates_from_today(today: datetime.date, weekday: int) -> list[dateti
 
 
 def save_weekly_taskboards(weekly_taskboards: list[TaskBoard], num_weekdays: int = 7, verbose: bool = True) -> None:
-    """ """
+    """
+    Saves the weekly TaskBoards to a single Excel file. Where each sheet is a TaskBoard of the week.
+
+    :param weekly_taskboards: A list of TaskBoard objects. Ordered by day of the week.
+    :param num_weekdays: (optional) The number of weekdays in the week. Default is 7.
+    :param verbose: (optional) A boolean to print information about the saving process. Default is True.
+    """
     today = datetime.date.today()
     year, week, weekday = today.isocalendar()
     week_dates = get_week_dates_from_today(today, weekday)
