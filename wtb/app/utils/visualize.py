@@ -2,9 +2,63 @@ import datetime
 import os
 
 import matplotlib.pyplot as plt
+import pandas as pd
 
 from app.data_structures.taskboard import TaskBoard
 from app.utils.os_structure import get_week_dates_from_today
+
+
+def color_header(df: pd.DataFrame, table: plt.table, config: dict[str, any] = None) -> None:
+    """
+    Color the header of the table.
+
+    :param df: A pandas DataFrame.
+    :param table: A matplotlib table object.
+    :param config: (optional) A dictionary with the configuration settings. Default is None.
+    """
+    ## Preliminary - Unpack configurations ***********************************************************************
+    # Default configurations
+    header_fontsize = 14
+    background_color = "#d9e8fc"  # soft blue background for header
+    font_color = "#2c3e50"  # Navy, text color for header
+    if config is not None:
+        header_fontsize = config["visualize"]["header_fontsize"]
+        background_color = config["visualize"]["header_background_color"]
+        font_color = config["visualize"]["header_font_color"]
+    ## ***********************************************************************************************************
+
+    for col, _ in enumerate(df.columns):
+        cell = table[0, col]
+        cell.set_fontsize(header_fontsize)
+        cell.set_text_props(weight="bold")  # Bold font for header
+        cell.set_facecolor(background_color)
+        cell.set_text_props(color=font_color)
+
+
+def color_alternating_rows(df: pd.DataFrame, table: plt.table, config: dict[str, any] = None) -> None:
+    """
+    Colors the rows of the table in an alternating pattern.
+
+    :param df: A pandas DataFrame.
+    :param table: A matplotlib table object.
+    :param config: (optional) A dictionary with the configuration settings. Default is None.
+    """
+    ## Preliminary - Unpack configurations ***********************************************************************
+    # Default colors
+    color_even = "#eaf3fb"  # soft pastel blue for even rows
+    color_odd = "white"
+    if config is not None:
+        color_even = config["visualize"]["color_even"]
+        color_odd = config["visualize"]["color_odd"]
+    ## ***********************************************************************************************************
+
+    for row in range(1, len(df) + 1):
+        for col in range(len(df.columns)):
+            cell = table[row, col]
+            if row % 2 == 0:
+                cell.set_facecolor(color_even)
+            else:
+                cell.set_facecolor(color_odd)
 
 
 def save_taskboards_as_png(weekly_taskboards: list[TaskBoard], verbose: bool = True, config: dict[str, any] = None) -> None:
@@ -15,7 +69,14 @@ def save_taskboards_as_png(weekly_taskboards: list[TaskBoard], verbose: bool = T
     :param verbose: A boolean to control the print statements. Default is True.
     :param config: (optional) A dictionary with the configuration settings. Default is None.
     """
+    ## Preliminary - Unpack configurations ***********************************************************************
+    # Default resolution
     width, height = 19.2, 10.8
+    if config is not None:
+        width, height = config["visualize"]["screen_resolution"]
+        width, height = width / 100.0, height / 100.0
+    ## ***********************************************************************************************************
+
     header_dict = {"Nurse": "Navn", "Function": "Funktion", "Location": "Lokation", "Time": "Tid", "Doctor": "Læge", "Extras": "Extra"}
     today = datetime.date.today()
     year, week, weekday = today.isocalendar()
@@ -48,21 +109,10 @@ def save_taskboards_as_png(weekly_taskboards: list[TaskBoard], verbose: bool = T
         table.scale(1.5, 1.5)
 
         # Header styling
-        for col, _ in enumerate(df.columns):
-            cell = table[0, col]
-            cell.set_fontsize(14)  # Increase header font size
-            cell.set_text_props(weight="bold")  # Bold font for header
-            cell.set_facecolor("#d9e8fc")  # soft blue background for header
-            cell.set_text_props(color="#2c3e50")  # Navy, text color for header
+        color_header(df, table, config)
 
         # Alternate row colors for better readability
-        for row in range(1, len(df) + 1):
-            for col in range(len(df.columns)):
-                cell = table[row, col]
-                if row % 2 == 0:
-                    cell.set_facecolor("#eaf3fb")  # soft pastel blue for even rows
-                else:
-                    cell.set_facecolor("white")  # White for odd rows
+        color_alternating_rows(df, table, config)
 
         # Save or display as an image
         plt.savefig(png_file, bbox_inches="tight", dpi=100)
