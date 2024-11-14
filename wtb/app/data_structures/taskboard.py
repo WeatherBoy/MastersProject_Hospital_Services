@@ -41,6 +41,9 @@ class TaskBoard:
             self.nurses[nurse_name].update_function(function_name, location, time, doctor, extras)
 
     def to_dataframe(self) -> pd.DataFrame:
+        """
+        Returns a dataframe representation of the TaskBoard.
+        """
         data = []
         for nurse in self.nurses.values():
             for func in nurse.get_functions():
@@ -50,6 +53,18 @@ class TaskBoard:
 
         df = pd.DataFrame(data, columns=["Nurse", "Function", "Location", "Time", "Doctor", "Extras"])
         return df
+
+    def to_matrix(self) -> list[list[str]]:
+        """
+        Returns a matrix representation of the TaskBoard.
+        """
+        matrix = []
+        for nurse in self.nurses.values():
+            for func in nurse.get_functions():
+                nurse_row = [nurse.name]
+                nurse_row.extend(func.to_list())
+                matrix.append(nurse_row)
+        return matrix
 
 
 class Nurse:
@@ -99,3 +114,6 @@ class FunctionAssignment:
 
     def to_dict(self) -> dict[str, str]:
         return {"Function": self.name, "Location": self.location, "Time": self.time, "Doctor": self.doctor, "Extras": self.extras}
+
+    def to_list(self) -> list[str]:
+        return [self.name, self.location, self.time, self.doctor, self.extras]
