@@ -12,11 +12,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 from app.utils.os_structure import get_html_save_path
 
 
-def get_soup_from_altiplan(config: dict[str, any] = None) -> bs4.BeautifulSoup | None:
+def get_soup_from_altiplan(verbose: bool = True, config: dict[str, any] = None) -> bs4.BeautifulSoup | None:
     """
     Uses Selenium to scrape the Altiplan website (with the configurations given by a config)
     and returns the HTML as a BeautifulSoup object.
 
+    :param verbose: A boolean indicating whether to print the status of the scraping process. Default is True.
     :param config: A dictionary containing the configurations for the scraping process.
 
     :return: A BeautifulSoup object containing the HTML of the Altiplan website.
@@ -38,7 +39,8 @@ def get_soup_from_altiplan(config: dict[str, any] = None) -> bs4.BeautifulSoup |
 
     html_save_path = get_html_save_path()
     if not run_selenium_regardless and os.path.exists(html_save_path):
-        print("HTML already fetched.")
+        if verbose:
+            print("HTML already fetched.")
         with open(html_save_path, "r", encoding="utf-8") as file:
             return bs4.BeautifulSoup(file.read(), "html.parser")
 
@@ -77,7 +79,8 @@ def get_soup_from_altiplan(config: dict[str, any] = None) -> bs4.BeautifulSoup |
         # Wait for the login process to complete
         wait.until(ec.presence_of_element_located((By.XPATH, js_xpath_unique_afterlogin_elem)))
 
-        print("Login successful.")
+        if verbose:
+            print("Login successful.")
 
         # Navigate to the target page
         driver.get(url_schedule)
