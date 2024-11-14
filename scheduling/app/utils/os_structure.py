@@ -1,13 +1,16 @@
 import pandas as pd
 
 
-def write_schedule_to_excel(filename: str, data_path: str, assignments: list[dict[str, int | str]], agent_assignments: dict[str, int]):
+def write_schedule_to_excel(
+    filename: str, data_path: str, assignments: list[dict[str, int | str]], agent_assignments: dict[str, int], verbose: bool = True
+) -> None:
     """
     Writes the schedule and agent assignment counts to an Excel file.
 
     :param filename: Name of the Excel file to write to.
     :param assignments: List of assignment dictionaries with keys 'Day', 'Task' and 'Agent'.
     :param agent_assignments: Dictionary with agent names as keys and total assignments as values.
+    :param verbose: (optional) If True, prints the filename. Default is True.
     """
     schedule_df = pd.read_excel(data_path, index_col=0, sheet_name="doctor_charts")
     task_df = pd.read_excel(data_path, index_col=0, sheet_name="tasks")
@@ -31,4 +34,5 @@ def write_schedule_to_excel(filename: str, data_path: str, assignments: list[dic
         task_df.to_excel(writer, sheet_name="Task Assignments")
         agent_assignments_df.to_excel(writer, sheet_name="Agent Assignments", index=False)
 
-    print(f"Schedule and agent assignments written to {filename}")
+    if verbose:
+        print(f"Schedule and agent assignments written to {filename}")

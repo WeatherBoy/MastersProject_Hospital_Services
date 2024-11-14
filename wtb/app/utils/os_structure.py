@@ -12,7 +12,7 @@ def get_week_dates_from_today(today: datetime.date, weekday: int) -> list[dateti
     return [start_of_week + datetime.timedelta(days=i) for i in range(7)]
 
 
-def save_weekly_taskboards(weekly_taskboards: list[TaskBoard], num_weekdays: int = 7) -> None:
+def save_weekly_taskboards(weekly_taskboards: list[TaskBoard], num_weekdays: int = 7, verbose: bool = True) -> None:
     """ """
     today = datetime.date.today()
     year, week, weekday = today.isocalendar()
@@ -26,13 +26,17 @@ def save_weekly_taskboards(weekly_taskboards: list[TaskBoard], num_weekdays: int
 
     for i in range(num_weekdays):
         if weekly_taskboards[i] is None:
-            print(f"The {i + 1}th TaskBoard of the week was EMPTY and NOT saved.")
+            if verbose:
+                print(f"The {i + 1}th TaskBoard of the week was EMPTY and NOT saved.")
             continue
+
         name = str(week_dates[i])
         df = weekly_taskboards[i].to_dataframe()
         df.to_excel(dir_path + name + ".xlsx", index=False, engine="openpyxl")
-        print(f"Saved {i + 1}th TaskBoard of the week succesfully as: {dir_path + name}.xlsx")
-        print(f"DataFrame:\n{df}\n")
+
+        if verbose:
+            print(f"Saved {i + 1}th TaskBoard of the week succesfully as: {dir_path + name}.xlsx")
+            print(f"DataFrame:\n{df}\n")
 
 
 def get_html_save_path() -> str:
