@@ -1,7 +1,7 @@
 [settings]
 save_html = true
 run_headless = true
-run_selenium_regardless = true
+run_selenium_regardless = false
 
 url_login = "https://login.altiplan.dk/webmodul/"
 url_schedule = "https://login.altiplan.dk/webmodul/ugeplan/"
@@ -14,3 +14,13 @@ NUM_WEEKDAYS = 7
 skippable_funcs = ["ERGO aktiviteter", "Syg/barns syg", "Kursus/Ferie/Fri"]  # These might be fragile depending on naming
 WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 valid_monikers = ["elev", "stud"]
+
+[visualize]
+screen_resolution = [1920, 1080]    # [width, height] in pixels
+header_fontsize = 14
+header_background_color = "#d9e8fc"
+header_font_color = "#2c3e50"
+
+# Alternating row color scheme
+color_even = "#eaf3fb"
+color_odd = "white"
