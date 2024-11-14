@@ -1,5 +1,6 @@
 import datetime
-import os
+
+import pandas as pd
 
 from app.data_structures.taskboard import TaskBoard
 
@@ -16,27 +17,27 @@ def save_weekly_taskboards(weekly_taskboards: list[TaskBoard], num_weekdays: int
     """ """
     today = datetime.date.today()
     year, week, weekday = today.isocalendar()
-
-    dir_path = f"data/results/{year}_Week_{week}/"
-
-    if not os.path.exists(dir_path):
-        os.makedirs(dir_path)
-
     week_dates = get_week_dates_from_today(today, weekday)
 
-    for i in range(num_weekdays):
-        if weekly_taskboards[i] is None:
+    filename = f"data/results/XLSX/Taskboard_{year}_Week_{week}.xlsx"
+
+    with pd.ExcelWriter(filename, engine="openpyxl") as writer:
+        for i in range(num_weekdays):
+            if weekly_taskboards[i] is None:
+                if verbose:
+                    print(f"The {i + 1}th TaskBoard of the week was EMPTY and NOT saved.")
+                continue
+
+            name = str(week_dates[i])
+            df = weekly_taskboards[i].to_dataframe()
+            df.to_excel(writer, sheet_name=name, index=False)
+
             if verbose:
-                print(f"The {i + 1}th TaskBoard of the week was EMPTY and NOT saved.")
-            continue
+                print(f"Saved the {i + 1}th TaskBoard of the week as sheet: '{name}'.")
+                print(f"DataFrame:\n{df}\n")
 
-        name = str(week_dates[i])
-        df = weekly_taskboards[i].to_dataframe()
-        df.to_excel(dir_path + name + ".xlsx", index=False, engine="openpyxl")
-
-        if verbose:
-            print(f"Saved {i + 1}th TaskBoard of the week succesfully as: {dir_path + name}.xlsx")
-            print(f"DataFrame:\n{df}\n")
+    if verbose:
+        print(f"Saved the weekly TaskBoards to '{filename}'.\n")
 
 
 def get_html_save_path() -> str:
