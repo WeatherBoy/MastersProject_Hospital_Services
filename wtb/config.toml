@@ -15,7 +15,7 @@ skippable_funcs = ["ERGO aktiviteter", "Syg/barns syg", "Kursus/Ferie/Fri"]  # T
 WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 valid_monikers = ["elev", "stud"]
 
-[visualize]
+[visualise]
 screen_resolution = [1920, 1080]    # [width, height] in pixels
 header_fontsize = 14
 header_background_color = "#d9e8fc"

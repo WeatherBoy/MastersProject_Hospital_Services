@@ -22,9 +22,9 @@ def color_header(df: pd.DataFrame, table: plt.table, config: dict[str, any] = No
     background_color = "#d9e8fc"  # soft blue background for header
     font_color = "#2c3e50"  # Navy, text color for header
     if config is not None:
-        header_fontsize = config["visualize"]["header_fontsize"]
-        background_color = config["visualize"]["header_background_color"]
-        font_color = config["visualize"]["header_font_color"]
+        header_fontsize = config["visualise"]["header_fontsize"]
+        background_color = config["visualise"]["header_background_color"]
+        font_color = config["visualise"]["header_font_color"]
     ## ***********************************************************************************************************
 
     for col, _ in enumerate(df.columns):
@@ -48,8 +48,8 @@ def color_alternating_rows(df: pd.DataFrame, table: plt.table, config: dict[str,
     color_even = "#eaf3fb"  # soft pastel blue for even rows
     color_odd = "white"
     if config is not None:
-        color_even = config["visualize"]["color_even"]
-        color_odd = config["visualize"]["color_odd"]
+        color_even = config["visualise"]["color_even"]
+        color_odd = config["visualise"]["color_odd"]
     ## ***********************************************************************************************************
 
     for row in range(1, len(df) + 1):
@@ -73,7 +73,7 @@ def save_taskboards_as_png(weekly_taskboards: list[TaskBoard], verbose: bool = T
     # Default resolution
     width, height = 19.2, 10.8
     if config is not None:
-        width, height = config["visualize"]["screen_resolution"]
+        width, height = config["visualise"]["screen_resolution"]
         width, height = width / 100.0, height / 100.0
     ## ***********************************************************************************************************
 
