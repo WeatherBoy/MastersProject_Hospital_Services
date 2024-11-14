@@ -107,7 +107,6 @@ def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> 
                 function_stripped = strip_str(function)
 
                 if function_stripped not in function_names_stripped:  # <-- NOTE: make search on stripped, lower-case name
-                    print(f"Function '{function}' not found in the taskboard  {indx}.")
                     if non_matching_functions[indx] is None:
                         non_matching_functions[indx] = []
                     non_matching_functions[indx].append(function)
