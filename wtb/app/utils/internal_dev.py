@@ -40,7 +40,7 @@ def save_functions_mismatch(weekly_taskboards: list[TaskBoard], non_matching_fun
     today = datetime.date.today()
     year, week, weekday = today.isocalendar()
 
-    filename = f"data/functions_mismatch/{year}_Week_{week}.xlsx"
+    filename = f"data/functions_mismatch/Functions_mismatch_{year}_Week_{week}.xlsx"
 
     week_dates = get_week_dates_from_today(today, weekday)
     dfs = []
