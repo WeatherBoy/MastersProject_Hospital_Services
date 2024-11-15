@@ -3,7 +3,7 @@ import pandas as pd
 
 from app.data_structures.taskboard import FunctionAssignment, TaskBoard
 from app.utils.os_structure import get_current_stuefordeling_path
-from app.utils.string_process import regex_formatting_time_name, str_and_non_empty, strip_str
+from app.utils.string_process import add_stue, regex_formatting_time_name, str_and_non_empty, strip_str
 
 
 def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -> list[TaskBoard]:
@@ -99,6 +99,7 @@ def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> 
         # Loop through each row in this 'Dag' and 'Læge' pair
         for _, row in df.iterrows():
             location = row.iloc[0]  # The first column as location
+            location = add_stue(location)
             function = row[day_column] if str_and_non_empty(row[day_column]) else None
             doctor = row[doctor_column] if str_and_non_empty(row[doctor_column]) else None
 
