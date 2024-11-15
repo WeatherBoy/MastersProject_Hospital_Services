@@ -87,3 +87,17 @@ def regex_formatting_time_name(cell_split: str, config: dict[str, any]) -> tuple
         # NOTE: This is poor error handling - placeholder
         # Maybe I have decided, that this is adequate error handling
         return None, None
+
+
+def add_stue(location: str | int) -> str:
+    """
+    Add "Stue" to the location if it's JUST a numer.
+
+    :param location: A string or integer with the location.
+
+    :return: A string with "Stue" added to the location if it's just a number.
+    """
+    if type(location) is int or location.replace(" ", "").isnumeric():
+        location = f"Stue {location}"
+
+    return location
