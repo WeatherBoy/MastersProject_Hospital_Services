@@ -74,7 +74,7 @@ def save_taskboards_as_png(weekly_taskboards: list[TaskBoard], verbose: bool = T
     width, height = 19.2, 10.8
     if config is not None:
         width, height = config["visualise"]["screen_resolution"]
-        width, height = width / 100.0, height / 100.0
+        width, height = width / 100.0, height / 100.0  # <-- assumes resolution is in pixels in configuration
     ## ***********************************************************************************************************
 
     header_dict = {"Nurse": "Navn", "Function": "Funktion", "Location": "Lokation", "Time": "Tid", "Doctor": "Læge", "Extras": "Extra"}
