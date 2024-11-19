@@ -95,14 +95,15 @@ class Nurse:
 
 
 class FunctionAssignment:
-    def __init__(self, name: str, location: str = None, time: str = None, doctor: str = None, extras: str = None):
+    def __init__(self, name: str, location: str = None, time: str = None, doctor: str = None, extras: str = None, flex: int = None):
         self.name = name
         self.location = location
         self.time = time
         self.doctor = doctor
         self.extras = extras
+        self.flex = flex
 
-    def update(self, location: str = None, time: str = None, doctor: str = None, extras: str = None):
+    def update(self, location: str = None, time: str = None, doctor: str = None, extras: str = None, flex: int = None) -> None:
         if location is not None:
             self.location = location
         if time is not None:
@@ -111,9 +112,18 @@ class FunctionAssignment:
             self.doctor = doctor
         if extras is not None:
             self.extras = extras
+        if flex is not None:
+            self.flex = flex
 
     def to_dict(self) -> dict[str, str]:
-        return {"Function": self.name, "Location": self.location, "Time": self.time, "Doctor": self.doctor, "Extras": self.extras}
+        return {
+            "Function": self.name,
+            "Location": self.location,
+            "Time": self.time,
+            "Doctor": self.doctor,
+            "Extras": self.extras,
+            "Flex": self.flex,
+        }
 
     def to_list(self) -> list[str]:
-        return [self.name, self.location, self.time, self.doctor, self.extras]
+        return [self.name, self.location, self.time, self.doctor, self.extras, self.flex]
