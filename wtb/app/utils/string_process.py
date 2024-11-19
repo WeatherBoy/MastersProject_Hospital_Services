@@ -8,6 +8,17 @@ def str_and_non_empty(cell: str) -> bool:
     return type(cell) is str and cell.strip() != ""
 
 
+def is_flex(function: str) -> bool:
+    """
+    Check if a function is a flex location.
+
+    :param location: A string with the function.
+
+    :return: A boolean indicating if the function is a flex location.
+    """
+    return "flex" in function.lower()
+
+
 def strip_str(cell: str) -> str:
     """
     Strip a string of all whitespaces and make it lowercase.
