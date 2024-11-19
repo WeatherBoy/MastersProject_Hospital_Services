@@ -77,7 +77,7 @@ def save_taskboards_as_png(weekly_taskboards: list[TaskBoard], verbose: bool = T
         width, height = width / 100.0, height / 100.0  # <-- assumes resolution is in pixels in configuration
     ## ***********************************************************************************************************
 
-    header_dict = {"Nurse": "Navn", "Function": "Funktion", "Location": "Lokation", "Time": "Tid", "Doctor": "Læge", "Extras": "Extra"}
+    header_dict = {"Nurse": "Navn", "Function": "Funktion", "Location": "Stuer", "Time": "Mødetid", "Doctor": "Læge", "Extras": "Bemærkninger"}
     today = datetime.date.today()
     year, week, weekday = today.isocalendar()
     week_dates = get_week_dates_from_today(today, weekday)
@@ -115,7 +115,7 @@ def save_taskboards_as_png(weekly_taskboards: list[TaskBoard], verbose: bool = T
         color_alternating_rows(df, table, config)
 
         # Save or display as an image
-        plt.savefig(png_file, bbox_inches="tight", dpi=100)
+        plt.savefig(png_file, bbox_inches="tight", dpi=72)
         plt.close()
         if verbose:
             print(f"PNG created at: {png_file}")
