@@ -70,11 +70,13 @@ def save_taskboards_as_png(weekly_taskboards: list[TaskBoard], verbose: bool = T
     :param config: (optional) A dictionary with the configuration settings. Default is None.
     """
     ## Preliminary - Unpack configurations ***********************************************************************
-    # Default resolution
+    # Default resolution and dpi
     width, height = 19.2, 10.8
+    dpi = 100
     if config is not None:
         width, height = config["visualise"]["screen_resolution"]
         width, height = width / 100.0, height / 100.0  # <-- assumes resolution is in pixels in configuration
+        dpi = config["visualise"]["dpi"]
     ## ***********************************************************************************************************
 
     header_dict = {"Nurse": "Navn", "Function": "Funktion", "Location": "Stuer", "Time": "Mødetid", "Doctor": "Læge", "Extras": "Bemærkninger"}
@@ -115,7 +117,7 @@ def save_taskboards_as_png(weekly_taskboards: list[TaskBoard], verbose: bool = T
         color_alternating_rows(df, table, config)
 
         # Save or display as an image
-        plt.savefig(png_file, bbox_inches="tight", dpi=72)
+        plt.savefig(png_file, bbox_inches="tight", dpi=dpi)
         plt.close()
         if verbose:
             print(f"PNG created at: {png_file}")

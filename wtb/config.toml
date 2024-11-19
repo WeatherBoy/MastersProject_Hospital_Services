@@ -16,7 +16,8 @@ WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", 
 valid_monikers = ["elev", "stud"]
 
 [visualise]
-screen_resolution = [1920, 1080]    # [width, height] in pixels
+screen_resolution = [1191, 842]    # [width, height] in pixels
+dpi = 72
 header_fontsize = 14
 header_background_color = "#d9e8fc"
 header_font_color = "#2c3e50"
