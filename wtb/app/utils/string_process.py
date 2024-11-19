@@ -100,6 +100,20 @@ def regex_formatting_time_name(cell_split: str, config: dict[str, any]) -> tuple
         return None, None
 
 
+def regex_format_flex(function: str) -> list[int]:
+    """
+    Extract the flex location(s) from the function.
+
+    :param function: A string with the function.
+
+    :return: A list of integers with the flex location(s).
+    """
+    pattern = r"(?i)\bflex(?:stue)?\b\s*(\d+)(?:\s*\+\s*(\d+))?"
+    matches = re.findall(pattern, function)
+    matches = [int(num) for num in matches[0] if num]  # <-- Convert to integers and remove None
+    return matches
+
+
 def add_stue(location: str | int) -> str:
     """
     Add "Stue" to the location if it's JUST a numer.
