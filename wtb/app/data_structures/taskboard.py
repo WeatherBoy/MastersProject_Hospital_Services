@@ -40,6 +40,19 @@ class TaskBoard:
         for nurse_name in nurses:
             self.nurses[nurse_name].update_function(function_name, location, time, doctor, extras)
 
+    def add_flex(self, flex_dict: dict[str, str]) -> None:
+        """
+        Updates the flex value of the functions that have a location that matches a key in the flex_dict.
+
+        :param flex_dict: A dictionary with the location as key and the flex value as value.
+        """
+        for nurse in self.nurses.values():
+            for func in nurse.get_functions():
+                # Checking if the function has a location that matches a key in flex_dict
+                if func.location is not None and func.location in flex_dict:
+                    flex_value = flex_dict[func.location]
+                    func.update(flex=flex_value)
+
     def to_dataframe(self) -> pd.DataFrame:
         """
         Returns a dataframe representation of the TaskBoard.
@@ -51,7 +64,7 @@ class TaskBoard:
                 func_dict["Nurse"] = nurse.name
                 data.append(func_dict)
 
-        df = pd.DataFrame(data, columns=["Nurse", "Function", "Location", "Time", "Doctor", "Extras"])
+        df = pd.DataFrame(data, columns=["Nurse", "Function", "Location", "Time", "Doctor", "Extras", "Flex"])
         return df
 
     def to_matrix(self) -> list[list[str]]:
