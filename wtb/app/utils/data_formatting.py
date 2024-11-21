@@ -3,7 +3,7 @@ import pandas as pd
 
 from app.data_structures.taskboard import FunctionAssignment, TaskBoard
 from app.utils.os_structure import get_current_stuefordeling_path
-from app.utils.string_process import regex_formatting_time_name, str_and_non_empty, strip_str
+from app.utils.string_process import is_flex, regex_format_flex, regex_formatting_time_name, str_and_non_empty, strip_str
 
 
 def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -> list[TaskBoard]:
@@ -89,6 +89,7 @@ def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> 
         taskboard = weekly_taskboards[indx]
         if taskboard is None:
             continue
+        flex_dict = {}
         function_names = taskboard.get_function_names()
         function_names_stripped = [strip_str(name) for name in function_names]
 
@@ -98,7 +99,7 @@ def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> 
 
         # Loop through each row in this 'Dag' and 'Læge' pair
         for _, row in df.iterrows():
-            location = row.iloc[0]  # The first column as location
+            location = str(row.iloc[0]).strip()  # The first column as location
             function = row[day_column] if str_and_non_empty(row[day_column]) else None
             doctor = row[doctor_column] if str_and_non_empty(row[doctor_column]) else None
 
@@ -106,7 +107,13 @@ def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> 
             if pd.notna(function):
                 function_stripped = strip_str(function)
 
-                if function_stripped not in function_names_stripped:  # <-- NOTE: make search on stripped, lower-case name
+                if is_flex(function):
+                    flex_location = location  # <-- If the current function is 'flex', then the current location is a flex location
+                    flex_locations = regex_format_flex(function)
+                    for locations in flex_locations:
+                        flex_dict[locations] = flex_location
+
+                elif function_stripped not in function_names_stripped:  # <-- NOTE: make search on stripped, lower-case name
                     if non_matching_functions[indx] is None:
                         non_matching_functions[indx] = []
                     non_matching_functions[indx].append(function)
@@ -116,6 +123,7 @@ def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> 
                     function_name = function_names[function_indx]
                     taskboard.update_function_assignments(function_name=function_name, location=location, doctor=doctor)
 
+        taskboard.add_flex(flex_dict)
         updated_weekly_taskboards[indx] = taskboard
 
     return updated_weekly_taskboards, non_matching_functions
