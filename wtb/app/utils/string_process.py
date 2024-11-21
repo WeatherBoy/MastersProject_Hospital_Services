@@ -105,17 +105,17 @@ def regex_formatting_time_name(cell_split: str, config: dict[str, any]) -> tuple
         return None, None
 
 
-def regex_format_flex(function: str) -> list[int]:
+def regex_format_flex(function: str) -> list[str]:
     """
     Extract the flex location(s) from the function.
 
     :param function: A string with the function.
 
-    :return: A list of integers with the flex location(s).
+    :return: A list of strings with the flex location(s).
     """
     pattern = r"(?i)\bflex(?:stue)?\b\s*(\d+)(?:\s*\+\s*(\d+))?"
     matches = re.findall(pattern, function)
-    matches = [int(num) for num in matches[0] if num]  # <-- Convert to integers and remove None
+    matches = [str(num) for num in matches[0] if num]  # <-- Convert to string and remove None
     return matches
 
 
