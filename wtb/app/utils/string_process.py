@@ -117,17 +117,3 @@ def regex_format_flex(function: str) -> list[str]:
     matches = re.findall(pattern, function)
     matches = [str(num) for num in matches[0] if num]  # <-- Convert to string and remove None
     return matches
-
-
-def add_stue(location: str | int) -> str:
-    """
-    Add "Stue" to the location if it's JUST a numer.
-
-    :param location: A string or integer with the location.
-
-    :return: A string with "Stue" added to the location if it's just a number.
-    """
-    if type(location) is int or location.replace(" ", "").isnumeric():
-        location = f"Stue {location}"
-
-    return location
