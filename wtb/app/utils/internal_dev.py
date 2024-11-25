@@ -3,7 +3,7 @@ import datetime
 import pandas as pd
 
 from app.data_structures.taskboard import TaskBoard
-from app.utils.os_structure import get_week_dates_from_today
+from app.utils.os_structure import get_week_dates_from_today, save_df_to_excel
 
 
 def print_taskboards(weekly_taskboards: list[TaskBoard], config: dict[str, any] = None) -> None:
@@ -28,7 +28,7 @@ def print_taskboards(weekly_taskboards: list[TaskBoard], config: dict[str, any] 
             print(taskboard.to_dataframe())
 
 
-def save_functions_mismatch(weekly_taskboards: list[TaskBoard], non_matching_functions: list[list[str]]) -> None:
+def save_functions_mismatch(weekly_taskboards: list[TaskBoard], non_matching_functions: list[list[str]], verbose: bool = False) -> None:
     """
     Meant only for internal development.
 
@@ -36,6 +36,7 @@ def save_functions_mismatch(weekly_taskboards: list[TaskBoard], non_matching_fun
 
     :param weekly_taskboards: A list of TaskBoard objects. Ordered by day of the week.
     :param non_matching_functions: A list of lists of strings. Each list contains the mismatching functions for a day.
+    :param verbose: (optional) A boolean to print information about the saving process. Default is False.
     """
     today = datetime.date.today()
     year, week, weekday = today.isocalendar()
@@ -68,7 +69,9 @@ def save_functions_mismatch(weekly_taskboards: list[TaskBoard], non_matching_fun
             dfs.append(pd.DataFrame(df))
 
     # Write to Excel
-    with pd.ExcelWriter(filename, engine="openpyxl") as writer:
+    with pd.ExcelWriter(filename, engine="xlsxwriter") as writer:
         for i, df in enumerate(dfs):
             name = str(week_dates[i])
-            df.to_excel(writer, sheet_name=name, index=False)
+            save_df_to_excel(df, writer, name)
+    if verbose:
+        print(f"Saved functions from the Stuefordeling without HosInfo pairings to:\n '{filename}'.\n")
