@@ -3,7 +3,7 @@ import datetime
 import pandas as pd
 
 from app.data_structures.taskboard import TaskBoard
-from app.utils.os_structure import get_week_dates_from_today
+from app.utils.os_structure import get_week_dates_from_today, save_df_to_excel
 
 
 def print_taskboards(weekly_taskboards: list[TaskBoard], config: dict[str, any] = None) -> None:
@@ -68,7 +68,7 @@ def save_functions_mismatch(weekly_taskboards: list[TaskBoard], non_matching_fun
             dfs.append(pd.DataFrame(df))
 
     # Write to Excel
-    with pd.ExcelWriter(filename, engine="openpyxl") as writer:
+    with pd.ExcelWriter(filename, engine="xlsxwriter") as writer:
         for i, df in enumerate(dfs):
             name = str(week_dates[i])
-            df.to_excel(writer, sheet_name=name, index=False)
+            save_df_to_excel(df, writer, name)
