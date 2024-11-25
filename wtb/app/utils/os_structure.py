@@ -13,6 +13,32 @@ def get_week_dates_from_today(today: datetime.date, weekday: int) -> list[dateti
     return [start_of_week + datetime.timedelta(days=i) for i in range(7)]
 
 
+def save_df_to_excel(df: pd.DataFrame, writer: pd.ExcelWriter, name: str, format_columns: bool = True) -> None:
+    """
+    Saves a DataFrame to a given Excel Writer with a given sheet name. Optionally, the column widths are adjusted to fit the data.
+
+    :param df: A pandas DataFrame.
+    :param writer: A pandas Excel Writer object.
+    :param name: A string with the name of the sheet.
+    :param format_columns: (optional) A boolean to adjust the column widths to fit the data. Default is True.
+    """
+    df.to_excel(writer, sheet_name=name, index=False)  # send DataFrame to Writer
+    if format_columns:
+        worksheet = writer.sheets[name]
+        for idx, col in enumerate(df):
+            series = df[col]
+            max_len = (
+                max(
+                    (
+                        series.astype(str).map(len).max(),  # len of largest item
+                        len(str(series.name)),  # len of column name/header
+                    )
+                )
+                + 1  # adding a little extra space
+            )
+            worksheet.set_column(idx, idx, max_len)  # set column width
+
+
 def save_weekly_taskboards(weekly_taskboards: list[TaskBoard], num_weekdays: int = 7, verbose: bool = True) -> None:
     """
     Saves the weekly TaskBoards to a single Excel file. Where each sheet is a TaskBoard of the week.
@@ -27,7 +53,7 @@ def save_weekly_taskboards(weekly_taskboards: list[TaskBoard], num_weekdays: int
 
     filename = f"data/results/XLSX/Taskboard_{year}_Week_{week}.xlsx"
 
-    with pd.ExcelWriter(filename, engine="openpyxl") as writer:
+    with pd.ExcelWriter(filename, engine="xlsxwriter") as writer:
         for i in range(num_weekdays):
             if weekly_taskboards[i] is None:
                 if verbose:
@@ -36,7 +62,7 @@ def save_weekly_taskboards(weekly_taskboards: list[TaskBoard], num_weekdays: int
 
             name = str(week_dates[i])
             df = weekly_taskboards[i].to_dataframe()
-            df.to_excel(writer, sheet_name=name, index=False)
+            save_df_to_excel(df, writer, name)
 
             if verbose:
                 print(f"Saved the {i + 1}th TaskBoard of the week as sheet: '{name}'.")
