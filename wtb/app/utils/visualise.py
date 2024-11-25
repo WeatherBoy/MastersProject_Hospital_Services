@@ -62,28 +62,15 @@ def color_alternating_rows(df: pd.DataFrame, table: plt.table, config: dict[str,
                 cell.set_facecolor(color_odd)
 
 
-def make_df_ready_for_visualisation(df: pd.DataFrame) -> pd.DataFrame:
+def flex_to_stue(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Takes a DataFrame and prepares it for visualisation by renaming columns, moving Flexstue data, and cleaning functions with timeslots.
-    NOTE: This is all stuff that should be done prior to visualisation, but shouldn't alter the data itself.
+    Takes a DataFrame and moves the data from the "Flexstue" column to the "Stue" column.
+    This is in the interest of a less cluttered visualisation.
 
-    :param df: A pandas DataFrame.
+    :param df: A pandas DataFrame representing the final visualisation.
 
-    :return: A pandas DataFrame ready for visualisation.
+    :return: A pandas DataFrame with the Flexstue data moved to the Stue column.
     """
-    # Dictionary for declaring the headers of the DataFrame (column names)
-    header_dict = {
-        "Nurse": "Navn",
-        "Function": "Funktion",
-        "Location": "Stue",
-        "Time": "Mødetid",
-        "Doctor": "Læge",
-        "Extras": "Bemærkninger",
-        "Flex": "Flexstue",
-    }
-    df.rename(columns=header_dict, inplace=True)
-
-    # Move Flexstue data to Stue  #########################################################################################################
     if "Stue" in df.columns and "Flexstue" in df.columns:
         df["Stue"] = df.apply(
             lambda row: f"{row['Stue']} (Flex {row['Flexstue']})".strip(", ") if str_and_non_empty(row["Flexstue"]) else row["Stue"],
@@ -93,7 +80,17 @@ def make_df_ready_for_visualisation(df: pd.DataFrame) -> pd.DataFrame:
         # Now that it is redundant, drop the "Flexstue" colum
         df.drop(columns=["Flexstue"], inplace=True)
 
-    # Move and clean functions with timeslots to the bottom of the DataFrame ##############################################################
+    return df
+
+
+def timeslot_tasks_to_bottom(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Takes a DataFrame and cleans and moves the functions with timeslots to the bottom of the DataFrame.
+
+    :param df: A pandas DataFrame representing the final visualisation.
+
+    :return: A pandas DataFrame with the functions with timeslots moved to the bottom.
+    """
     pattern = r"\b\d{1,2}:\d{2}\b"  # Regex pattern to identify timeslots
 
     # Define the list of columns to clear (all columns except "Navn" and "Funktion")
@@ -110,6 +107,36 @@ def make_df_ready_for_visualisation(df: pd.DataFrame) -> pd.DataFrame:
     reorganized_df = pd.concat([non_timeslot_rows, timeslot_rows])
 
     return reorganized_df
+
+
+def make_df_ready_for_visualisation(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Takes a DataFrame and prepares it for visualisation by renaming columns, moving Flexstue data, and cleaning functions with timeslots.
+    NOTE: This is all stuff that should be done prior to visualisation, but shouldn't alter the data itself.
+
+    :param df: A pandas DataFrame representing the final visualisation.
+
+    :return: A pandas DataFrame ready for visualisation.
+    """
+    # Dictionary for declaring the headers of the DataFrame (column names)
+    header_dict = {
+        "Nurse": "Navn",
+        "Function": "Funktion",
+        "Location": "Stue",
+        "Time": "Mødetid",
+        "Doctor": "Læge",
+        "Extras": "Bemærkninger",
+        "Flex": "Flexstue",
+    }
+    df.rename(columns=header_dict, inplace=True)
+
+    # Move Flexstue data to Stue
+    df = flex_to_stue(df)
+
+    # Move and clean functions with timeslots to the bottom of the DataFrame
+    df = timeslot_tasks_to_bottom(df)
+
+    return df
 
 
 def save_taskboards_as_png(weekly_taskboards: list[TaskBoard], verbose: bool = True, config: dict[str, any] = None) -> None:
