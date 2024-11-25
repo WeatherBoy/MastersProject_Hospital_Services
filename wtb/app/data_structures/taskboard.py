@@ -40,6 +40,19 @@ class TaskBoard:
         for nurse_name in nurses:
             self.nurses[nurse_name].update_function(function_name, location, time, doctor, extras)
 
+    def add_flex(self, flex_dict: dict[str, str]) -> None:
+        """
+        Updates the flex value of the functions that have a location that matches a key in the flex_dict.
+
+        :param flex_dict: A dictionary with the location as key and the flex value as value.
+        """
+        for nurse in self.nurses.values():
+            for func in nurse.get_functions():
+                # Checking if the function has a location that matches a key in flex_dict
+                if func.location is not None and func.location in flex_dict:
+                    flex_value = flex_dict[func.location]
+                    func.update(flex=flex_value)
+
     def to_dataframe(self) -> pd.DataFrame:
         """
         Returns a dataframe representation of the TaskBoard.
@@ -51,20 +64,8 @@ class TaskBoard:
                 func_dict["Nurse"] = nurse.name
                 data.append(func_dict)
 
-        df = pd.DataFrame(data, columns=["Nurse", "Function", "Location", "Time", "Doctor", "Extras"])
+        df = pd.DataFrame(data, columns=["Nurse", "Function", "Location", "Time", "Doctor", "Extras", "Flex"])
         return df
-
-    def to_matrix(self) -> list[list[str]]:
-        """
-        Returns a matrix representation of the TaskBoard.
-        """
-        matrix = []
-        for nurse in self.nurses.values():
-            for func in nurse.get_functions():
-                nurse_row = [nurse.name]
-                nurse_row.extend(func.to_list())
-                matrix.append(nurse_row)
-        return matrix
 
 
 class Nurse:
@@ -95,14 +96,15 @@ class Nurse:
 
 
 class FunctionAssignment:
-    def __init__(self, name: str, location: str = None, time: str = None, doctor: str = None, extras: str = None):
+    def __init__(self, name: str, location: str = None, time: str = None, doctor: str = None, extras: str = None, flex: int = None):
         self.name = name
         self.location = location
         self.time = time
         self.doctor = doctor
         self.extras = extras
+        self.flex = flex
 
-    def update(self, location: str = None, time: str = None, doctor: str = None, extras: str = None):
+    def update(self, location: str = None, time: str = None, doctor: str = None, extras: str = None, flex: int = None) -> None:
         if location is not None:
             self.location = location
         if time is not None:
@@ -111,9 +113,18 @@ class FunctionAssignment:
             self.doctor = doctor
         if extras is not None:
             self.extras = extras
+        if flex is not None:
+            self.flex = flex
 
     def to_dict(self) -> dict[str, str]:
-        return {"Function": self.name, "Location": self.location, "Time": self.time, "Doctor": self.doctor, "Extras": self.extras}
+        return {
+            "Function": self.name,
+            "Location": self.location,
+            "Time": self.time,
+            "Doctor": self.doctor,
+            "Extras": self.extras,
+            "Flex": self.flex,
+        }
 
     def to_list(self) -> list[str]:
-        return [self.name, self.location, self.time, self.doctor, self.extras]
+        return [self.name, self.location, self.time, self.doctor, self.extras, self.flex]

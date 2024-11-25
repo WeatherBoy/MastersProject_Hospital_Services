@@ -11,12 +11,13 @@ js_ID_username = "Brugernavn-form"
 js_ID_password = "Password-form"
 js_XPATH_unique_afterlogin_elem = "//*[@id='dashboard-container']/div[2]"
 NUM_WEEKDAYS = 7
-skippable_funcs = ["ERGO aktiviteter", "Syg/barns syg", "Kursus/Ferie/Fri"]  # These might be fragile depending on naming
+skippable_funcs = ["ERGO aktiviteter", "Syg/barns syg", "Kursus/Ferie/Fri", "Ikke tildelt funktion"]  # These might be fragile depending on naming
 WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 valid_monikers = ["elev", "stud"]
 
 [visualise]
-screen_resolution = [1920, 1080]    # [width, height] in pixels
+screen_resolution = [1191, 842]    # [width, height] in pixels
+dpi = 72
 header_fontsize = 14
 header_background_color = "#d9e8fc"
 header_font_color = "#2c3e50"
