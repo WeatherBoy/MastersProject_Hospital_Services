@@ -28,7 +28,7 @@ def print_taskboards(weekly_taskboards: list[TaskBoard], config: dict[str, any] 
             print(taskboard.to_dataframe())
 
 
-def save_functions_mismatch(weekly_taskboards: list[TaskBoard], non_matching_functions: list[list[str]]) -> None:
+def save_functions_mismatch(weekly_taskboards: list[TaskBoard], non_matching_functions: list[list[str]], verbose: bool = False) -> None:
     """
     Meant only for internal development.
 
@@ -36,6 +36,7 @@ def save_functions_mismatch(weekly_taskboards: list[TaskBoard], non_matching_fun
 
     :param weekly_taskboards: A list of TaskBoard objects. Ordered by day of the week.
     :param non_matching_functions: A list of lists of strings. Each list contains the mismatching functions for a day.
+    :param verbose: (optional) A boolean to print information about the saving process. Default is False.
     """
     today = datetime.date.today()
     year, week, weekday = today.isocalendar()
@@ -72,3 +73,5 @@ def save_functions_mismatch(weekly_taskboards: list[TaskBoard], non_matching_fun
         for i, df in enumerate(dfs):
             name = str(week_dates[i])
             save_df_to_excel(df, writer, name)
+    if verbose:
+        print(f"Saved functions from the Stuefordeling without HosInfo pairings to:\n '{filename}'.\n")
