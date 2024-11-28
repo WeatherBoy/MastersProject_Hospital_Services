@@ -4,3 +4,4 @@ selenium#==4.24.0
 toml#==0.10.2
 XlsxWriter#==3.2.0
 matplotlib#==3.9.2
+openpyxl#==3.1.5
