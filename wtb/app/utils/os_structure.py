@@ -3,6 +3,7 @@ import datetime
 import pandas as pd
 
 from app.data_structures.taskboard import TaskBoard
+from app.utils.data_formatting import make_df_ready_for_visualisation
 
 
 def get_week_dates_from_today(today: datetime.date, weekday: int) -> list[datetime.date]:
@@ -62,6 +63,7 @@ def save_weekly_taskboards(weekly_taskboards: list[TaskBoard], num_weekdays: int
 
             name = str(week_dates[i])
             df = weekly_taskboards[i].to_dataframe()
+            df = make_df_ready_for_visualisation(df)
             save_df_to_excel(df, writer, name)
 
             if verbose:

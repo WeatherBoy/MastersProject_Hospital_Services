@@ -2,7 +2,7 @@ import time
 
 import toml
 
-from app.utils.data_formatting import soup_to_weekly_taskboards, update_taskboards_with_stuefordeling
+from app.utils.data_process import soup_to_weekly_taskboards, update_taskboards_with_stuefordeling
 from app.utils.internal_dev import save_functions_mismatch
 from app.utils.os_structure import save_weekly_taskboards
 from app.utils.visualise import save_taskboards_as_png
