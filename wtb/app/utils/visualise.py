@@ -109,32 +109,38 @@ def timeslot_tasks_to_bottom(df: pd.DataFrame) -> pd.DataFrame:
     return reorganized_df
 
 
-def make_df_ready_for_visualisation(df: pd.DataFrame) -> pd.DataFrame:
+def make_df_ready_for_visualisation(
+    df: pd.DataFrame, rename_headers: bool = True, join_flex_stue: bool = True, move_time_funcs: bool = True
+) -> pd.DataFrame:
     """
     Takes a DataFrame and prepares it for visualisation by renaming columns, moving Flexstue data, and cleaning functions with timeslots.
     NOTE: This is all stuff that should be done prior to visualisation, but shouldn't alter the data itself.
 
     :param df: A pandas DataFrame representing the final visualisation.
+    :param rename_headers: (optional) A boolean to rename the headers of the DataFrame. Default is True.
+    :param join_flex_stue: (optional) A boolean to move the Flexstue data to the Stue column. Default is True.
+    :param move_time_funcs: (optional) A boolean to move and clean functions with timeslots to the bottom of the DataFrame. Default is True.
 
     :return: A pandas DataFrame ready for visualisation.
     """
-    # Dictionary for declaring the headers of the DataFrame (column names)
-    header_dict = {
-        "Nurse": "Navn",
-        "Function": "Funktion",
-        "Location": "Stue",
-        "Time": "Mødetid",
-        "Doctor": "Læge",
-        "Extras": "Bemærkninger",
-        "Flex": "Flexstue",
-    }
-    df.rename(columns=header_dict, inplace=True)
+    if rename_headers:
+        # Dictionary for declaring the headers of the DataFrame (column names)
+        header_dict = {
+            "Nurse": "Navn",
+            "Function": "Funktion",
+            "Location": "Stue",
+            "Time": "Mødetid",
+            "Doctor": "Læge",
+            "Extras": "Bemærkninger",
+            "Flex": "Flexstue",
+        }
+        df.rename(columns=header_dict, inplace=True)
 
-    # Move Flexstue data to Stue
-    df = flex_to_stue(df)
+    if join_flex_stue:
+        df = flex_to_stue(df)
 
-    # Move and clean functions with timeslots to the bottom of the DataFrame
-    df = timeslot_tasks_to_bottom(df)
+    if move_time_funcs:
+        df = timeslot_tasks_to_bottom(df)
 
     return df
 
