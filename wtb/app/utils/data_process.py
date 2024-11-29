@@ -65,6 +65,36 @@ def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -
     return weekly_taskboards
 
 
+def extract_relevant_stuefordeling_data(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Takes a DataFrame, representing the excel data over the Stuefordeling, and the slices out the actual relevant data.
+
+    Currently, slices by finding the starting row with the pattern "Stuenr." and the first blank cell in column 0 after that.
+    NOTE: this might be a somewhat fragile approach, as I don't know whether an earlier row could be refered to as "Stuenr.".
+
+    :param df: A pandas DataFrame, representing the Stuefordeling data.
+
+    :return: A pandas DataFrame, representing the relevant Stuefordeling data.
+    """
+    num_weekdays = 5
+    max_cols = 1 + num_weekdays * 3  # <-- 1 for the first column, 3 (date, Læge and Pleje) for each day of the week
+
+    # Find the starting row: Match the pattern of "Stuenr." - NOTE: this is a somewhat fragile approach
+    start_row = df[df.iloc[:, 0].str.contains("Stuenr.", na=False)].index[0]
+
+    # Find the ending row: First blank cell in column 0 after the start row
+    end_row = df.iloc[start_row + 1 :, 0].isnull().idxmax()  # <-- Add 1 to avoid including the header row
+
+    # Slice the table based on found and known max columns
+    table_df = df.iloc[start_row:end_row, 0:max_cols]  # <-- Limit to max_cols columns
+
+    # Assign column headers from the header row
+    table_df.columns = table_df.iloc[0]
+    table_df = table_df[1:].reset_index(drop=True)
+
+    return table_df
+
+
 def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> tuple[list[TaskBoard], list[list[str]]]:
     """
     Make a new list of `TaskBoard` objects, where the functions are updated with the information from the stuefordeling.
