@@ -8,22 +8,6 @@ def str_and_non_empty(cell: str) -> bool:
     return type(cell) is str and cell.strip() != ""
 
 
-def is_flex(function: str) -> bool:
-    """
-    Check if a function is a flex location.
-    NOTE: Sometimes the Flex function is called Flex KOOR (or something similar), and that doesn't
-    match how a flex location should be treated.
-
-    :param location: A string with the function.
-
-    :return: A boolean indicating if the function is a flex location.
-    """
-    edgecases = ["koor", "koordinator"]
-    if any(edgecase in function.lower() for edgecase in edgecases):
-        return False
-    return "flex" in function.lower()
-
-
 def strip_str(cell: str) -> str:
     """
     Strip a string of all whitespaces and make it lowercase.
@@ -113,7 +97,12 @@ def regex_format_flex(function: str) -> list[str]:
 
     :return: A list of strings with the flex location(s).
     """
-    pattern = r"(?i)\bflex(?:stue)?\b\s*(\d+)(?:\s*\+\s*(\d+))?"
-    matches = re.findall(pattern, function)
-    matches = [str(num) for num in matches[0] if num]  # <-- Convert to string and remove None
-    return matches
+    edgecases = ["koor", "koordinator"]
+    if any(edgecase in function.lower() for edgecase in edgecases):
+        return ["koordinator"]
+
+    else:
+        pattern = r"(?i)\bflex(?:stue)?\b\s*(\d+)(?:\s*\+\s*(\d+))?"
+        matches = re.findall(pattern, function)
+        matches = [str(num) for num in matches[0] if num]  # <-- Convert to string and remove None
+        return matches

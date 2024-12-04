@@ -5,16 +5,21 @@ from app.utils.string_process import str_and_non_empty
 
 def flex_to_stue(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Takes a DataFrame and moves the data from the "Flexstue" column to the "Stue" column.
-    This is in the interest of a less cluttered visualisation.
+    Merges the data from the "Flexstue" column into the "Stue" column for a cleaner visualization.
+
+    If the "Stue" column contains None or is empty, it is treated as an empty string during the merge.
+    If "Flexstue" contains valid data, it is appended to the "Stue" column in the format "Stue (Flex Flexstue)".
+    Otherwise, the "Stue" column remains unchanged or is set to an empty string if originally None.
 
     :param df: A pandas DataFrame representing the final visualisation.
 
-    :return: A pandas DataFrame with the Flexstue data moved to the Stue column.
+    :return: A pandas DataFrame with the "Flexstue" data merged into the "Stue" column, and the "Flexstue" column removed.
     """
     if "Stue" in df.columns and "Flexstue" in df.columns:
         df["Stue"] = df.apply(
-            lambda row: f"{row['Stue']} (Flex {row['Flexstue']})".strip(", ") if str_and_non_empty(row["Flexstue"]) else row["Stue"],
+            lambda row: f"{row['Stue'] or ''} (Flex {row['Flexstue']})".strip(", ")
+            if str_and_non_empty(row["Flexstue"])
+            else (row["Stue"] or ""),
             axis=1,
         )
 

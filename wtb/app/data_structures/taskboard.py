@@ -53,6 +53,10 @@ class TaskBoard:
                     flex_value = flex_dict[func.location]
                     func.update(flex=flex_value)
 
+                elif func.name.lower() == "koordinator" and "koordinator" in flex_dict:  # <-- Handles ONLY "koordinator" edge-case
+                    flex_value = flex_dict[func.name.lower()]
+                    func.update(flex=flex_value)
+
     def to_dataframe(self) -> pd.DataFrame:
         """
         Returns a dataframe representation of the TaskBoard.
