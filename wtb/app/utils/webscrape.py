@@ -1,4 +1,5 @@
 import os
+import time
 
 import bs4
 import toml
@@ -7,7 +8,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import Select, WebDriverWait
 
 from app.utils.os_structure import get_html_save_path
 
@@ -32,6 +33,8 @@ def get_soup_from_altiplan(verbose: bool = True, config: dict[str, any] = None) 
     js_id_department = config["settings"]["js_ID_department"]
     js_id_username = config["settings"]["js_ID_username"]
     js_id_password = config["settings"]["js_ID_password"]
+    js_id_dropdown = config["settings"]["js_ID_dropdown"]
+    js_dropdown_select = config["settings"]["js_dropdown_select"]  # <-- Odense O-amb select in dropdown
     js_xpath_unique_afterlogin_elem = config["settings"]["js_XPATH_unique_afterlogin_elem"]
     run_headless = config["settings"]["run_headless"]
     run_selenium_regardless = config["settings"]["run_selenium_regardless"]  # <-- togleable: run `selenium` if already fetched?
@@ -86,7 +89,18 @@ def get_soup_from_altiplan(verbose: bool = True, config: dict[str, any] = None) 
         driver.get(url_schedule)
 
         # Wait until the target page loads
+        wait.until(ec.presence_of_element_located((By.ID, js_id_dropdown)))
+
+        # Select the desired option from the dropdown
+        dropdown = Select(driver.find_element(By.ID, js_id_dropdown))
+        dropdown.select_by_value(js_dropdown_select)
+
+        # Wait for the page to update after selecting the dropdown option
+        time.sleep(2)
         wait.until(ec.presence_of_element_located((By.TAG_NAME, "body")))
+
+        if verbose:
+            print("Page loaded. Scraping...")
 
         # Scrape the required data
         soup = bs4.BeautifulSoup(driver.page_source, "html.parser")
