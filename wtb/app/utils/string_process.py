@@ -113,7 +113,12 @@ def regex_format_flex(function: str) -> list[str]:
 
     :return: A list of strings with the flex location(s).
     """
-    pattern = r"(?i)\bflex(?:stue)?\b\s*(\d+)(?:\s*\+\s*(\d+))?"
-    matches = re.findall(pattern, function)
-    matches = [str(num) for num in matches[0] if num]  # <-- Convert to string and remove None
-    return matches
+    edgecases = ["koor", "koordinator"]
+    if any(edgecase in function.lower() for edgecase in edgecases):
+        return ["koordinator"]
+
+    else:
+        pattern = r"(?i)\bflex(?:stue)?\b\s*(\d+)(?:\s*\+\s*(\d+))?"
+        matches = re.findall(pattern, function)
+        matches = [str(num) for num in matches[0] if num]  # <-- Convert to string and remove None
+        return matches
