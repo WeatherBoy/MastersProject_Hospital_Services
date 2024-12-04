@@ -3,7 +3,7 @@ import pandas as pd
 
 from app.data_structures.taskboard import FunctionAssignment, TaskBoard
 from app.utils.os_structure import get_current_stuefordeling_path
-from app.utils.string_process import is_flex, regex_format_flex, regex_formatting_time_name, str_and_non_empty, strip_str
+from app.utils.string_process import regex_format_flex, regex_formatting_time_name, str_and_non_empty, strip_str
 
 
 def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -> list[TaskBoard]:
@@ -138,7 +138,7 @@ def update_taskboards_with_stuefordeling(weekly_taskboards: list[TaskBoard]) -> 
             if pd.notna(function):
                 function_stripped = strip_str(function)
 
-                if is_flex(function):
+                if "flex" in function.lower():  # <-- If there is 'flex' in the function name, it is 'flex'
                     flex_location = location  # <-- If the current function is 'flex', then the current location is a flex location
                     flex_locations = regex_format_flex(function)
                     for locations in flex_locations:
