@@ -4,6 +4,7 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from app import WEEKDAYS_DANISH
 from app.data_structures.taskboard import TaskBoard
 from app.utils.data_formatting import make_df_ready_for_visualisation
 from app.utils.os_structure import get_week_dates_from_today
@@ -62,6 +63,22 @@ def color_alternating_rows(df: pd.DataFrame, table: plt.table, config: dict[str,
                 cell.set_facecolor(color_odd)
 
 
+def daily_taskboard_title(day_iter: int, week_dates: list[datetime.date]) -> str:
+    """
+    Creates a daily taskboard title, adhering to `day_iter` with 0 corresponding to Monday and 6 to Sunday.
+
+    :param day_iter: An integer representing the day of the week. Monday is 0, Sunday is 6.
+    :param week_dates: A list of datetime.date objects representing the dates in the week. Ordered from Monday to Sunday.
+
+    :return: A string with the title of the daily taskboard.
+    """
+    day_name = WEEKDAYS_DANISH[day_iter]  # Get the danish day name
+    date_str = week_dates[day_iter].strftime("%d-%m-%Y")  # Format the date
+    title = f"{day_name}, {date_str}"
+
+    return title
+
+
 def save_taskboards_as_png(weekly_taskboards: list[TaskBoard], verbose: bool = True, config: dict[str, any] = None) -> None:
     """
     Saves the TaskBoards of the week as PNG images.
@@ -80,6 +97,7 @@ def save_taskboards_as_png(weekly_taskboards: list[TaskBoard], verbose: bool = T
         dpi = config["visualise"]["dpi"]
     ## ***********************************************************************************************************
 
+    # For naming - `year`, `week` and relating to today (`weekday`)
     today = datetime.date.today()
     year, week, weekday = today.isocalendar()
     week_dates = get_week_dates_from_today(today, weekday)
@@ -99,11 +117,14 @@ def save_taskboards_as_png(weekly_taskboards: list[TaskBoard], verbose: bool = T
         df = taskboard.to_dataframe()
         df = make_df_ready_for_visualisation(df)
 
-        fig, ax = plt.subplots(figsize=(width, height))
+        fig, ax = plt.subplots(figsize=(width, height), layout="constrained")
+
+        table_title = daily_taskboard_title(i, week_dates)
+        fig.suptitle(table_title, fontsize=16, fontweight="bold")
         ax.axis("off")
 
         # Render table
-        table = ax.table(cellText=df.values, colLabels=df.columns, cellLoc="center", loc="center")
+        table = ax.table(cellText=df.values, colLabels=df.columns, bbox=[0, 0, 1, 1])
 
         # General table styling
         table.auto_set_font_size(False)
