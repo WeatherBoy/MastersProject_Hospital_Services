@@ -12,9 +12,7 @@ js_ID_password = "Password-form"
 js_ID_dropdown = "plan-select"
 js_dropdown_select = "8"
 js_XPATH_unique_afterlogin_elem = "//*[@id='dashboard-container']/div[2]"
-NUM_WEEKDAYS = 7
 skippable_funcs = ["ERGO aktiviteter", "Syg/barns syg", "Kursus/Ferie/Fri", "Ikke tildelt funktion"]  # These might be fragile depending on naming
-WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 valid_monikers = ["elev", "stud"]
 
 [visualise]
