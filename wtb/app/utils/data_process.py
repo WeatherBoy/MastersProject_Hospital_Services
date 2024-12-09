@@ -1,6 +1,7 @@
 import bs4
 import pandas as pd
 
+from app import NUM_BUSSINESS_DAYS, NUM_WEEKDAYS
 from app.data_structures.taskboard import FunctionAssignment, TaskBoard
 from app.utils.os_structure import get_current_stuefordeling_path
 from app.utils.string_process import regex_format_flex, regex_formatting_time_name, str_and_non_empty, strip_str
@@ -17,12 +18,10 @@ def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -
     """
     ## Preliminary ***********************************************************************************************
     # Unpack the configuration settings
-    num_weekdays = config["settings"]["NUM_WEEKDAYS"]
     skipable_funcs = config["settings"]["skippable_funcs"]  # <-- A list of function indices that should be skipped.
-
-    weekly_taskboards = [None] * num_weekdays
     ## ***********************************************************************************************************
 
+    weekly_taskboards = [None] * NUM_WEEKDAYS
     functions = soup.find_all("div", class_="single-function")  # <-- functions (funktioner)/ rows on Altiplan
     data = soup.find_all("div", class_="single-description")  # <-- cells in the "grid" on Altiplan
 
@@ -30,8 +29,8 @@ def soup_to_weekly_taskboards(soup: bs4.BeautifulSoup, config: dict[str, any]) -
         if cell.text.strip() == "":
             continue
 
-        day_indx = indx % num_weekdays
-        function_indx = indx // num_weekdays
+        day_indx = indx % NUM_WEEKDAYS
+        function_indx = indx // NUM_WEEKDAYS
 
         if functions[function_indx].text in skipable_funcs:
             # Currently I skip 'Ergo aktiviteter' as, as far as I can see, they seem to be an outlier.
@@ -76,8 +75,7 @@ def extract_relevant_stuefordeling_data(df: pd.DataFrame) -> pd.DataFrame:
 
     :return: A pandas DataFrame, representing the relevant Stuefordeling data.
     """
-    num_weekdays = 5
-    max_cols = 1 + num_weekdays * 3  # <-- 1 for the first column, 3 (date, Læge and Pleje) for each day of the week
+    max_cols = 1 + NUM_BUSSINESS_DAYS * 3  # <-- 1 for the first column, 3 (date, Læge and Pleje) for each day of the week
 
     # Find the starting row: Match the pattern of "Stuenr." - NOTE: this is a somewhat fragile approach
     start_row = df[df.iloc[:, 0].str.contains("Stuenr.", na=False)].index[0]

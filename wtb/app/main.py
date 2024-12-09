@@ -14,7 +14,6 @@ if __name__ == "__main__":
 
     # Get configs from config file
     config = toml.load("config.toml")
-    NUM_WEEKDAYS = config["settings"]["NUM_WEEKDAYS"]
 
     soup = get_soup_from_altiplan(config)
 
@@ -22,7 +21,7 @@ if __name__ == "__main__":
     updated_weekly_taskboards, non_matching_functions = update_taskboards_with_stuefordeling(weekly_taskboards)
     # print_taskboards(updated_weekly_taskboards, config)
     save_functions_mismatch(weekly_taskboards, non_matching_functions)
-    save_weekly_taskboards(updated_weekly_taskboards, NUM_WEEKDAYS)
+    save_weekly_taskboards(updated_weekly_taskboards)
     save_taskboards_as_png(updated_weekly_taskboards, config)
 
     print(f"\nProgram finished in {time.time() - start:.2f} seconds.")
