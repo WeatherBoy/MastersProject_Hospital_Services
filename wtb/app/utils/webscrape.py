@@ -25,7 +25,7 @@ def get_soup_from_altiplan(verbose: bool = True, config: dict[str, any] = None) 
     """
     # **Unpacking the config dictionary** #########################################################
     if config is None:
-        config = config = toml.load("config.toml")
+        config = toml.load("config.toml")
 
     save_html = config["settings"]["save_html"]
     url_login = config["settings"]["url_login"]
