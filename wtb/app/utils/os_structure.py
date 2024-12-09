@@ -7,6 +7,16 @@ from app.utils.data_formatting import make_df_ready_for_visualisation
 
 
 def get_week_dates_from_today(today: datetime.date, weekday: int) -> list[datetime.date]:
+    """
+    Returns a list of dates in the week (denoted by the today parameter), starting from Monday.
+    NOTE: I didn't make `today` nor `weekday` optional, as they are often used outside of this function.
+    E.g. to get the year and week corresponding to 'today'.
+
+    :param today: A datetime.date object. Represents the current date.
+    :param weekday: An integer representing the day of the week. Monday is 0, Sunday is 6.
+
+    :return: A list of datetime.date objects representing the dates in the week. Ordered from Monday to Sunday.
+    """
     # Find the start of the week (Monday)
     start_of_week = today - datetime.timedelta(days=weekday - 1)
 
