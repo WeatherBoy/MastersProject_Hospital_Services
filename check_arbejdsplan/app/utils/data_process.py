@@ -3,7 +3,7 @@ import datetime
 import pandas as pd
 
 from app import MONTHS
-from app.utils.string_process import str_and_non_empty
+from app.utils.string_process import valid_task
 
 
 def load_arbejdsplan_lejeplan(month: str) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -58,14 +58,3 @@ def lejeplan_days_ordered(lejeplan: pd.DataFrame) -> list[datetime.date]:
     days_ordered = [day.date() for day in days if pd.notna(day)]
 
     return days_ordered
-
-
-def valid_task(cell: str | None) -> bool:
-    """
-    Check if a task is valid. Not none and not empty.
-
-    :param cell: A cell from the lejeplan, representing a task.
-
-    :return: A boolean indicating whether the task is valid.
-    """
-    return pd.notna(cell) and str_and_non_empty(cell)
