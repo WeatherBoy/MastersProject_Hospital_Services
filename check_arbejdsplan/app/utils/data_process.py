@@ -1,3 +1,5 @@
+import datetime
+
 import pandas as pd
 
 from app import MONTHS
@@ -39,6 +41,23 @@ def lejeplan_daily_tasks_lists(lejeplan: pd.DataFrame) -> list[list[str]]:
         tasks_matrix.append(tasks_list)
 
     return tasks_matrix
+
+
+def lejeplan_days_ordered(lejeplan: pd.DataFrame) -> list[datetime.date]:
+    """
+    Get the days in the lejeplan, ordered by date, corresponding to the tasks in the lejeplan.
+
+    :param lejeplan: A pandas DataFrame representing the lejeplan.
+
+    :return: A list of datetime.date objects, representing the days in the lejeplan.
+    """
+    start_row = 1  # <-- Skip the first row (it is a pseudo-header)
+    start_col = 1  # <-- Skip 'day' - start at 'date'
+
+    days = lejeplan.iloc[start_row:, start_col]
+    days_ordered = [day.date() for day in days if pd.notna(day)]
+
+    return days_ordered
 
 
 def valid_task(cell: str | None) -> bool:
