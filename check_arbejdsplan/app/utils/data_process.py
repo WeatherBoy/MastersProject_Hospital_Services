@@ -1,6 +1,7 @@
 import pandas as pd
 
 from app import MONTHS
+from app.utils.string_process import str_and_non_empty
 
 
 def load_arbejdsplan_lejeplan(month: str) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -23,3 +24,14 @@ def load_arbejdsplan_lejeplan(month: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     arbejdsplan = pd.read_excel(arbejdsplan_path)
 
     return lejeplan, arbejdsplan
+
+
+def valid_task(cell: str | None) -> bool:
+    """
+    Check if a task is valid. Not none and not empty.
+
+    :param cell: A cell from the lejeplan, representing a task.
+
+    :return: A boolean indicating whether the task is valid.
+    """
+    return pd.notna(cell) and str_and_non_empty(cell)
