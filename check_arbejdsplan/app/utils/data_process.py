@@ -19,7 +19,7 @@ def load_arbejdsplan_lejeplan(month: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     lejeplan_path = f"data/lejeplan/{month} - lejeplan.xlsx"
     arbejdsplan_path = f"data/arbejdsplan/{month} - arbejdsplan.xlsx"
 
-    lejeplan = pd.read_excel(lejeplan_path)
+    lejeplan = pd.read_excel(lejeplan_path, header=None)  # There is only a "pseudo-header" in the lejeplan - NOTE: might be used later
     arbejdsplan = pd.read_excel(arbejdsplan_path)
 
     return lejeplan, arbejdsplan
