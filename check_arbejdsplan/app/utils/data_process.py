@@ -26,6 +26,21 @@ def load_arbejdsplan_lejeplan(month: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     return lejeplan, arbejdsplan
 
 
+def lejeplan_daily_tasks_lists(lejeplan: pd.DataFrame) -> list[list[str]]:
+    """ """
+    start_row = 1  # <-- Skip the first row (it is a pseudo-header)
+    start_col = 4  # <-- Skip 'day' + 'date' + 'optional week' + "undv"?? (NOTE: "undv" always two down from week numeration)
+
+    table_df = lejeplan.iloc[start_row:, start_col:]
+
+    tasks_matrix = []
+    for row in table_df.iterrows():
+        tasks_list = [task for task in row[1] if valid_task(task)]
+        tasks_matrix.append(tasks_list)
+
+    return tasks_matrix
+
+
 def valid_task(cell: str | None) -> bool:
     """
     Check if a task is valid. Not none and not empty.
