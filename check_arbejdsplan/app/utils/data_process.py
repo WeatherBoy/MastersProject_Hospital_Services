@@ -58,3 +58,19 @@ def lejeplan_days_ordered(lejeplan: pd.DataFrame) -> list[datetime.date]:
     days_ordered = [day.date() for day in days if pd.notna(day)]
 
     return days_ordered
+
+
+def lejeplan_dict_with_date_keys(lejeplan: pd.DataFrame) -> pd.DataFrame:
+    """
+    Convert the lejeplan to a dictionary, with date keys and a list of daily tasks as values.
+
+    :param lejeplan: A pandas DataFrame representing the lejeplan.
+
+    :return: Dict with 'date' keys and 'list of tasks' values.
+    """
+    tasks_matrix = lejeplan_daily_tasks_lists(lejeplan)
+    days_ordered = lejeplan_days_ordered(lejeplan)
+
+    lejeplan_dict = {date: tasks for date, tasks in zip(days_ordered, tasks_matrix)}
+
+    return lejeplan_dict
