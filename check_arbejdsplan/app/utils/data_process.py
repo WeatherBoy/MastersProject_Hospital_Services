@@ -6,13 +6,13 @@ from app import MONTHS
 from app.utils.string_process import valid_task
 
 
-def load_arbejdsplan_lejeplan(month: str) -> tuple[pd.DataFrame, pd.DataFrame]:
+def load_arbejdsplan_lejeplan(month: str) -> tuple[pd.DataFrame, pd.ExcelFile]:
     """
     Load the arbejdsplan and lejeplan, for the given month, as pandas DataFrames.
 
     :param month: The month for which to load the arbejdsplan and lejeplan.
 
-    :return: A tuple of two pandas DataFrames, representing the arbejdsplan and lejeplan, respectively.
+    :return: A tuple of a pandas DataFrame (lejeplan) and a pandas ExcelFile (arbejdsplan).
     """
     month = month.lower()
 
@@ -23,7 +23,7 @@ def load_arbejdsplan_lejeplan(month: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     arbejdsplan_path = f"data/arbejdsplan/{month} - arbejdsplan.xlsx"
 
     lejeplan = pd.read_excel(lejeplan_path, header=None)  # There is only a "pseudo-header" in the lejeplan - NOTE: might be used later
-    arbejdsplan = pd.read_excel(arbejdsplan_path)
+    arbejdsplan = pd.ExcelFile(arbejdsplan_path)
 
     return lejeplan, arbejdsplan
 
