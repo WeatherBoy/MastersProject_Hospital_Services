@@ -29,3 +29,18 @@ def valid_task(cell: str | None) -> bool:
     :return: A boolean indicating whether the task is valid.
     """
     return pd.notna(cell) and str_and_non_empty(cell)
+
+
+def extract_task(cell: str) -> list[str]:
+    """
+    Extract tasks from a cell in the arbejdsplan.
+    NOTE: cells in the arbejdsplan may be separated into multiple tasks by '|'.
+
+    :param cell: A cell from the arbejdsplan, representing one or multiple tasks.
+
+    :return: A list of tasks extracted from the cell.
+    """
+    tasks = cell.split("|")
+    tasks = [task for task in tasks if valid_task(task)]
+
+    return tasks

@@ -3,7 +3,7 @@ import datetime
 import pandas as pd
 
 from app import MONTHS
-from app.utils.string_process import valid_task
+from app.utils.string_process import extract_task, valid_task
 
 
 def load_arbejdsplan_lejeplan(month: str) -> tuple[pd.DataFrame, pd.ExcelFile]:
@@ -58,20 +58,6 @@ def lejeplan_days_ordered(lejeplan: pd.DataFrame) -> list[datetime.date]:
     days_ordered = [day.date() for day in days if pd.notna(day)]
 
     return days_ordered
-
-
-def extract_task(cell: str) -> list[str]:
-    """
-    Extract tasks from a cell in the arbejdsplan.
-
-    :param cell: A cell from the arbejdsplan, representing one or multiple tasks.
-
-    :return: A list of tasks extracted from the cell.
-    """
-    tasks = cell.split("|")
-    tasks = [task for task in tasks if valid_task(task)]
-
-    return tasks
 
 
 def arbejdsplan_daily_tasks_lists(arbejdsplan: pd.ExcelFile) -> list[list[str]]:
