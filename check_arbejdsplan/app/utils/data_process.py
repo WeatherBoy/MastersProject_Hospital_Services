@@ -60,6 +60,20 @@ def lejeplan_days_ordered(lejeplan: pd.DataFrame) -> list[datetime.date]:
     return days_ordered
 
 
+def extract_task(cell: str) -> list[str]:
+    """
+    Extract tasks from a cell in the arbejdsplan.
+
+    :param cell: A cell from the arbejdsplan, representing one or multiple tasks.
+
+    :return: A list of tasks extracted from the cell.
+    """
+    tasks = cell.split("|")
+    tasks = [task for task in tasks if valid_task(task)]
+
+    return tasks
+
+
 def lejeplan_dict_with_date_keys(lejeplan: pd.DataFrame) -> pd.DataFrame:
     """
     Convert the lejeplan to a dictionary, with date keys and a list of daily tasks as values.
