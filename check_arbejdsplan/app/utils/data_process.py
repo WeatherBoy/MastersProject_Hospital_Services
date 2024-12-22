@@ -74,6 +74,24 @@ def extract_task(cell: str) -> list[str]:
     return tasks
 
 
+def arbejdsplan_daily_tasks_lists(arbejdsplan: pd.ExcelFile) -> list[list[str]]:
+    """
+    Extract the daily tasks from the arbejdsplan.
+
+    :param arbejdsplan: A pandas ExcelFile representing the arbejdsplan.
+
+    :return: A list of lists of tasks, where each list represents the tasks for a given day.
+    """
+    tasks_matrix = []
+    for sheet in arbejdsplan.sheet_names:
+        df = arbejdsplan.parse(sheet)
+        for row in df.iterrows():
+            # exctract_task returns a list, so we need to sum the lists to get a single list of tasks
+            tasks_matrix.append(sum([extract_task(task) for task in row[1]], []))  # <-- second param, "[ ]"", is the initial value
+
+    return tasks_matrix
+
+
 def lejeplan_dict_with_date_keys(lejeplan: pd.DataFrame) -> pd.DataFrame:
     """
     Convert the lejeplan to a dictionary, with date keys and a list of daily tasks as values.
