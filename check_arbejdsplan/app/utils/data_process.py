@@ -100,7 +100,7 @@ def arbejdsplan_days_ordered(arbejdsplan: pd.ExcelFile) -> list[datetime.date]:
     return days_ordered
 
 
-def lejeplan_dict_with_date_keys(lejeplan: pd.DataFrame) -> pd.DataFrame:
+def lejeplan_dict_with_date_keys(lejeplan: pd.DataFrame) -> dict[datetime.date, list[str]]:
     """
     Convert the lejeplan to a dictionary, with date keys and a list of daily tasks as values.
 
