@@ -64,9 +64,9 @@ def extract_dates(headers: list[str]) -> list[datetime.date]:
     for header in headers:
         match = re.search(date_pattern, header)
         if match:
-            date = datetime.strptime(match.group(), "%d-%m-%Y").date()
+            date = datetime.datetime.strptime(match.group(), "%d-%m-%Y").date()
             dates.append(date)
         else:
             raise Exception(f"`datetime.date` not found in header: {header}\nOBS: maybe check excel-file formatting!")
 
-    return date
+    return dates
