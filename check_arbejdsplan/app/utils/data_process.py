@@ -3,7 +3,7 @@ import datetime
 import pandas as pd
 
 from app import MONTHS
-from app.utils.string_process import extract_task, valid_task
+from app.utils.string_process import extract_dates, extract_task, valid_task
 
 
 def load_arbejdsplan_lejeplan(month: str) -> tuple[pd.DataFrame, pd.ExcelFile]:
@@ -76,6 +76,28 @@ def arbejdsplan_daily_tasks_lists(arbejdsplan: pd.ExcelFile) -> list[list[str]]:
             tasks_matrix.append(sum([extract_task(task) for task in row[1]], []))  # <-- second param, "[ ]"", is the initial value
 
     return tasks_matrix
+
+
+def arbejdsplan_days_ordered(arbejdsplan: pd.ExcelFile) -> list[datetime.date]:
+    """
+    Get the days from each sheet of the arbejdsplan, corresponding to the tasks_lists.
+
+    :param arbejdsplan: A pandas ExcelFile representing the arbejdsplan.
+
+    :return: A list of datetime.date objects, representing the days in the arbejdsplan.
+    """
+    days_ordered = []
+
+    for sheet in arbejdsplan.sheet_names:
+        df = arbejdsplan.parse(sheet)
+
+        sheet_header = list(df.columns.values)
+        sheet_header.pop(0)  # <-- Remove the first column, which is the 'Navn' column
+
+        dates = extract_dates(sheet_header)
+        days_ordered += dates
+
+    return days_ordered
 
 
 def lejeplan_dict_with_date_keys(lejeplan: pd.DataFrame) -> pd.DataFrame:
