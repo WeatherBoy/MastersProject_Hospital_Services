@@ -114,3 +114,19 @@ def lejeplan_dict_with_date_keys(lejeplan: pd.DataFrame) -> pd.DataFrame:
     lejeplan_dict = {date: tasks for date, tasks in zip(days_ordered, tasks_matrix)}
 
     return lejeplan_dict
+
+
+def arbejdsplan_dict_with_date_keys(arbejdsplan: pd.ExcelFile) -> dict[datetime.date, list[str]]:
+    """
+    Convert the arbejdsplan to a dictionary, with date keys and a list of daily tasks as values.
+
+    :param arbejdsplan: A pandas DataFrame representing the arbejdsplan.
+
+    :return: Dict with 'date' keys and 'list of tasks' values.
+    """
+    tasks_matrix = arbejdsplan_daily_tasks_lists(arbejdsplan)
+    days_ordered = arbejdsplan_days_ordered(arbejdsplan)
+
+    arbejdsplan_dict = {date: tasks for date, tasks in zip(days_ordered, tasks_matrix)}
+
+    return arbejdsplan_dict
