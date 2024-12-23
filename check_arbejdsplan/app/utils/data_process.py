@@ -55,7 +55,7 @@ def lejeplan_days_ordered(lejeplan: pd.DataFrame) -> list[datetime.date]:
     start_col = 1  # <-- Skip 'day' - start at 'date'
 
     days = lejeplan.iloc[start_row:, start_col]
-    days_ordered = [day.date() for day in days if pd.notna(day)]
+    days_ordered = [day.date() for day in days]
 
     return days_ordered
 
