@@ -55,7 +55,7 @@ def extract_task(cell: str, config: dict[str, any] = None) -> list[str]:
 
     tasks = cell.split("|")
     if regex_filter:
-        tasks = [task for task in tasks if regex_filter(task, config)]
+        tasks = [task for task in tasks if regex_filter(task)]
 
     return tasks
 
