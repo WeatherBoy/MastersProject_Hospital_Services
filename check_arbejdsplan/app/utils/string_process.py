@@ -1,8 +1,6 @@
 import datetime
 import re
 
-import pandas as pd
-
 
 def str_and_non_empty(cell: str) -> bool:
     """
@@ -23,43 +21,41 @@ def strip_str(cell: str) -> str:
     return cell.lower().replace(" ", "")
 
 
-def valid_task(cell: str | None, config: dict[str, any] = None) -> bool:
+def regex_filtering(cell: str | None) -> bool:
     """
-    Check if a task is valid. Not none and not empty.
+    Check whether cell contains timeslot information. Returns true if it doesn't, false otherwise.
+    NOTE: This might be a bit SUS.. be aware.
 
     :param cell: A cell from the lejeplan, representing a task.
 
     :return: A boolean indicating whether the task is valid.
     """
-    ## Preliminary - Unpack configurations ***********************************************************************
-    # Default resolution and dpi
-    regex_filter = True
-    if config is not None:
-        regex_filter = ["string_processing"]["enable_regex_filter"]
-    ## ***********************************************************************************************************
-
-    valid = False
-
-    if pd.notna(cell) and str_and_non_empty(cell):
-        valid = True
-        if regex_filter:
-            valid_task_pattern = r"^[A-Za-zÆØÅæøå0-9 .,'/-]+$"
-            valid = re.match(valid_task_pattern, cell)
+    valid_task_pattern = r"^[A-Za-zÆØÅæøå0-9 .,'/-]+$"
+    valid = re.match(valid_task_pattern, cell)
 
     return valid
 
 
 def extract_task(cell: str, config: dict[str, any] = None) -> list[str]:
     """
-    Extract tasks from a cell in the arbejdsplan.
+    Extract tasks from a cell in the arbejdsplan. Optionally filter tasks using a regex pattern.
     NOTE: cells in the arbejdsplan may be separated into multiple tasks by '|'.
 
     :param cell: A cell from the arbejdsplan, representing one or multiple tasks.
+    :param config: (optional) A dictionary with the configuration settings. Default is None.
 
     :return: A list of tasks extracted from the cell.
     """
+    ## Preliminary - Unpack configurations ***********************************************************************
+    # Default resolution and dpi
+    regex_filter = False
+    if config is not None:
+        regex_filter = config["string_processing"]["enable_regex_filter"]
+    ## ***********************************************************************************************************
+
     tasks = cell.split("|")
-    tasks = [task for task in tasks if valid_task(task, config)]
+    if regex_filter:
+        tasks = [task for task in tasks if regex_filter(task, config)]
 
     return tasks
 

@@ -3,7 +3,7 @@ import datetime
 import pandas as pd
 
 from app import MONTHS
-from app.utils.string_process import extract_dates, extract_task, valid_task
+from app.utils.string_process import extract_dates, extract_task, str_and_non_empty, valid_task
 
 
 def load_arbejdsplan_lejeplan(month: str) -> tuple[pd.DataFrame, pd.ExcelFile]:
@@ -78,7 +78,7 @@ def arbejdsplan_daily_tasks_lists(arbejdsplan: pd.ExcelFile, config: dict[str, a
 
             # exctract_task returns a list, so we need to sum the lists to get a single list of tasks
             # NOTE: second param, "[ ]"", is the initial value
-            tasks_matrix.append(sum([extract_task(task, config) for task in series], []))
+            tasks_matrix.append(sum([extract_task(task, config) for task in series if str_and_non_empty(task)], []))
 
     return tasks_matrix
 
