@@ -30,7 +30,7 @@ def regex_filtering(cell: str | None) -> bool:
 
     :return: A boolean indicating whether the task is valid.
     """
-    valid_task_pattern = r"^[A-Za-zÆØÅæøå0-9 .,'/-]+$"
+    valid_task_pattern = r"^(?=.*[A-Za-zÆØÅæøå])[A-Za-zÆØÅæøå0-9 .,'/-]+$"
     valid = re.match(valid_task_pattern, cell)
 
     return valid
