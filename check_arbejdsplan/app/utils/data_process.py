@@ -60,7 +60,7 @@ def lejeplan_days_ordered(lejeplan: pd.DataFrame) -> list[datetime.date]:
     return days_ordered
 
 
-def arbejdsplan_daily_tasks_lists(arbejdsplan: pd.ExcelFile) -> list[list[str]]:
+def arbejdsplan_daily_tasks_lists(arbejdsplan: pd.ExcelFile, config: dict[str, any] = None) -> list[list[str]]:
     """
     Extract the daily tasks from the arbejdsplan.
 
@@ -71,9 +71,14 @@ def arbejdsplan_daily_tasks_lists(arbejdsplan: pd.ExcelFile) -> list[list[str]]:
     tasks_matrix = []
     for sheet in arbejdsplan.sheet_names:
         df = arbejdsplan.parse(sheet)
-        for row in df.iterrows():
+        for indx, (_, series) in enumerate(df.items()):
+            # Skip the first column, which is the 'Navn' column
+            if indx == 0:
+                continue
+
             # exctract_task returns a list, so we need to sum the lists to get a single list of tasks
-            tasks_matrix.append(sum([extract_task(task) for task in row[1]], []))  # <-- second param, "[ ]"", is the initial value
+            # NOTE: second param, "[ ]"", is the initial value
+            tasks_matrix.append(sum([extract_task(task, config) for task in series], []))
 
     return tasks_matrix
 
@@ -116,7 +121,7 @@ def lejeplan_dict_with_date_keys(lejeplan: pd.DataFrame) -> dict[datetime.date, 
     return lejeplan_dict
 
 
-def arbejdsplan_dict_with_date_keys(arbejdsplan: pd.ExcelFile) -> dict[datetime.date, list[str]]:
+def arbejdsplan_dict_with_date_keys(arbejdsplan: pd.ExcelFile, config: dict[str, any] = None) -> dict[datetime.date, list[str]]:
     """
     Convert the arbejdsplan to a dictionary, with date keys and a list of daily tasks as values.
 
@@ -124,7 +129,7 @@ def arbejdsplan_dict_with_date_keys(arbejdsplan: pd.ExcelFile) -> dict[datetime.
 
     :return: Dict with 'date' keys and 'list of tasks' values.
     """
-    tasks_matrix = arbejdsplan_daily_tasks_lists(arbejdsplan)
+    tasks_matrix = arbejdsplan_daily_tasks_lists(arbejdsplan, config)
     days_ordered = arbejdsplan_days_ordered(arbejdsplan)
 
     arbejdsplan_dict = {date: tasks for date, tasks in zip(days_ordered, tasks_matrix)}

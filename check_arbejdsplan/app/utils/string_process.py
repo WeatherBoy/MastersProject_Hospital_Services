@@ -23,7 +23,7 @@ def strip_str(cell: str) -> str:
     return cell.lower().replace(" ", "")
 
 
-def valid_task(cell: str | None) -> bool:
+def valid_task(cell: str | None, config: dict[str, any] = None) -> bool:
     """
     Check if a task is valid. Not none and not empty.
 
@@ -31,10 +31,25 @@ def valid_task(cell: str | None) -> bool:
 
     :return: A boolean indicating whether the task is valid.
     """
-    return pd.notna(cell) and str_and_non_empty(cell)
+    ## Preliminary - Unpack configurations ***********************************************************************
+    # Default resolution and dpi
+    regex_filter = True
+    if config is not None:
+        regex_filter = ["string_processing"]["enable_regex_filter"]
+    ## ***********************************************************************************************************
+
+    valid = False
+
+    if pd.notna(cell) and str_and_non_empty(cell):
+        valid = True
+        if regex_filter:
+            valid_task_pattern = r"^[A-Za-zÆØÅæøå0-9 .,'/-]+$"
+            valid = re.match(valid_task_pattern, cell)
+
+    return valid
 
 
-def extract_task(cell: str) -> list[str]:
+def extract_task(cell: str, config: dict[str, any] = None) -> list[str]:
     """
     Extract tasks from a cell in the arbejdsplan.
     NOTE: cells in the arbejdsplan may be separated into multiple tasks by '|'.
@@ -44,7 +59,7 @@ def extract_task(cell: str) -> list[str]:
     :return: A list of tasks extracted from the cell.
     """
     tasks = cell.split("|")
-    tasks = [task for task in tasks if valid_task(task)]
+    tasks = [task for task in tasks if valid_task(task, config)]
 
     return tasks
 
