@@ -48,14 +48,14 @@ def extract_task(cell: str, config: dict[str, any] = None) -> list[str]:
     """
     ## Preliminary - Unpack configurations ***********************************************************************
     # Default resolution and dpi
-    regex_filter = False
+    enable_regex_filter = False
     if config is not None:
-        regex_filter = config["string_processing"]["enable_regex_filter"]
+        enable_regex_filter = config["string_processing"]["enable_regex_filter"]
     ## ***********************************************************************************************************
 
     tasks = cell.split("|")
-    if regex_filter:
-        tasks = [task for task in tasks if regex_filter(task)]
+    if enable_regex_filter:
+        tasks = [task for task in tasks if regex_filtering(task)]
 
     return tasks
 
