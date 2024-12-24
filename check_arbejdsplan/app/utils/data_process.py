@@ -3,7 +3,7 @@ import datetime
 import pandas as pd
 
 from app import MONTHS
-from app.utils.string_process import extract_dates, extract_task, str_and_non_empty, valid_task
+from app.utils.string_process import extract_dates, extract_task, str_and_non_empty
 
 
 def load_arbejdsplan_lejeplan(month: str) -> tuple[pd.DataFrame, pd.ExcelFile]:
@@ -37,7 +37,7 @@ def lejeplan_daily_tasks_lists(lejeplan: pd.DataFrame) -> list[list[str]]:
 
     tasks_matrix = []
     for row in table_df.iterrows():
-        tasks_list = [task for task in row[1] if valid_task(task)]
+        tasks_list = [task for task in row[1] if str_and_non_empty(task)]
         tasks_matrix.append(tasks_list)
 
     return tasks_matrix
