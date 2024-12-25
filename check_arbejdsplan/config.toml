@@ -1,2 +1,3 @@
 [string_processing]
 enable_regex_filter = true
+enable_invalid_task_filter = true
