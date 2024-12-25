@@ -1,6 +1,8 @@
 import datetime
 import re
 
+from app import INVALID_TASKS
+
 
 def str_and_non_empty(cell: str) -> bool:
     """
@@ -49,13 +51,17 @@ def extract_task(cell: str, config: dict[str, any] = None) -> list[str]:
     ## Preliminary - Unpack configurations ***********************************************************************
     # Default resolution and dpi
     enable_regex_filter = False
+    enable_invalid_task_filter = False
     if config is not None:
         enable_regex_filter = config["string_processing"]["enable_regex_filter"]
+        enable_invalid_task_filter = config["string_processing"]["enable_invalid_task_filter"]
     ## ***********************************************************************************************************
 
     tasks = cell.split("|")
     if enable_regex_filter:
         tasks = [task for task in tasks if regex_filtering(task)]
+    if enable_invalid_task_filter:
+        tasks = [task for task in tasks if strip_str(task) not in INVALID_TASKS]
 
     return tasks
 
