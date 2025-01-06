@@ -1,0 +1,22 @@
+\documentclass{article}
+\usepackage[dvipsnames]{xcolor}
+
+\begin{document}
+    \input{sections/Frontpage.tex}
+    \newpage
+
+    \input{sections/0_abstract.tex}
+    \newpage
+
+    \input{sections/1_preface.tex}
+    \newpage
+
+    \setcounter{page}{1}
+    \pagenumbering{roman}
+    \tableofcontents
+    \newpage
+
+    \setcounter{page}{1}
+    \pagenumbering{arabic}
+    \input{sections/2_introduction.tex}
+\end{document}
