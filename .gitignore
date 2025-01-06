@@ -1,6 +1,5 @@
+# Python-specific ignores
 .vscode/
-TODOs/
-Notes/Personal
 venvs/ 
 data/
 *.env
@@ -8,3 +7,26 @@ secrets.json
 **/__pycache__/
 **/.pytest_cache/
 **/.ruff_cache/
+
+# Project-specific ignores
+TODOs/
+Notes/Personal
+
+# LaTeX-specific ignores (scoped to the report directory)
+report/*.aux
+report/*.log
+report/*.toc
+report/*.out
+report/*.synctex.gz
+report/*.fdb_latexmk
+report/*.fls
+report/*.dvi
+report/*.ps
+report/*.pdf
+report/*.bak
+report/*~
+
+# General ignores for the entire repository
+# Backup files (editor-generated)
+*.bak
+*~
