@@ -1,6 +1,5 @@
+# Python-specific ignores
 .vscode/
-TODOs/
-Notes/Personal
 venvs/ 
 data/
 *.env
@@ -8,6 +7,10 @@ secrets.json
 **/__pycache__/
 **/.pytest_cache/
 **/.ruff_cache/
+
+# Project-specific ignores
+TODOs/
+Notes/Personal
 
 # LaTeX-specific ignores (scoped to the report directory)
 report/*.aux
