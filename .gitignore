@@ -25,6 +25,8 @@ report/*.ps
 report/*.pdf
 report/*.bcf
 report/*.xml
+report/*.lot
+report/*.lof
 # Report-specific ignores
 report/figures/
 
