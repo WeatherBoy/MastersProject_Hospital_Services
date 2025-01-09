@@ -23,6 +23,8 @@ report/*.fls
 report/*.dvi
 report/*.ps
 report/*.pdf
+# Report-specific ignores
+report/figures/
 
 # General ignores for the entire repository
 # Backup files (editor-generated)
