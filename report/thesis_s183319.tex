@@ -1,7 +1,63 @@
 \documentclass{article}
 \usepackage[english]{babel}
+\usepackage[top=2cm, bottom=3cm, left=2cm, right=2cm]{geometry}
 
+% ## Nice referencing ##
+\usepackage{csquotes}   % <-- for biblatex
+\usepackage{biblatex}
+\addbibresource{Bibliography.bib}
+
+% ## Math ##
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{cancel} % <-- the big slash over equations
+\usepackage{breqn}  % <-- Automatic wrapping of long equations (good stuff)
+
+% ## For the graphical aspect ##
+\usepackage{float}  % <-- superior package for figure handling
 \usepackage[dvipsnames]{xcolor}
+\usepackage{graphicx} % <-- Required for inserting images
+\usepackage{wrapfig} % <-- In case you want to wrap text around figures (can look quite pro)
+\usepackage{arydshln}   % <-- For horizontal, vertical, etc. lines (for tables and matrices)
+
+
+
+% ## Referencing ##
+\usepackage{fancyref}   % <-- Supposed to make referencing better, don't know where it's used
+\usepackage{hyperref}   % <-- has \autoref{} and all kinds of other goodies
+\usepackage{url}   % <-- web addresses are handled properly when URL referencing
+
+% ## Utility ##
+\usepackage{enumitem}   % <-- enumerate, itemize and description
+\usepackage{pdfpages}   % <-- for including external PDFs
+\usepackage{titlesec}   % <-- (used for the header) section and chapter titles manipulation
+\usepackage{subfiles}   % <-- smart for BIG projects where you include multiple subfiles
+\usepackage{comment}    % <-- multi-line comments
+\usepackage{fontawesome5}   % <-- add cool logos to your report
+\usepackage{sectsty}    % <-- can help with generalising section design
+
+\usepackage{fancyhdr}   % <-- for the header and footer
+\pagestyle{fancy}   % <-- used to great extent for the title page header
+
+% ## Inserting Code ##
+\usepackage{minted}
+\usemintedstyle{fruity}
+
+% Make github logo
+\usepackage{fontawesome5}
+\newcommand{\github}[1]{%
+   \href{#1}{\faGithubSquare}%
+}
+
+% Formalia goes here:
+\newcommand\course{Master's Thesis} %<--- Kursus
+\newcommand\datoen{E24} %<--- Dato
+\newcommand\opgavetitel{The cumbersome necessity of digitalising the Danish healthcare sector} %<--- Navnet på opgaven
+
+
+% Make GREAT looking header and footer:
+\fancyhead[L]{Master's Thesis}
+\fancyhead[R]{\rightmark}
 
 \begin{document}
     \input{sections/Frontpage.tex}
