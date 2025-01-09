@@ -23,6 +23,8 @@ report/*.fls
 report/*.dvi
 report/*.ps
 report/*.pdf
+report/*.bcf
+report/*.xml
 # Report-specific ignores
 report/figures/
 
