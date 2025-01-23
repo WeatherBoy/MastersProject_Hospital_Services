@@ -17,7 +17,36 @@ The objective function's sole criteria is that it evaluates to a scalar, usually
 The selection criteria is how we pick the \textit{parents} for the next generations. The parents, a set of two phenotypes, always produce two \textit{children} to keep the population size constant throughout the iterations of the GA scheme. However, picking the parents can be a science in itself. Detailed below are some different algorithms used to perform the selection step.
 
 \subsubsection{Random Selection}
-Like its name gives way to, Random Selection simply chooses a parent uniformly at random from the entire set of $M$ phenotypes.
+Like its name gives way to, Random Selection simply chooses a parent uniformly at random from the entire set of $M$ phenotypes. A big plus for Random Selection is that it finds a candidate in $O(1)$ time without preprocessing. 
+
+\subsubsection{Fitness Proportionate Selection}
+Fitness Proportionate Selection, or as it is more often and very aptly called Roulette Wheel Selection, selects a phenotype weighted by its fitness. Mathematically, we can express it as the probability $p_i$ of selecting the $i$th phenotype being
+\begin{equation*}
+    p_i = \frac{f_i}{\sum_{j = 1}^M f_j},
+\end{equation*}
+where $f_i$ is the fitness score of the $i$th phenotype.
+\\
+For the implementation, one would typically normalise the fitness scores and then create $M$ bins of cumulative ranges, each corresponding to their respective fitness scores. Then, "spinning the boule" would equate to generating a \textit{floating point} value in the range $[0,1]$ uniformly at random and performing a binary search for finding the corresponding bin. This implementation would take $O(M)$ preprocessing and $O(\log M )$ at runtime. 
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Genetic_Algorithms/Roulette_Selection.png}
+        \subcaption{Five phenotypes (A, B, C, D and E) with fitness scores $0.1$, $0.2$, $0.05$, $0.3$, $0.4$.}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Genetic_Algorithms/Roulette_Selection2.png}
+        \subcaption{Five phenotypes (A, B, C, D and E) with fitness scores $0.1$, $0.2$, $0.05$, $0.3$, $0.4$. Scaled to their fitness, with a boule for the sake of example.}
+    \end{subfigure}
+    
+    \caption{Roulette Wheel Selection - Visualisation}
+    \small
+    \raggedright
+    An attempt at visualising the idea behind Roulette Wheel Selection. First the five phenotypes, with their given fitness scores, then below, scaled to show the increased probability of the boule stopping on a phenotype with a higher fitness score. (Despite the roulette wheel here being mapped to 1D, the example still stands. As it prooved far too difficult to draw a 2D roulette wheel, we must rely on the reader's imagination.)
+    \label{fig:GA_Roulette_Selection}
+\end{figure}
 
 \subsubsection{Tournament Selection}
 Tournament Selection selects a subset of size\footnote{As with $M$, it is preferable to pick $k$ as a power of two.} $1 \leq k \leq M$, uniformly at random of the generation and elects the phenotype with the greatest fitness score, the \textit{best candidate}, within the subset as the winner or, in other words, a parent of the next generation. One might note, that choosing $k = 1$ is equivalent to Random Selection.
