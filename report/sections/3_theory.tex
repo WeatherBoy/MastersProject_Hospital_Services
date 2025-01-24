@@ -17,7 +17,7 @@ The objective function's sole criteria is that it evaluates to a scalar, usually
 The selection criteria is how we pick the \textit{parents} for the next generations. The parents, a set of two phenotypes, always produce two \textit{children} to keep the population size constant throughout the iterations of the GA scheme. However, picking the parents can be a science in itself. Detailed below are some different algorithms used to perform the selection step.
 
 \subsubsection{Random Selection}
-Like its name gives way to, Random Selection simply chooses a parent uniformly at random from the entire set of $M$ phenotypes. A big plus for Random Selection is that it finds a candidate in $O(1)$ time without preprocessing. 
+Like its name gives way to, Random Selection simply chooses a parent uniformly at random from the entire set of $M$ phenotypes. A big plus for Random Selection is that it finds a candidate in $O(1)$ time without preprocessing. However, it is not uncommon for Random Selection to converge slowly, as it does not take into account the fitness scores. 
 
 \subsubsection{Fitness Proportionate Selection}
 Fitness Proportionate Selection, or as it is more often and very aptly called Roulette Wheel Selection, selects a phenotype weighted by its fitness. Mathematically, we can express it as the probability $p_i$ of selecting the $i$th phenotype being
@@ -27,6 +27,8 @@ Fitness Proportionate Selection, or as it is more often and very aptly called Ro
 where $f_i$ is the fitness score of the $i$th phenotype.
 \\
 For the implementation, one would typically normalise the fitness scores and then create $M$ bins of cumulative ranges, each corresponding to their respective fitness scores. Then, "spinning the boule" would equate to generating a \textit{floating point} value in the range $[0,1]$ uniformly at random and performing a binary search for finding the corresponding bin. This implementation would take $O(M)$ preprocessing and $O(\log M )$ at runtime. 
+\\
+Despite its slightly inferior runtime, Fitness Proportionate Selection usually converges faster than Random Selection, as by considering the fitness scores, it will likely continually select better parents. In addition, while the probability of selecting a phenotype with a poor fitness score is lower, it isn't zero, thus allowing for a more diverse search space exploration.   
 
 \begin{figure}[H]
     \centering
@@ -49,11 +51,14 @@ For the implementation, one would typically normalise the fitness scores and the
 \end{figure}
 
 \subsubsection{Tournament Selection}
-Tournament Selection selects a subset of size\footnote{As with $M$, it is preferable to pick $k$ as a power of two.} $1 \leq k \leq M$, uniformly at random of the generation and elects the phenotype with the greatest fitness score, the \textit{best candidate}, within the subset as the winner or, in other words, a parent of the next generation. One might note, that choosing $k = 1$ is equivalent to Random Selection.
+Tournament Selection selects a subset of size\footnote{As with $M$, it is preferable to pick $k$ as a power of two.} $1 \leq k \leq M$, uniformly at random of the generation and elects the phenotype with the greatest fitness score, the \textit{best candidate}, within the subset as the winner (parent). Choosing $k = 1 $ is equivalent to Random Selection, while $k = M$ would only ever propagate the best candidate.
+\\
+Tournament Selection's runtime is entirely dependent on the size of the tournament, $O(k)$\footnote{Although we might sort our fitness scores in $O(M \cdot \log M)$ preprocessing time and retain the ordering when sampling the $k$ tournament-contestants, we still have to generate $k$ indices and, thus, selecting the best candidate wouldn't be reduced to constant runtime.}. Hence, it offers a nice balance between Random and Fitness Proportionate selection, with a possibly fast runtime, while still generating a diverse pool of new phenotypes.
 \\
 A variant\cite{Wiki-tournament-selection} of Tournament Selection introduces a probability $p$ of electing the best candidate as the winner. Inversely, with probability $1-p$, a new tournament is held, where the best candidate is removed, leaving $k-1$ phenotypes, where once again, the best candidate of the remaining phenotypes is selected with probability $p$, and with probability $1-p$, we repeat the process. This variant can, in turn, be considered a Geometric Distribution, with each tournament being a Bernoulli Trial with probability of success $p$. Due to the properties\cite{Wiki-geometric-distribution} of a Geometric Distribution, we can infer that the probability of picking the $k$th best candidate is
 \begin{equation*}
     P\left[ X = k \right] = (1-p)^{k-1} \cdot p.
 \end{equation*}
-
-Recalling that only a single pair of children (next generation) can be derived from a pair of parents (current generation), for a generation size of $M$, the GA scheme requires exactly $M$ parents to produce the next generation. Since Tournament Selection only produces one parent per tournament, it would require $M$ tournaments between every generation.
+For this variant of Tournament Selection, we still have to draw our $k$ contestants. However, we can simulate the (possibly) repeat tournaments by simply sampling a number $g$ from the geometric distribution and then electing the $g$th best candidate amongst the $k$ tournament contestants. As such, the runtime of the variant on Tournament Selection remains $O(k)$.
+\\
+Recalling that only a single pair of children can be derived from a pair of parents, for a generation size of $M$, the GA scheme requires exactly $M$ parents to produce the next generation. Since Random, Fitness Proportionate and Tournament Selection only produce one parent per run; it would require $M$ runs between every generation.
