@@ -61,4 +61,7 @@ A variant\cite{Wiki-tournament-selection} of Tournament Selection introduces a p
 \end{equation*}
 For this variant of Tournament Selection, we still have to draw our $k$ contestants. However, we can simulate the (possibly) repeat tournaments by simply sampling a number $g$ from the geometric distribution and then electing the $g$th best candidate amongst the $k$ tournament contestants. As such, the runtime of the variant on Tournament Selection remains $O(k)$.
 \\
-Recalling that only a single pair of children can be derived from a pair of parents, for a generation size of $M$, the GA scheme requires exactly $M$ parents to produce the next generation. Since Random, Fitness Proportionate and Tournament Selection only produce one parent per run; it would require $M$ runs between every generation.
+Recalling that only a single pair of children can be derived from a pair of parents, for a generation size of $M$, the GA scheme requires exactly $M$ parents to produce the next generation. Since Random, Fitness Proportionate and Tournament Selection only produce one parent per run; it would require $M$ runs between every generation. In order to avoid this computational bottleneck, one may opt for a selection algorithm with a runtime independent of the generation size, such as Truncation Selection.
+
+\subsection{Truncation Selection}
+
