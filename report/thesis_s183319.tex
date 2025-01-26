@@ -61,14 +61,9 @@
 \fancyhead[R]{\rightmark}
 
 \begin{document}
-    \input{sections/Frontpage.tex}
-    \newpage
-
-    \input{sections/0_abstract.tex}
-    \newpage
-
-    \input{sections/1_preface.tex}
-    \newpage
+    \include{sections/Frontpage.tex}
+    \include{sections/0_abstract.tex}
+    \include{sections/1_preface.tex}
 
     \setcounter{page}{1}
     \pagenumbering{roman}
@@ -77,23 +72,12 @@
 
     \setcounter{page}{1}
     \pagenumbering{arabic}
-    \input{sections/2_introduction.tex}
-    \newpage
-
-    \input{sections/3_theory.tex}
-    \newpage
-
-    \input{sections/4_methods.tex}
-    \newpage
-
-    \input{sections/5_results.tex}
-    \newpage
-
-    \input{sections/6_discussion.tex}
-    \newpage
-
-    \input{sections/7_conclusion.tex}
-    \newpage
+    \include{sections/2_introduction.tex}
+    \include{sections/3_theory.tex}
+    \include{sections/4_methods.tex}
+    \include{sections/5_results.tex}
+    \include{sections/6_discussion.tex}
+    \include{sections/7_conclusion.tex}
 
     \listoffigures
     \newpage
@@ -101,9 +85,8 @@
     \listoftables
     \newpage
 
-    \input{sections/software_versions.tex}
-    \input{sections/appendix.tex}
-    \newpage
+    \include{sections/software_versions.tex}
+    \include{sections/appendix.tex}
 
     \printbibliography
 \end{document}
