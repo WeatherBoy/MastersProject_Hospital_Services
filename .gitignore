@@ -13,7 +13,7 @@ TODOs/
 Notes/Personal
 
 # LaTeX-specific ignores (scoped to the report directory)
-report/*.aux
+report/**/*.aux
 report/*.log
 report/*.toc
 report/*.out
