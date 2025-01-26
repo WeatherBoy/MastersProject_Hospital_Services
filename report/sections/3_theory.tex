@@ -2,71 +2,7 @@
 Of the three main tasks explored in this thesis, developing a \textit{scheduling assistance tool}, which we henceforth will refer to as '\textit{the scheduling task}', required the most mathematical approach. \textit{The scheduling task} is a case of the \textbf{Generalised Assignment Problem}\cite{Wiki-general-assignment-prob}, which can ultimately be expressed as a \textbf{Linear Program}\cite{Wiki-linear-programming}, specifically, a \textbf{Binary Integer Program}.
 The following sections explore different theoretical approaches that might yield a satisfactory solution to such a \textbf{Generalised Assignment Problem}.
 
-\subsection{Genetic Algorithms}
-A Genetic Algorithm (GA), as popularised by John Holland\cite{Genetic-Algorithm-original} in 1975\footnote{Though later revised in 1992.}, is a metaheuristic within primarily \textbf{Computer Science} and \textbf{Operations Research} (OR). Inspired by evolutionary theory's natural selection, a GA is typically employed for \textbf{Optimisation} and \textbf{Search problems}.
-\\
-In short, inspired by natural selection, a GA scheme initiates, at random, a pool of \textit{candidate solutions} called the \textit{initial generation}. It then evaluates the solutions with respect to the given domain and assigns each of them a \textit{fitness score}. Finally, utilising some selection criteria, the GA scheme pairs the solutions with the best fitness, creating a new set of candidate solutions called the \textit{next generation}. However, in order to avoid converging towards some \textit{local optimum}, a bit of stochasticity (\textit{mutation}) is introduced in each generation. The GA scheme then iterates this entire process, stopping when reaching some criteria, either time or a threshold on the fitness score.
-\\
-\\
-A Genetic Algorithm, boiled down to its base parts, consists of an objective function $f : \mathbb{R}^N \rightarrow [0,1]$, for some $N \in \mathbb{N}$, a \textit{selection criteria}, and a population of \textit{phenotypes}, the candidate solutions - each with its own genotype. A population of phenotypes is formally called the $i$'th generation, where $i$ adheres to the current iteration of the GA scheme. The number of phenotypes in a generation is usually chosen as a power of two, $2^N$, as this can significantly impact computer performance. The phenotypes and genotypes are domain-dependent; however, they are frequently represented as N-dimensional vectors. The genotypes will often be the actions or set of rules from which the phenotype can be derived. However, this is also largely dependent on the domain. For some problems, the genotype and phenotype are simply identical.
-\\
-Finally, the objective function $f$ and selection criteria are largely the crux of the GA scheme. While the phenotypes and their respective genotypes are essentially bound to the domain, the objective function and selection criteria can be modelled for better results. The objective function and selection criteria could be considered the Genetic Algorithm's counterpart to Machine Learning's (ML) hyperparameters.
-\\
-The objective function's sole criteria is that it evaluates to a scalar, usually standardised to the real interval $[0,1]$, hence $f$ doesn't need to be differentiable nor even continuous. This feature can allow for some creative objective functions specifically suited to the given problem.
-\\
-The selection criteria is how we pick the \textit{parents} for the next generations. The parents, a set of two phenotypes, always produce two \textit{children} to keep the population size constant throughout the iterations of the GA scheme. However, picking the parents can be a science in itself. Detailed below are some different algorithms used to perform the selection step.
-
-\subsubsection{Random Selection}
-Like its name gives way to, Random Selection simply chooses a parent uniformly at random from the entire set of $M$ phenotypes. A big plus for Random Selection is that it finds a candidate in $O(1)$ time without preprocessing. However, it is not uncommon for Random Selection to converge slowly, as it does not take into account the fitness scores. 
-
-\subsubsection{Fitness Proportionate Selection}
-Fitness Proportionate Selection, or as it is more often and very aptly called Roulette Wheel Selection, selects a phenotype weighted by its fitness. Mathematically, we can express it as the probability $p_i$ of selecting the $i$th phenotype being
-\begin{equation*}
-    p_i = \frac{f_i}{\sum_{j = 1}^M f_j},
-\end{equation*}
-where $f_i$ is the fitness score of the $i$th phenotype.
-\\
-For the implementation, one would typically normalise the fitness scores and then create $M$ bins of cumulative ranges, each corresponding to their respective fitness scores. Then, "spinning the boule" would equate to generating a \textit{floating point} value in the range $[0,1]$ uniformly at random and performing a binary search for finding the corresponding bin. This implementation would take $O(M)$ preprocessing and $O(\log M )$ at runtime. 
-\\
-Despite its slightly inferior runtime, Fitness Proportionate Selection usually converges faster than Random Selection, as by considering the fitness scores, it will likely continually select better parents. In addition, while the probability of selecting a phenotype with a poor fitness score is lower, it isn't zero, thus allowing for a more diverse search space exploration.   
-
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}[b]{0.8\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{figures/Genetic_Algorithms/Roulette_Selection.png}
-        \subcaption{Five phenotypes (A, B, C, D and E) with fitness scores $0.1$, $0.2$, $0.05$, $0.3$, $0.4$.}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.8\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{figures/Genetic_Algorithms/Roulette_Selection2.png}
-        \subcaption{Five phenotypes (A, B, C, D and E) with fitness scores $0.1$, $0.2$, $0.05$, $0.3$, $0.4$. Scaled to their fitness, with a boule for the sake of example.}
-    \end{subfigure}
-    
-    \caption{Roulette Wheel Selection - Visualisation}
-    \small
-    \raggedright
-    An attempt at visualising the idea behind Roulette Wheel Selection. First the five phenotypes, with their given fitness scores, then below, scaled to show the increased probability of the boule stopping on a phenotype with a higher fitness score. (Despite the roulette wheel here being mapped to 1D, the example still stands. As it prooved far too difficult to draw a 2D roulette wheel, we must rely on the reader's imagination.)
-    \label{fig:GA_Roulette_Selection}
-\end{figure}
-
-\subsubsection{Tournament Selection}
-Tournament Selection selects a subset of size\footnote{As with $M$, it is preferable to pick $k$ as a power of two.} $1 \leq k \leq M$, uniformly at random of the generation and elects the phenotype with the greatest fitness score, the \textit{best candidate}, within the subset as the winner (parent). Choosing $k = 1 $ is equivalent to Random Selection, while $k = M$ would only ever propagate the best candidate.
-\\
-Tournament Selection's runtime is entirely dependent on the size of the tournament, $O(k)$\footnote{Although we might sort our fitness scores in $O(M \cdot \log M)$ preprocessing time and retain the ordering when sampling the $k$ tournament-contestants, we still have to generate $k$ indices and, thus, selecting the best candidate wouldn't be reduced to constant runtime.}. Hence, it offers a nice balance between Random and Fitness Proportionate selection, with a possibly fast runtime, while still generating a diverse pool of new phenotypes.
-\\
-A variant\cite{Wiki-tournament-selection} of Tournament Selection introduces a probability $p$ of electing the best candidate as the winner. Inversely, with probability $1-p$, a new tournament is held, where the best candidate is removed, leaving $k-1$ phenotypes, where once again, the best candidate of the remaining phenotypes is selected with probability $p$, and with probability $1-p$, we repeat the process. This variant can, in turn, be considered a Geometric Distribution, with each tournament being a Bernoulli Trial with probability of success $p$. Due to the properties\cite{Wiki-geometric-distribution} of a Geometric Distribution, we can infer that the probability of picking the $k$th best candidate is
-\begin{equation*}
-    P\left[ X = k \right] = (1-p)^{k-1} \cdot p.
-\end{equation*}
-For this variant of Tournament Selection, we still have to draw our $k$ contestants. However, we can simulate the (possibly) repeat tournaments by simply sampling a number $g$ from the geometric distribution and then electing the $g$th best candidate amongst the $k$ tournament contestants. As such, the runtime of the variant on Tournament Selection remains $O(k)$.
-\\
-Recalling that only a single pair of children can be derived from a pair of parents, for a generation size of $M$, the GA scheme requires exactly $M$ parents to produce the next generation. Since Random, Fitness Proportionate and Tournament Selection only produce one parent per run; it would require $M$ runs between every generation. In order to avoid this computational bottleneck, one may opt for a selection algorithm with a runtime independent of the generation size, such as Truncation Selection.
-
-\subsubsection{Truncation Selection}
-Truncation Selection\cite{Wiki-truncation-selection}, as utilised in Mühlenbein \& Schlierkamp-Voosen's\cite{Truncation-Selection-Breeder-Algorithm} Breeder Genetic Algorithm\footnote{Whose explanation is beyond the intent of this report.}, is inspired by and named after a standard animal and plant breeding method. Truncation Selection is quite simple: it selects the top $T\%$ of fitness scores among phenotypes and then mates these until sufficient children have been produced.
-\\
-A variant of Truncation Selection propagates the best candidate to the next generation. This variant does impose a slight hiccup, though. As previously mentioned, for a GA scheme it is desirable to keep $M$ as a power of two, and parents always produce children in tuplets. However, this can be alleviated twofold, as will be clarified in [SECTION]Mutation; one could actually withhold a single child, thereby again reaching an even population size. A more straightforward solution could be simply propagating the top two candidates to the next generation.
-\\
-As with Random Selection, Truncation Selection picks its candidates in $O(1)$ time, and to be even more exact, for $T \in [0:1]$, it picks all the parents for the next generation in $O(T \cdot M)$ \footnote{Although, for the purpose of Truncation Selection $T$ would be a coefficient for $M$ and in asymptotic notation the runtime remains as $O(M)$.}.
+\input{sections/theory/Genetic_Algorithms.tex}
+\input{sections/theory/Operations_research.tex}
+\input{sections/theory/Coding_theory.tex}
 
