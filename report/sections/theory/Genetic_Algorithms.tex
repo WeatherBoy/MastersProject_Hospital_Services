@@ -28,7 +28,7 @@ Despite its slightly inferior runtime, Fitness Proportionate Selection usually c
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.8\textwidth}
+    \begin{subfigure}[t]{0.8\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/Genetic_Algorithms/Roulette_Selection.png}
         \subcaption{Five phenotypes (A, B, C, D and E) with fitness scores $0.1$, $0.2$, $0.05$, $0.3$, $0.4$.}
@@ -67,8 +67,9 @@ A variant of Truncation Selection propagates the best candidate to the next gene
 As with Random Selection, Truncation Selection picks its candidates in $O(1)$ time, and to be even more exact, for $T \in [0:1]$, it picks all the parents for the next generation in $O(T \cdot M)$ \footnote{Although, for the purpose of Truncation Selection $T$ would be a coefficient for $M$ and in asymptotic notation the runtime remains as $O(M)$.}.
 
 \subsubsection{Rank Selection}
-Unlike the aforementioned selection algorithms, Rank Selection isn't a selection scheme but rather a mapping. Rank Selection serves two main purposes. First, one could imagine a problem domain wherein it either isn't feasible or doesn't make sense to score every phenotype, but instead, we are only able to rank all of them against each other. Second, as argued by Whitley, Darrell\cite{Rank-Selection-Usefullness} ranking aims to avoid premature convergence, where a few initially highly fit phenotypes may dominate the population early on.
+Unlike the aforementioned selection algorithms, Rank Selection isn't a selection scheme but rather a mapping. Rank Selection serves two main purposes. First, one could imagine a problem domain wherein it either isn't feasible or doesn't make sense to score every phenotype, but instead, we are only able to rank all of them against each other. Second, as argued by Whitley, Darrell\cite{Rank-Selection-Usefullness} ranking aims to avoid premature convergence, as illustrated by \autoref{fig:GA_Rank_Selection}, where a few initially highly fit phenotypes may dominate the population early on.
 \\
+Rank Selection maps elements from a finite set of rankings $\{1, 2, 3, \hdots, M\}$ to $\mathbb{R}$, whereafter the rankings can be treated as fitness scores, and a selection algorithm can be utilised. Conversely, to achieve the second aim of Rank Selection, the fitness scores would typically be converted to ranks (integers) beforehand.
 
 \begin{figure}[H]
     \centering
@@ -76,8 +77,47 @@ Unlike the aforementioned selection algorithms, Rank Selection isn't a selection
     \caption{Rank Selection - Dilution of early dominant phenotypes}
     \small
     \raggedright
-    This illustration aims to show how Rank selection can dilute the early dominant phenotypes. Here \textit{Chromosomes} are synonymous with what we have otherwise referred to as genotypes. Although this illustration frequently appears throughout the genetic algorithm literature, it proved challenging to determine its origin. We suspect it might have been published first by Muhamad Azree Bin Mat Said\cite{Rank-Selection-Illustration-Origin}. 
+    This illustration aims to show how Rank selection can dilute the early dominant phenotypes. Here \textit{Chromosomes} are synonymous with what we have otherwise referred to as genotypes. (Although this illustration frequently appears throughout the genetic algorithm literature, it proved challenging to determine its origin. We suspect it might have been published first by Muhamad Azree Bin Mat Said\cite{Rank-Selection-Illustration-Origin}.) 
     \label{fig:GA_Rank_Selection}
+\end{figure}
+
+\paragraph{Naive Rank Selection} assigns\footnote{We found it unclear whether this specific variant of Rank Selection has a formal name. As such, we have dubbed it Naive Rank Selection.} fitness to a rank proportional to the sum of all ranks. It is formally expressed as
+\begin{equation*}
+    f_i = \frac{r_i}{\sum_{j = 1}^M r_i},
+\end{equation*}
+where $r_i$ is the rank of the $i$th phenotype. This mapping is a fast and straightforward approach to diluting greater ranks, which might have held a high fitness score compared to the other ranks while still emphasising larger ones.
+
+\paragraph{Linear Rank Selection} assigns fitness to a rank linearly. It introduces a kind of temperature parameter called Selection Pressure, $sp \in [1,2]$, emphasising how much priority a greater rank has. It is formally expressed as 
+\begin{equation*}
+    f_i = 2 - sp + 2 \cdot (sp - 1) \cdot \frac{r_i - 1}{M - 1}, \qquad \text{where} \quad 1 \leq sp \leq 2.
+\end{equation*}
+
+\paragraph{Exponential Rank Selection} assigns, quite intuitively, fitness to a rank exponentially. It is formally expressed as
+\begin{equation*}
+    f_i = \frac{w^{M - r_i}}{\sum_{j = 1}^M w^{j}}, \qquad \text{where} \quad 0 \leq w \leq 1.
+\end{equation*}
+The $w$ parameter is called Weight and, as for Linear Rank Selection's Selection Pressure, it determines the importance of the greater ranks. However, the Weight parameter is inverted, as a greater weight will emphasise the lower ranks.
+\\
+The effect of varying the Selection Pressure in Linear Rank Selection and the Weight in Exponential Rank Selection is visualised in \autoref{fig:GA_Rank_Selection_Visualisation}.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Genetic_Algorithms/linear_rank_selection_selection_pressure_effect.png}
+        \subcaption{The effect of Linear Rank Selection with varying Selection Pressure.}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Genetic_Algorithms/exponential_rank_selection_weight_effect.png}
+        \subcaption{The effect of Exponential Rank Selection with varying Weight.}
+    \end{subfigure}
+
+    \caption{Rank Selection - Visualisation}
+    \small
+    \raggedright
+    The effect of varying the Selection Pressure in Linear Rank Selection and the Weight in Exponential Rank Selection. Both methods are used on the rankings $\{1, 2, \hdots , 10\}$. 
+    \label{fig:GA_Rank_Selection_Visualisation}
 \end{figure}
 
 \subsubsection{Crossover}\label{subsubsec:Crossover}
