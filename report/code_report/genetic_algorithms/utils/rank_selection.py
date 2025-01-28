@@ -22,11 +22,11 @@ def heatmap_rank_selection(
 
     match rank_selection.lower():
         case "linear":
-            y_tick_labels, y_label, title, file_name, fitness_matrix = handle_linear_rank_case(fitness_scores, selection_pressures)
+            y_tick_labels, y_label, file_name, fitness_matrix = handle_linear_rank_case(fitness_scores, selection_pressures)
             save_path += file_name
 
         case "exponential":
-            y_tick_labels, y_label, title, file_name, fitness_matrix = handle_exponential_rank_case(fitness_scores, weights)
+            y_tick_labels, y_label, file_name, fitness_matrix = handle_exponential_rank_case(fitness_scores, weights)
             save_path += file_name
 
         case _:
@@ -39,7 +39,6 @@ def heatmap_rank_selection(
     plt.ylabel(y_label)
     plt.xticks(ticks=range(n), labels=range(1, n + 1))  # Show ranks from 1 to 10
     plt.yticks(ticks=range(n), labels=y_tick_labels)
-    plt.title(title)
     plt.savefig(save_path, bbox_inches="tight", dpi=dpi)
     plt.close()
 
@@ -47,10 +46,10 @@ def heatmap_rank_selection(
         print(f"Heatmap saved at {save_path}")
 
 
-def handle_linear_rank_case(fitness_scores: list[float], selection_pressures: np.ndarray = None) -> tuple[list[str], str, str, str, np.ndarray]:
+def handle_linear_rank_case(fitness_scores: list[float], selection_pressures: np.ndarray = None) -> tuple[list[str], str, str, np.ndarray]:
     """
     Handles the linear rank selection case and returns the required values for plotting the heatmap.
-    :return: y_tick_labels, y_label, title, file_name, fitness_matrix
+    :return: y_tick_labels, y_label, file_name, fitness_matrix
     """
     n = len(fitness_scores)
     if selection_pressures is None:
@@ -59,18 +58,17 @@ def handle_linear_rank_case(fitness_scores: list[float], selection_pressures: np
 
     y_tick_labels = [f"{sp:.2f}" for sp in selection_pressures]
     y_label = "Selection Pressure (sp)"
-    title = "Effect of Linear Rank Selection on Fitness Scores"
     file_name = "linear_rank_selection_selection_pressure_effect.png"
 
     fitness_matrix = np.array([linear_rank_selection(fitness_scores, sp) for sp in selection_pressures])
 
-    return y_tick_labels, y_label, title, file_name, fitness_matrix
+    return y_tick_labels, y_label, file_name, fitness_matrix
 
 
-def handle_exponential_rank_case(fitness_scores: list[float], weights: np.ndarray = None) -> tuple[list[str], str, str, str, np.ndarray]:
+def handle_exponential_rank_case(fitness_scores: list[float], weights: np.ndarray = None) -> tuple[list[str], str, str, np.ndarray]:
     """
     Handles the exponential rank selection case and returns the required values for plotting the heatmap.
-    :return: y_tick_labels, y_label, title, file_name, fitness_matrix
+    :return: y_tick_labels, y_label, file_name, fitness_matrix
     """
     n = len(fitness_scores)
     if weights is None:
@@ -79,12 +77,11 @@ def handle_exponential_rank_case(fitness_scores: list[float], weights: np.ndarra
 
     y_tick_labels = [f"{w:.2f}" for w in weights]
     y_label = "Weight (w)"
-    title = "Effect of Exponential Rank Selection on Fitness Scores"
     file_name = "exponential_rank_selection_weight_effect.png"
 
     fitness_matrix = np.array([exponential_rank_selection(fitness_scores, w) for w in weights])
 
-    return y_tick_labels, y_label, title, file_name, fitness_matrix
+    return y_tick_labels, y_label, file_name, fitness_matrix
 
 
 def naive_rank_selection(fitness_scores: list[float]) -> list[float]:
