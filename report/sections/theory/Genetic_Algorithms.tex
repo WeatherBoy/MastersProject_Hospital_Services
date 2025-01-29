@@ -69,7 +69,7 @@ As with Random Selection, Truncation Selection picks its candidates in $O(1)$ ti
 \subsubsection{Rank Selection}
 Unlike the aforementioned selection algorithms, Rank Selection isn't a selection scheme but rather a mapping. Rank Selection serves two main purposes. First, one could imagine a problem domain wherein it either isn't feasible or doesn't make sense to score every phenotype, but instead, we are only able to rank all of them against each other. Second, as argued by Whitley, Darrell\cite{Rank-Selection-Usefullness} ranking aims to avoid premature convergence, as illustrated by \autoref{fig:GA_Rank_Selection}, where a few initially highly fit phenotypes may dominate the population early on.
 \\
-Rank Selection maps elements from a finite set of rankings $\{1, 2, 3, \hdots, M\}$ to $\mathbb{R}$, whereafter the rankings can be treated as fitness scores, and a selection algorithm can be utilised. Conversely, to achieve the second aim of Rank Selection, the fitness scores would typically be converted to ranks (integers) beforehand.
+Rank Selection maps elements from a finite set of rankings $\{1, 2, 3, \hdots, M\}$ to $\mathbb{R}$, whereafter the rankings can be treated as fitness scores, and a selection algorithm can be utilised. Conversely, to achieve this second aim of Rank Selection, the fitness scores would typically be converted to ranks (integers) beforehand.
 
 \begin{figure}[H]
     \centering
@@ -87,7 +87,7 @@ Rank Selection maps elements from a finite set of rankings $\{1, 2, 3, \hdots, M
 \end{equation*}
 where $r_i$ is the rank of the $i$th phenotype. This mapping is a fast and straightforward approach to diluting greater ranks, which might have held a high fitness score compared to the other ranks while still emphasising larger ones.
 
-\paragraph{Linear Rank Selection} assigns fitness to a rank linearly. It introduces a kind of temperature parameter called Selection Pressure, $sp \in [1,2]$, emphasising how much priority a greater rank has. It is formally expressed as 
+\paragraph{Linear Rank Selection} assigns fitness to a rank linearly. It introduces a kind of temperature parameter called Selection Pressure, $sp$, emphasising how much priority a greater rank has. It is formally expressed as 
 \begin{equation*}
     f_i = 2 - sp + 2 \cdot (sp - 1) \cdot \frac{r_i - 1}{M - 1}, \qquad \text{where} \quad 1 \leq sp \leq 2.
 \end{equation*}
@@ -113,13 +113,49 @@ The effect of varying the Selection Pressure in Linear Rank Selection and the We
         \subcaption{The effect of Exponential Rank Selection with varying Weight.}
     \end{subfigure}
 
-    \caption{Rank Selection - Visualisation}
+    \caption{Rank Selection - Exponential and Linear Rank Selection}
     \small
     \raggedright
-    The effect of varying the Selection Pressure in Linear Rank Selection and the Weight in Exponential Rank Selection. Both methods are used on the rankings $\{1, 2, \hdots , 10\}$. 
+    The effect of varying the Selection Pressure in Linear Rank Selection and the Weight in Exponential Rank Selection. Both methods are used on the rankings $\{1, 2, \hdots , 10\}$. For Linear Rank Selection, the Selection Pressure is varied from $1$ to $2$, with $10$ equidistant values. For Exponential Rank Selection, the Weight is varied from $0$ to $1$, also with $10$ equidistant values.
     \label{fig:GA_Rank_Selection_Visualisation}
 \end{figure}
 
 \subsubsection{Crossover}\label{subsubsec:Crossover}
+After selecting a suitable pair of candidate parents, the GA scheme has to utilise these in order to produce the next generation. The process of generating children for the next generation is usually\footnote{Another alternative is cloning, also referred to as asexual reproduction, where a phenotype is propagated directly to the next generation.} achieved with crossover, which aims to mimic sexual reproduction from biology.
+\\
+Crossover works by splicing the parents' genotypes, thus creating a child that inherits traits from both parents. In the following, we will detail three standard crossover methods.
+
+\paragraph{Single-point Crossover} works by splitting the parent's genotypes at the same spot and then simply recombining them for the two permutations they allow. For a genotype of length $n$, an integer $s$ is picked uniformly at random from the set $\{1, 2, \hdots, n\}$ and the first child is made up of the bottom $n - s$ traits from its first parents and the $s$ traits from the second parents. Vice versa for the second child. This is best illustrated as can be seen from \autoref{fig:GA_Single_Point_Crossover}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/Genetic_Algorithms/Single_Point_Crossover.png}
+    \caption{Single-Point Crossover}
+    \small
+    \raggedright
+    \label{fig:GA_Single_Point_Crossover}
+\end{figure}
+This method nicely captures traits from both parents while still retaining most of the sequential information, which could arise from problems where neighbouring traits are strongly linked.
+
+\paragraph{Two-point Crossover} works exactly like Single-point Crossover, but two splits are made instead of one. This methods is illustrated in \autoref{fig:GA_Two_Point_Crossover}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/Genetic_Algorithms/Two_Point_Crossover.png}
+    \caption{Two-point Crossover}
+    \small
+    \raggedright
+    \label{fig:GA_Two_Point_Crossover}
+\end{figure}
+Two-point Crossover is slightly more aggressive than Single-point Crossover, as it can shuffle the traits around more. This method can be beneficial in problems where the order of the traits isn't as important.
+
+\paragraph{Uniform Crossover} works by iterating through the parent's genotypes and, with a probability $p$, swapping the traits. For nearly all\footnote{Cases wherein a varying probability or fixed $p \neq 0.5$ are well beyond the intent of this report and will usually be combined with much more sophisticated methods.} cases, the probability $p$ will be set to $0.5$. This method is illustrated in \autoref{fig:GA_Uniform_Crossover}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/Genetic_Algorithms/Uniform_Crossover.png}
+    \caption{Uniform Crossover}
+    \small
+    \raggedright
+    \label{fig:GA_Uniform_Crossover}
+\end{figure}
+Where Two-point Crossover is a tad more aggressive than One-point, Uniform Crossover is at the opposite end of the spectrum. As this method isn't very prone to retaining sequential information, it is more beneficial in problems where the order of the traits is largely irrelevant.
 
 \subsubsection{Mutation}
