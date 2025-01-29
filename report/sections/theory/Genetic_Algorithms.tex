@@ -159,3 +159,6 @@ Two-point Crossover is slightly more aggressive than Single-point Crossover, as 
 Where Two-point Crossover is a tad more aggressive than One-point, Uniform Crossover is at the opposite end of the spectrum. As this method isn't very prone to retaining sequential information, it is more beneficial in problems where the order of the traits is largely irrelevant.
 
 \subsubsection{Mutation}
+Mutation is the final step in the GA scheme. It tries to prohibit convergence towards a local optimum by introducing a bit of stochasticity into the population's genotypes.
+\\
+At a surface level, the procedure is eerily similar to Uniform Crossover. Mutation works by going through every trait in a genotype and "flipping a coin", where with probability $p_m$, this trait is mutated (i.e., changed). The probability of mutation,  $p_m$, is usually set relatively low. The mutation rate is domain-dependent, and it is often beneficial to experiment with different rates. The mutation rate can be set as a constant or varied throughout the iterations of the GA scheme. The latter is often referred to as adaptive mutation, and it can be beneficial in problems where the search space is complex and the GA is at risk of premature convergence.
