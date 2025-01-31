@@ -29,6 +29,7 @@ report/*.lot
 report/*.lof
 report/*.blg
 report/*.bbl
+report/*.bbl-SAVE-ERROR
 # Report-specific ignores
 report/figures/
 
