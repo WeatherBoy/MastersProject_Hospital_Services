@@ -1,13 +1,14 @@
 \subsection{Constraint Programming}
-Another approach for solving the Generalised Assignment Problem, which the \textit{scheduling task} poses, is Constraint Programming. However, in order to arrive at Constraint Programming\footnote{Constraint Programming is a somewhat odd nomenclature, as \textit{programming} here refers to 'the process of scheduling' rather than in the sense of a computer programming language.}, we will first argue, without a complete theoretical deep dive, that the Generalised Assignment Problem can be reformulated into the binary case of an integer problem. A binary integer problem takes the form\cite{Integer-Programming-Book} 
+Another approach for solving the Generalised Assignment Problem, which the \textit{scheduling task} poses, is Constraint Programming. However, in order to arrive at Constraint Programming\footnote{Constraint Programming is a somewhat odd nomenclature, as \textit{programming} here refers to 'the process of scheduling' rather than in the sense of a computer programming language.}, we will first argue, without a complete theoretical deep dive, that the Generalised Assignment Problem can be reformulated into the binary case of an integer linear problem (ILP). A binary ILP takes the form\cite{Integer-Programming-Book} 
 \begin{align*}
-    \text{max} &\sum_{i = 1}^m \sum_{j = 1}^n c_{ij} \cdot x_{ij}
+    \text{max} \quad &\sum_{i = 1}^m \sum_{j = 1}^n c_{ij} \cdot x_{ij}
     \\
-    \text{subject to} &\sum_{j = 1}^n a_{ij} \cdot x_{ij} \leq b \qquad &\text{for} \quad i = 1, \hdots, m
+    \text{subject to} \quad &\sum_{j = 1}^n a_{ij} \cdot x_{ij} \leq b \qquad &\text{for} \quad i = 1, \hdots, m
     \\
     &\sum_{i = 1}^m x_{ij} \leq 1 \qquad &\text{for} \quad j = 1, \hdots, n
     \\
-    &x \in \{0, 1\}^{m \times n}.
+    \text{for} \quad &x \in \{0, 1\}^{m \times n},
 \end{align*}
-This formulation gives way to a Boolean Satisfiability Problem (BSAT), a subfield of Constraint Programming, which we can attempt to solve with a SAT solver. In the following sections, we will elaborate on different algorithms employed by SAT solvers.
+where $x$ is the binary decision variable. This formulation gives way to a Boolean Satisfiability Problem (BSAT), a subfield of Constraint Programming, which we can attempt to solve with a \textit{satisfiability} (SAT) solver. In the following sections, we will elaborate on different algorithms employed by SAT solvers.
+
 
