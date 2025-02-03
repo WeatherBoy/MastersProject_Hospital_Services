@@ -1,1 +1,16 @@
 \section{Results}
+\textit{The scheduling task} is a case of the \textbf{Generalised Assignment Problem}\cite{Wiki-general-assignment-prob}, which can ultimately be expressed as a \textbf{Linear Program}\cite{Wiki-linear-programming}, specifically, a \textbf{Binary Integer Program}.
+
+However, in order to arrive at CP, we will first argue, without a complete theoretical deep dive, that the Generalised Assignment Problem can be reformulated into the binary case of an integer linear problem (ILP). A binary ILP takes the form\cite{Integer-Programming-Book} 
+\begin{align*}
+    \text{max} \quad &\sum_{i = 1}^m \sum_{j = 1}^n c_{ij} \cdot x_{ij}
+    \\
+    \text{subject to} \quad &\sum_{j = 1}^n a_{ij} \cdot x_{ij} \leq b \qquad &\text{for} \quad i = 1, \hdots, m
+    \\
+    &\sum_{i = 1}^m x_{ij} \leq 1 \qquad &\text{for} \quad j = 1, \hdots, n
+    \\
+    \text{for} \quad &x \in \{0, 1\}^{m \times n},
+\end{align*}
+where $x$ is the binary decision variable.
+\\
+This formulation gives way to a Boolean Satisfiability Problem (BSAT), a subfield of CP, which we can attempt to solve with a \textit{satisfiability} (SAT) solver.
