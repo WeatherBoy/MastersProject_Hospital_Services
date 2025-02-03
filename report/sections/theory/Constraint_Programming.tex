@@ -1,17 +1,12 @@
 \subsection{Constraint Programming}
-Another approach for solving the Generalised Assignment Problem, which the \textit{scheduling task} poses, is Constraint Programming (CP)\footnote{Constraint Programming is a somewhat odd nomenclature, as \textit{programming} here refers to 'the process of scheduling' rather than in the sense of a computer programming language.}. CP is concerned with problems that require a feasible solution. Often, this involves searching for a "needle within a haystack", as CP aims to arrive at a solution satisfying a complex set of constraints. As such, CP isn't inherently an optimisation technique and won't necessarily make use of an objective function. 
+Another approach for solving the \textit{scheduling task} is Constraint Programming (CP)\footnote{Constraint Programming is a somewhat odd nomenclature, as \textit{programming} here refers to 'the process of scheduling' rather than in the sense of a computer programming language.}. CP is concerned with problems that require a feasible solution. Often, this involves searching for a "needle within a haystack", as CP aims to arrive at a solution satisfying a complex set of constraints. As such, contrary to the GA scheme, CP isn't inherently an optimisation technique and won't even necessarily use an objective function.
 \\
-However, in order to arrive at CP, we will first argue, without a complete theoretical deep dive, that the Generalised Assignment Problem can be reformulated into the binary case of an integer linear problem (ILP). A binary ILP takes the form\cite{Integer-Programming-Book} 
-\begin{align*}
-    \text{max} \quad &\sum_{i = 1}^m \sum_{j = 1}^n c_{ij} \cdot x_{ij}
-    \\
-    \text{subject to} \quad &\sum_{j = 1}^n a_{ij} \cdot x_{ij} \leq b \qquad &\text{for} \quad i = 1, \hdots, m
-    \\
-    &\sum_{i = 1}^m x_{ij} \leq 1 \qquad &\text{for} \quad j = 1, \hdots, n
-    \\
-    \text{for} \quad &x \in \{0, 1\}^{m \times n},
-\end{align*}
-where $x$ is the binary decision variable. This formulation gives way to a Boolean Satisfiability Problem (BSAT), a subfield of CP, which we can attempt to solve with a \textit{satisfiability} (SAT) solver. In the following sections, we will elaborate on different algorithms employed by SAT solvers.
+As we will argue later, the domain posed by the \textit{scheduling task} gives way to a subfield of CP called satisfiability (SAT). Satisfiability concerns checking whether a boolean formula holds (is satisfiable) under some truth assignment to its variables. SAT solvers are explicitly made for solving such problems, so in the following sections, we will elaborate on different algorithms employed by such solvers.
+
+\subsubsection{Conjunctive Normal Form}
+However, although not inherent to boolean satisfiability, most SAT solvers work on boolean formulas in Conjunctive Normal Form (CNF). Therefore, we will first introduce CNF.
+
+\subsubsection{DPLL}
 
 
 
