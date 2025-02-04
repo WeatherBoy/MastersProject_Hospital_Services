@@ -7,11 +7,11 @@ As we will argue later, the domain posed by the \textit{scheduling task} gives w
 However, although not inherent to boolean satisfiability, most SAT solvers work on boolean formulas in Conjunctive Normal Form (CNF). Therefore, we will first introduce CNF.
 \\
 From Ben-Ari (chapter 4)\cite{Math-Logic-for-CompSci} we have the following definition:
-\begin{definition}
+\begin{definition}\label{def:CNF}
     A formula is in conjunctive normal form (CNF) if and only if it is a conjunction of disjunctions of literals.
 \end{definition}
-Here, conjunction and disjunction refer to the logical connectives $\wedge$ and $\vee$, respectively. While a formula and a literal, as given by Ben-Ari (chapter 2)\cite{Math-Logic-for-CompSci}, can be formally defined as:
-\begin{definition}
+Here, conjunction and disjunction refer to the logical connectives (boolean operators) $\wedge$ and $\vee$, respectively. While a formula and a literal, as given by Ben-Ari (chapter 2)\cite{Math-Logic-for-CompSci}, can be formally defined as:
+\begin{definition}\label{def:propositional_formulas}
     A formula in propositional logic is a tree defined recursively:
     \begin{itemize}
         \item A formula is a leaf labeled by an atomic proposition (often shortened
@@ -20,7 +20,7 @@ Here, conjunction and disjunction refer to the logical connectives $\wedge$ and 
         \item A formula is a node labeled by one of the boolean operators with two children both of which are formulas.
     \end{itemize}
 \end{definition}
-\begin{definition}
+\begin{definition}\label{def:propositional_atoms}
     A literal is an atom or the negation of an atom. An atom is a positive
     literal and the negation of an atom is a negative literal. For any atom $p$, $\{p,\neg p\}$ is a complementary pair of literals.
     \\
@@ -29,11 +29,47 @@ Here, conjunction and disjunction refer to the logical connectives $\wedge$ and 
 We will now briefly discuss how to arrive at CNF.
 
 \paragraph{Propositional logic to Conjunctive Normal Form}
-Ben-Ari (chapter 4) gives us the following theorem:
+Ben-Ari (chapter 4)\cite{Math-Logic-for-CompSci} gives us the following theorem:
 \begin{theorem}
     Every formula in propositional logic can be transformed into an equivalent formula in CNF.
 \end{theorem}
-Which is accompanied by a 
+Which is accompanied by a somewhat unintuitive and seemingly inadequate proof; however, it can be boiled down to the following: using \textbf{def} \ref{def:propositional_formulas}, if we can convert every formula of another boolean operator into a logically equivalent formula using only conjunctions and disjunctions, then it is simply a question of propagating negations inwards and whether we can redistribute the conjunctions and disjunctions. We can understand this as: It is necessary but not satisfactory that all boolean operators are either disjunctions or conjunctions. This is an example of a formula, for $A$, $B$ being atoms as per \textbf{def} \ref{def:propositional_atoms}, of only conjunctions and disjunctions which aren't in CNF
+\begin{equation*}
+    A \vee (B \wedge C).
+\end{equation*}
+And as per the final part of definition 2.1, the negation boolean operator must apply solely to an atom, making it literal. Hence, it is necessary to propagate negations inwards (to the atomic level).
+\begin{enumerate}
+    \item Converting all boolean operators to disjunctions and conjunctions by logical equivalent\footnote{We will let the reader verify for themselves, that these are in fact equivalent.} formulas:
+    \begin{align*}
+        A \leftrightarrow B &\equiv (A \rightarrow  B) \wedge (B \rightarrow A) \qquad &\text{biimplication},
+        \\
+        A \oplus B &\equiv \neg (A \rightarrow B) \vee \neg (B \rightarrow A) \qquad &\text{exclusive or/ logical XOR},
+        \\
+        A \rightarrow B &\equiv \neg A \vee B \qquad &\text{implication},
+        \\
+        A \uparrow B &\equiv \neg (A \wedge B) \qquad &\text{non-conjunction/ logical NAND},
+        \\
+        A \downarrow B &\equiv \neg (A \vee B) \qquad &\text{non-disjunction/ logical NOR}.
+    \end{align*}
+    \item Propagate negations inward with De Morgan's laws\cite{A-Concise-Introduction-to-Logic,Introduction-to-logic,Math-Logic-for-CompSci}:
+    \begin{align*}
+        \neg (A \wedge B) &\equiv (\neg A \vee \neg B),
+        \\
+        \neg (A \vee B) &\equiv (\neg A \wedge \neg B).
+    \end{align*}
+    \item Remove any redundant double negations, which may arise from the previous two steps:
+    \begin{equation*}
+        \neg \neg A \equiv A.
+    \end{equation*}
+    \item Finally, we can make the formula a conjunction of disjunctions by utilising the distributive property of boolean operators:
+    \begin{align*}
+        A \vee (B \wedge C) &\equiv (A \vee B) \wedge (A \vee C),
+        \\
+        (A \wedge B) \vee &\equiv (A \vee C) \wedge (B \vee C).
+    \end{align*}
+\end{enumerate}
+
+
 
 
 
