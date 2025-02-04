@@ -14,6 +14,7 @@
 % ## Math ##
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage{amsthm}
 \usepackage{cancel} % <-- the big slash over equations
 \usepackage{breqn}  % <-- Automatic wrapping of long equations (good stuff)
 
@@ -24,6 +25,7 @@
 \usepackage{wrapfig} % <-- In case you want to wrap text around figures (can look quite pro)
 \usepackage{arydshln}   % <-- For horizontal, vertical, etc. lines (for tables and matrices)
 \usepackage{subcaption} % <-- For subfigures
+\usepackage{mdframed} % <-- For frames around theorems and definitions
 
 
 
@@ -49,6 +51,10 @@
 \newcommand{\github}[1]{%
    \href{#1}{\faGithubSquare}%
 }
+
+% For math definitions
+\newmdtheoremenv{definition}{Definition}[section]
+\newmdtheoremenv{theorem}{Theorem}[section]
 
 % Formalia goes here:
 \newcommand\course{Master's Thesis} %<--- Kursus
