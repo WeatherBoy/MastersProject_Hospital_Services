@@ -5,6 +5,37 @@ As we will argue later, the domain posed by the \textit{scheduling task} gives w
 
 \subsubsection{Conjunctive Normal Form}
 However, although not inherent to boolean satisfiability, most SAT solvers work on boolean formulas in Conjunctive Normal Form (CNF). Therefore, we will first introduce CNF.
+\\
+From Ben-Ari (chapter 4)\cite{Math-Logic-for-CompSci} we have the following definition:
+\begin{definition}
+    A formula is in conjunctive normal form (CNF) if and only if it is a conjunction of disjunctions of literals.
+\end{definition}
+Here, conjunction and disjunction refer to the logical connectives $\wedge$ and $\vee$, respectively. While a formula and a literal, as given by Ben-Ari (chapter 2)\cite{Math-Logic-for-CompSci}, can be formally defined as:
+\begin{definition}
+    A formula in propositional logic is a tree defined recursively:
+    \begin{itemize}
+        \item A formula is a leaf labeled by an atomic proposition (often shortened
+        to atoms).
+        \item A formula is a node labeled by $\neg$ with a single child that is a formula.
+        \item A formula is a node labeled by one of the boolean operators with two children both of which are formulas.
+    \end{itemize}
+\end{definition}
+\begin{definition}
+    A literal is an atom or the negation of an atom. An atom is a positive
+    literal and the negation of an atom is a negative literal. For any atom $p$, $\{p,\neg p\}$ is a complementary pair of literals.
+    \\
+    For any formula $A$, $\{A,\neg A\}$ is a complementary pair of formulas. $A$ is the complement of $\neg A$ and $\neg A$ is the complement of $A$.
+\end{definition}
+We will now briefly discuss how to arrive at CNF.
+
+\paragraph{Propositional logic to Conjunctive Normal Form}
+Ben-Ari (chapter 4) gives us the following theorem:
+\begin{theorem}
+    Every formula in propositional logic can be transformed into an equivalent formula in CNF.
+\end{theorem}
+Which is accompanied by a 
+
+
 
 \subsubsection{DPLL}
 
