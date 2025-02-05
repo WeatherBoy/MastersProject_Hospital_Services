@@ -3,7 +3,7 @@ Another approach for solving the \textit{scheduling task} is Constraint Programm
 \\
 As we will argue later, the domain posed by the \textit{scheduling task} gives way to a subfield of CP called satisfiability (SAT). Satisfiability concerns checking whether a boolean formula holds (is satisfiable) under some truth assignment to its variables. SAT solvers are explicitly made for solving such problems, so in the following sections, we will elaborate on different algorithms employed by such solvers.
 
-\subsubsection{Conjunctive Normal Form}
+\subsubsection{Conjunctive Normal Form}\label{sec:CNF}
 However, although not inherent to boolean satisfiability, most SAT solvers work on boolean formulas in Conjunctive Normal Form (CNF). Therefore, we will first introduce CNF.
 \\
 From Ben-Ari (chapter 4)\cite{Math-Logic-for-CompSci} we have the following definition:
@@ -65,15 +65,13 @@ And as per the final part of \textbf{def} \ref{def:CNF}, the negation boolean op
     \begin{align*}
         A \vee (B \wedge C) &\equiv (A \vee B) \wedge (A \vee C),
         \\
-        (A \wedge B) \vee &\equiv (A \vee C) \wedge (B \vee C).
+        (A \wedge B) \vee C &\equiv (A \vee C) \wedge (B \vee C).
     \end{align*}
 \end{enumerate}
 
 
-
-
-
 \subsubsection{DPLL}
+
 
 
 
