@@ -68,10 +68,38 @@ And as per the final part of \textbf{def} \ref{def:CNF}, the negation boolean op
         (A \wedge B) \vee C &\equiv (A \vee C) \wedge (B \vee C).
     \end{align*}
 \end{enumerate}
+In appendix \autoref{sec:CNF_conversion_Examp}, we give an example of CNF conversion, going from
+\begin{equation*}
+    \Big(
+        p_1 \leftrightarrow (
+            p_2 \vee \neg p_3
+        )
+    \Big) \wedge \Big(
+        p_5 \rightarrow (
+            p_1 \uparrow p_4
+        )
+    \Big) \wedge \Big(
+        p_4 \oplus p_2
+    \Big),
+\end{equation*}
+to
+\begin{equation*}
+    (
+        \neg p_1 \vee p_2 \vee \neg p_3
+    ) \wedge (
+        p_1 \vee \neg p_2 
+    ) \wedge (
+        p_1 \vee p_3
+    ) \wedge (
+        \neg p_5 \vee \neg p_1 \vee \neg p_4
+    ) \wedge (
+        p_2 \vee p_4
+    ) \wedge (
+        \neg p_2 \vee \neg p_4
+    ).
+\end{equation*}
 
 
 \subsubsection{DPLL}
-
-
 
 
