@@ -35,7 +35,7 @@ For easy reference, we will redeclare the logical equivalence rules from \autore
 \end{equation}
 Taking it step-by-step, first, we eliminate all boolean operators except for $\neg$, $\vee$ and $\wedge$.
 \\
-Using \autoref{eq:biimplication} on \autoref{eq:CNF_example1}:
+Using \autoref{eq:biimplication} on \autoref{eq:CNF_example1}
 \begin{equation}\label{eq:CNF_example2}
     \bigg(
         \Big(
@@ -55,7 +55,7 @@ Using \autoref{eq:biimplication} on \autoref{eq:CNF_example1}:
         p_4 \oplus p_2
     \Big).
 \end{equation}
-Using \autoref{eq:implication} on \autoref{eq:CNF_example2}:
+Using \autoref{eq:implication} on \autoref{eq:CNF_example2}
 \begin{equation}\label{eq:CNF_example3}
     \bigg(
         \Big(
@@ -75,7 +75,7 @@ Using \autoref{eq:implication} on \autoref{eq:CNF_example2}:
         p_4 \oplus p_2
     \Big).
 \end{equation}
-Using \autoref{eq:NAND} on on \autoref{eq:CNF_example3}:
+Using \autoref{eq:NAND} on on \autoref{eq:CNF_example3}
 \begin{equation}\label{eq:CNF_example4}
     \bigg(
         \Big(
@@ -95,7 +95,7 @@ Using \autoref{eq:NAND} on on \autoref{eq:CNF_example3}:
         p_4 \oplus p_2
     \Big).
 \end{equation}
-Using \autoref{eq:XOR} on on \autoref{eq:CNF_example4}:
+Using \autoref{eq:XOR} on on \autoref{eq:CNF_example4}
 \begin{equation}\label{eq:CNF_example5}
     \bigg(
         \Big(
@@ -119,7 +119,7 @@ Using \autoref{eq:XOR} on on \autoref{eq:CNF_example4}:
         )
     \Big).
 \end{equation}
-Using \autoref{eq:implication} on on \autoref{eq:CNF_example5}:
+Using \autoref{eq:implication} on on \autoref{eq:CNF_example5}
 \begin{equation}\label{eq:CNF_example6}
     \bigg(
         \Big(
@@ -143,7 +143,7 @@ Using \autoref{eq:implication} on on \autoref{eq:CNF_example5}:
         )
     \Big).
 \end{equation}
-Second, we propagate negations inward:
+Second, we propagate negations inward
 \begin{equation*}
     \bigg(
         \Big(
@@ -167,7 +167,7 @@ Second, we propagate negations inward:
         )
     \Big).
 \end{equation*}
-Third, we remove any redundant double negations:
+Third, we remove any redundant double negations
 \begin{equation}\label{eq:CNF_example7}
     \bigg(
         \Big(
@@ -191,7 +191,7 @@ Third, we remove any redundant double negations:
         )
     \Big).
 \end{equation}
-Next, we put \autoref{eq:CNF_example7} in CNF by utilising the distributive property of boolean operators:
+Next, we put \autoref{eq:CNF_example7} in CNF by utilising the distributive property of boolean operators
 \begin{gather*}
     \bigg(
         \Big(
@@ -255,30 +255,55 @@ Next, we put \autoref{eq:CNF_example7} in CNF by utilising the distributive prop
                 \neg p_2 \vee \neg p_4
             )
         \Big)
-    \bigg)
+    \bigg).
 \end{gather*}
-Finally, we can remove redundant parentheses and clauses, such as $p \vee \neg p$:
-\begin{gather*}
-    \Big(
-        (
-            \neg p_1 \vee p_2 \vee \neg p_3
-        ) \wedge (
-            p_1 \vee \neg p_2 
-        ) \wedge (
-            p_1 \vee p_3
-        ) 
-    \Big) \wedge (
+Finally, we can remove redundant parentheses
+\begin{equation*}
+    (
+        \neg p_1 \vee p_2 \vee \neg p_3
+    ) \wedge (
+        p_1 \vee \neg p_2 
+    ) \wedge (
+        p_1 \vee p_3
+    ) \wedge (
         \neg p_5 \vee \neg p_1 \vee \neg p_4
-    ) \wedge \Big(
-        (
-            p_2 \vee p_4
-        ) \wedge (
-            \neg p_2 \vee \neg p_4
-        )
-    \Big)
-    \\
-    \equiv
-    \\
+    ) \wedge (
+        p_2 \vee p_4
+    ) \wedge (
+        p_2 \vee \neg p_2
+    ) \wedge (
+        p_4 \vee \neg p_4
+    ) \wedge (
+        \neg p_2 \vee \neg p_4
+    )
+\end{equation*}
+Thus, we have put \autoref{eq:CNF_example1} into CNF.
+
+\subsubsection{Conjunctive Normal Form to Clausal Form}\label{sec:CNF_to_Clausal_Examp}
+Continuing from \autoref{sec:CNF_conversion_Examp}, we will now convert the CNF formula
+\begin{equation*}
+    (
+        \neg p_1 \vee p_2 \vee \neg p_3
+    ) \wedge (
+        p_1 \vee \neg p_2 
+    ) \wedge (
+        p_1 \vee p_3
+    ) \wedge (
+        \neg p_5 \vee \neg p_1 \vee \neg p_4
+    ) \wedge (
+        p_2 \vee p_4
+    ) \wedge (
+        p_2 \vee \neg p_2
+    ) \wedge (
+        p_4 \vee \neg p_4
+    ) \wedge (
+        \neg p_2 \vee \neg p_4
+    ),
+\end{equation*}
+into clausal form.
+\\
+We start by removing trivial clauses, such as $p \vee \neg p$
+\begin{equation*}
     (
         \neg p_1 \vee p_2 \vee \neg p_3
     ) \wedge (
@@ -291,9 +316,34 @@ Finally, we can remove redundant parentheses and clauses, such as $p \vee \neg p
         p_2 \vee p_4
     ) \wedge (
         \neg p_2 \vee \neg p_4
-    )
-\end{gather*}
-Thus, we have put \autoref{eq:CNF_example1} into CNF.
+    ).
+\end{equation*}
+Then, we replace each disjunction with the corresponding set and collect all the sets into a single set of clauses
+\begin{equation*}
+    \Big\{
+        \{
+            \neg p_1, p_2, \neg p_3
+        \},
+        \{
+            p_1, \neg p_2
+        \},
+        \{
+            p_1, p_3
+        \},
+        \{
+            \neg p_5, \neg p_1, \neg p_4
+        \},
+        \{
+            p_2, p_4
+        \},
+        \{
+            \neg p_2, \neg p_4
+        \}
+    \Big\}
+\end{equation*}
+We have put \autoref{eq:CNF_example1} into CNF and now, ultimately, also into Clausal Form.
+
+
 \subsection{Figures}
 \begin{figure}[H]
     \centering
