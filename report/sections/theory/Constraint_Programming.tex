@@ -101,6 +101,11 @@ to
 
 
 \subsubsection{DPLL}
-The DPLL algorithm was first introduced by Davis, Logemann and Loveland (1961)\cite{Original-DPLL-Article} and is a refinement over Davis' and Putnam's (1960)\cite{Original-DP-Article} work from the year prior.
+The DPLL algorithm, introduced by Davis, Logemann, and Loveland in 1961~\cite{Original-DPLL-Article}, is a refinement over Davis' and Putnam's (DP) algorithm~\cite{Original-DP-Article} from the year prior. Many modern SAT solvers build off the foundation laid by the DPLL algorithm; as such, it makes for a good introduction.
+\\
+\\
+Conceptually, DPLL inherits from the backtracking paradigm~\cite{Wiki-backtracking}. Like other backtracking algorithms, it aims to avoid exhaustive search by immediately abandoning  'candidate solutions' that do not yield a feasible solution. However, unlike naive backtracking, DPLL includes additional deduction mechanisms, most notably \emph{unit propagation} and \emph{pure literal elimination}, that prune the search space more aggressively.
+\\
+As previously mentioned, the SAT problem, at its base, concerns checking whether there exists a truth assignment (valuation) \(\mathcal{A}\) such that a given Boolean formula \(\Phi\), expressed in CNF, is satisfied (i.e., \(\mathcal{A} \models \Phi\)). In practice, DPLL accomplishes this by selecting a literal \(\ell\), assigning a truth value to it (thus extending \(\mathcal{A}\)), and then simplifying \(\Phi\) accordingly. Then, the simplified formula is checked for satisfiability, and if no conflict arises, the algorithm continues recursively. If a contradiction occurs, DPLL backtracks and tries the opposite assignment for \(\ell\). This process continues until either \(\Phi\) is deemed satisfiable under \(\mathcal{A}\), or the search has been exhausted and \(\Phi\) is deemed unsatisfiable.
 
 
