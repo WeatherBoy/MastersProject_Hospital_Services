@@ -107,5 +107,11 @@ The DPLL algorithm, introduced by Davis, Logemann, and Loveland in 1961~\cite{Or
 Conceptually, DPLL inherits from the backtracking paradigm~\cite{Wiki-backtracking}. Like other backtracking algorithms, it aims to avoid exhaustive search by immediately abandoning  'candidate solutions' that do not yield a feasible solution. However, unlike naive backtracking, DPLL includes additional deduction mechanisms, most notably \emph{unit propagation} and \emph{pure literal elimination}, that prune the search space more aggressively.
 \\
 As previously mentioned, the SAT problem, at its base, concerns checking whether there exists a truth assignment (valuation) \(\mathcal{A}\) such that a given Boolean formula \(\Phi\), expressed in CNF, is satisfied (i.e., \(\mathcal{A} \models \Phi\)). In practice, DPLL accomplishes this by selecting a literal \(\ell\), assigning a truth value to it (thus extending \(\mathcal{A}\)), and then simplifying \(\Phi\) accordingly. Then, the simplified formula is checked for satisfiability, and if no conflict arises, the algorithm continues recursively. If a contradiction occurs, DPLL backtracks and tries the opposite assignment for \(\ell\). This process continues until either \(\Phi\) is deemed satisfiable under \(\mathcal{A}\), or the search has been exhausted and \(\Phi\) is deemed unsatisfiable.
+\\
+Then there are the deduction mechanisms, enhancing DPLL over basic backtracking, which takes the form of the following rules applied continuously while running the algorithm.
+
+\paragraph{Unit Propagation} 
+
+\paragraph{Pure Literal Elimination}
 
 
