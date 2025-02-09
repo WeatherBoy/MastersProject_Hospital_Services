@@ -30,7 +30,7 @@ We will now briefly discuss how to arrive at CNF.
 
 \paragraph{Propositional logic to Conjunctive Normal Form}
 Ben-Ari (chapter 4)~\cite{Math-Logic-for-CompSci} gives us the following theorem:
-\begin{theorem}
+\begin{theorem}\label{thm:CNF_conversion}
     Every formula in propositional logic can be transformed into an equivalent formula in CNF.
 \end{theorem}
 Which is accompanied by a somewhat unintuitive and seemingly inadequate proof; however, it can be boiled down to the following: using \textbf{def} \ref{def:propositional_formulas}, if we can convert every formula of another boolean operator into a logically equivalent formula using only conjunctions and disjunctions, then it is simply a question of propagating negations inwards and whether we can redistribute the conjunctions and disjunctions. We can understand this as: It is necessary but not satisfactory that all boolean operators are either disjunctions or conjunctions. This is an example of a formula, for $A$, $B$ being atoms as per \textbf{def} \ref{def:propositional_atoms}, of only conjunctions and disjunctions which aren't in CNF
@@ -65,10 +65,66 @@ And as per the final part of \textbf{def} \ref{def:CNF}, the negation boolean op
     \begin{align*}
         A \vee (B \wedge C) &\equiv (A \vee B) \wedge (A \vee C),
         \\
-        (A \wedge B) \vee C &\equiv (A \vee C) \wedge (B \vee C).
+        (A \wedge B) \vee C &\equiv (A \vee C) \wedge (B \vee C) \tag*{\(\blacksquare\).}
     \end{align*}
 \end{enumerate}
-In appendix \autoref{sec:CNF_conversion_Examp}, we give an example of CNF conversion, going from
+
+\subsubsection{Clausal Form}
+Before moving on to SAT solvers, we will give a brief yet necessary remark on the Clausal Form.
+\\
+Ben-Ari (chapter 4)~\cite{Math-Logic-for-CompSci} provides the following definition:
+\begin{definition}
+    Clausal Form adheres to the following rules:
+    \begin{itemize}
+        \item A \emph{clause} is a set of literals.
+        \item A clause is considered to be an implicit disjunction of its literals.
+        \item A \emph{unit clause} is a clause consisting of exactly one literal.
+        \item The empty set of literals is the \emph{empty clause}, denoted by \(\square\).
+        \item A formula is considered to be an implicit conjunction of its clauses.
+        \item The formula that is the \emph{empty set of clauses} is denoted by \(\emptyset\).
+    \end{itemize}
+\end{definition}
+Clausal Form is largely just a notational variant of CNF. However, the significant difference is that Clausal Form is defined in terms of sets, while the standard formula definition came from a recursion using trees, \textbf{def} \ref{def:propositional_formulas}. This property eliminates the possibility of duplicate literals in Clausal Form; nevertheless, it remains logically equivalent.
+\\
+For completeness, Ben-Ari (chapter 4)~\cite{Math-Logic-for-CompSci} gives the following corollary:
+\begin{corollary}
+    Every formula \(\Phi\) in propositional logic can be transformed into a logically equivalent formula in Clausal Form.
+\end{corollary}
+Once more, the accompanying proof is somewhat unclear. However, we will show the equivalence regardless. From \textbf{thm} \ref{thm:CNF_conversion}, we have that any formula \(\Phi\) can be transformed into a logically equivalent formula \(\Phi'\) in CNF, which takes the form
+\begin{equation*}
+    \Phi' = \bigwedge_{i=1}^m \bigg(
+        \bigvee_{j=1}^{n_i} l_{i,j},
+    \bigg)
+\end{equation*}
+where each \(l_{i,j}\) is a literal.
+\\
+Then, to move from CNF to Clausal Form, we replace each disjunction \( (l_{i,1} \vee \ldots \vee l_{i,n_i}) \) with the \emph{set} of those literals \(\{l_{i,1}, \ldots, l_{i,n_i}\}\). Then we collect all these sets into a single \emph{set of clauses}
+\begin{equation*}
+    \Delta = \bigg\{
+        \{l_{1,1}, \ldots, l_{1,n_1}\}, \ldots, \{l_{m,1}, \ldots, l_{m,n_m}\}
+    \bigg\}.
+\end{equation*}
+By definition, this is a formula in Clausal Form (a set of clauses, each being a set of literals). Conjunction becomes the implicit “and” among these clauses, while disjunction becomes the implicit “or” within each clause.
+\\
+Now, we eliminate any duplicate litterals within a clause and any cuplicate clauses. This preserves logical equivalence, due to the idempotence property of disjunctions and conjunctions, i.e. \(l \vee l \equiv l\) and \(l \wedge l \equiv l\).
+\\
+Hence taking a conjunction of disjunctions and “collapsing” it into a set-of-sets does not alter which valuations satisfy the formula. We can then state
+\begin{equation}\label{eq:CNF_to_Clausal}
+    \Phi' \equiv \Delta.
+\end{equation}
+And finally, from \autoref{eq:CNF_to_Clausal} and \textbf{thm} \ref{thm:CNF_conversion}, we have that
+\begin{equation*}
+    \Phi \equiv \Phi' \equiv \Delta \tag*{\(\blacksquare\).}
+\end{equation*}
+
+\paragraph{Trivial Clauses} are a final way to simplify Clausal Form. From Ben-Ari (chapter 4)~\cite{Math-Logic-for-CompSci}, we have:
+\begin{definition}
+    A clause is \emph{trivial} if it contains a pair of clashing literals.
+\end{definition}
+We will, without much proof, simply conclude that if a clause contains a pair of clashing literals, i.e. the same atom but with opposite polarity (e.g. \( l \vee \neg l\) ), then the clause is trivially true\footnote{Anything, without a shadow of a doubt, most certainly either \emph{is} or \emph{isn't}... aside maybe from quantum, yet that is neither here nor there.} and can be removed from the set of clauses, without altering the truth value of the entire formula.
+\\
+\\
+In appendix \autoref{sec:CNF_conversion_Examp} and \autoref{sec:CNF_to_Clausal_Examp}, we give an example of CNF and Clausal Form conversion, going from
 \begin{equation*}
     \Big(
         p_1 \leftrightarrow (
@@ -82,7 +138,7 @@ In appendix \autoref{sec:CNF_conversion_Examp}, we give an example of CNF conver
         p_4 \oplus p_2
     \Big),
 \end{equation*}
-to
+to,
 \begin{equation*}
     (
         \neg p_1 \vee p_2 \vee \neg p_3
@@ -95,10 +151,36 @@ to
     ) \wedge (
         p_2 \vee p_4
     ) \wedge (
+        p_2 \vee \neg p_2
+    ) \wedge (
+        p_4 \vee \neg p_4
+    ) \wedge (
         \neg p_2 \vee \neg p_4
-    ).
+    )
 \end{equation*}
-
+all the way, to
+\begin{equation*}
+    \Big\{
+        \{
+            \neg p_1, p_2, \neg p_3
+        \},
+        \{
+            p_1, \neg p_2
+        \},
+        \{
+            p_1, p_3
+        \},
+        \{
+            \neg p_5, \neg p_1, \neg p_4
+        \},
+        \{
+            p_2, p_4
+        \},
+        \{
+            \neg p_2, \neg p_4
+        \}
+    \Big\}.
+\end{equation*}
 
 \subsubsection{DPLL}
 The DPLL algorithm, introduced by Davis, Logemann, and Loveland in 1961~\cite{Original-DPLL-Article}, is a refinement over Davis' and Putnam's (DP) algorithm~\cite{Original-DP-Article} from the year prior. Many modern SAT solvers build off the foundation laid by the DPLL algorithm; as such, it makes for a good introduction.
