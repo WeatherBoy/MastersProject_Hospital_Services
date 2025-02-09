@@ -119,9 +119,9 @@ And finally, from \autoref{eq:CNF_to_Clausal} and \textbf{thm} \ref{thm:CNF_conv
 
 \paragraph{Trivial Clauses} are a final way to simplify Clausal Form. From Ben-Ari (chapter 4)~\cite{Math-Logic-for-CompSci}, we have:
 \begin{definition}
-    A clause is \emph{trivial} if it contains a pair of clashing literals.
+    A clause is \emph{trivial} if it contains a pair of clashing literals, i.e. the same atom but with opposite polarity (e.g. \( l \vee \neg l \) ).
 \end{definition}
-We will, without much proof, simply conclude that if a clause contains a pair of clashing literals, i.e. the same atom but with opposite polarity (e.g. \( l \vee \neg l\) ), then the clause is trivially true\footnote{Anything, without a shadow of a doubt, most certainly either \emph{is} or \emph{isn't}... aside maybe from quantum, yet that is neither here nor there.} and can be removed from the set of clauses, without altering the truth value of the entire formula.
+We will, without much proof, simply conclude that if a clause contains a pair of clashing literals, then the clause is trivially true\footnote{Anything, without a shadow of a doubt, most certainly either \emph{is} or \emph{isn't}... aside maybe from quantum, yet that is neither here nor there.} and can be removed from the set of clauses, without altering the truth value of the entire formula.
 \\
 \\
 In appendix \autoref{sec:CNF_conversion_Examp} and \autoref{sec:CNF_to_Clausal_Examp}, we give an example of CNF and Clausal Form conversion, going from
