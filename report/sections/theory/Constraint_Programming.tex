@@ -197,6 +197,9 @@ Then there are the deduction mechanisms, enhancing DPLL over basic backtracking,
 \paragraph{Pure Literal Elimination} is a rule for atoms which occur in \(\Phi\) with only one polarity. Such an atom \(l^{*}\) is called a \emph{Pure Literal}, and since it occurs as only negative or positive, assigning it the proper truth value will make every clause, \(l^{*}\) occurs in, true. Although it might not be as obvious as Unit Propagation, Pure Literal Eliminations is also a quick and straightforward rule for narrowing down the search space.
 \\
 \\
+Despite the DPLL algorithm's clever usage of deduction mechanics, it is still inherently a backtracking algorithm. As such, it retains a running time of \(O(2^n)\), where \(n\) is the number of atoms in \(\Phi\). This, however, is to be expected for an NP-complete problem.
+\\
+\\
 In listing \ref{lst:DPLL}, we present our interpretation of pseudocode for the DPLL algorithm. We have taken a slight liberty in that the pseudocode returns a boolean. This was done to allow for a recursive call on \texttt{DPLL}, evoking the backtracking with a \emph{short-circuiting operator} in the \texttt{return} statement. Additionally, this also serves to keep the pseudocode concise. However, one could imagine an alternate approach where we would be interested in the truth assignment \(\mathcal{A}\). We elected to simply regard this as an implementation detail.
 
 \begin{lstlisting}[caption={DPLL Algorithm (Pseudocode)}, escapeinside={(*}{*)}, label={lst:DPLL}]
@@ -268,6 +271,8 @@ Sometimes, the best way to understand an algorithm is just to see it in action. 
 \end{figure}
 Note, that in this example \(p_3\) was never assigned a value. That is because for the assignment
 \begin{equation*}
-    \mathcal{A}: \{ p_1 = \text{\texttt{True}}, p_2 = \text{\texttt{True}}, p_4 = \text{\texttt{True}}, p_5 = \text{\texttt{True}} \},
+    \mathcal{A}: \{ p_1 = \text{\texttt{True}}, p_2 = \text{\texttt{True}}, p_4 = \text{\texttt{False}}, p_5 = \text{\texttt{False}} \},
 \end{equation*} 
 The formula is true and in turn \(p_3\) effectively becomes a free parameter.
+
+\subsubsection{CDCL}
