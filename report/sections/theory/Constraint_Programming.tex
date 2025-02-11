@@ -192,8 +192,36 @@ As previously mentioned, the SAT problem, at its base, concerns checking whether
 \\
 Then there are the deduction mechanisms, enhancing DPLL over basic backtracking, which takes the form of the following rules applied continuously while running the algorithm.
 
-\paragraph{Unit Propagation} 
+\paragraph{Unit Propagation} is a rule for \emph{Unit Clauses}. Unit Clauses are the case, where a clause contains onley a single literal. Thus \(\Phi\) can only be satisfied, if that literal is assigned its necessary truth value. DPLL starts by appending all the truth values adhering to a Unit Clause to \(\mathcal{A}\). Although Unit Propagation might seem like an obvious approach, it is nevertheless vastly superior to naive backtracking and has the potential to severely trim the search space without negatively impacting runtime.
 
-\paragraph{Pure Literal Elimination}
+\paragraph{Pure Literal Elimination} is a rule for atoms which occur in \(\Phi\) with only one polarity. Such an atom \(l^{*}\) is called a \emph{Pure Literal}, and since it occurs as only negative or positive, assigning it the proper truth value will make every clause, \(l^{*}\) occurs in, true. Although it might not be as obvious as Unit Propagation, Pure Literal Eliminations is also a quick and straightforward rule for narrowing down the search space.
+\\
+\\
+In listing \ref{lst:DPLL}, we present our interpretation of pseudocode for the DPLL algorithm. We have taken a slight liberty in that the pseudocode returns a boolean. This was done to allow for a recursive call on \texttt{DPLL}, evoking the backtracking with a \emph{short-circuiting operator} in the \texttt{return} statement. Additionally, this also serves to keep the pseudocode concise. However, one could imagine an alternate approach where we would be interested in the truth assignment \(\mathcal{A}\). We elected to simply regard this as an implementation detail.
+\begin{lstlisting}[caption={DPLL Algorithm (Pseudocode)}, escapeinside={(*}{*)}, label={lst:DPLL}]
+    def DPLL((*\(\Phi\)*), (*\(\mathcal{A}\)*)):
+        Input: (*A formula \(\Phi\) in Clausal Form and a truth assignment \(\mathcal{A}\)*)
+        Output: (*A truth value indicating whether \(\Phi\) is satisfiable*)
+
+        # Unit propagation
+        while (*there is a unit clause \(\{l\}\)*) in (*\(\Phi \mid_{\mathcal{A}}\)*):
+            (*\(\mathcal{A}\)*) (*\(\leftarrow\)*) unit_propagation((*\(\{l\}\)*), (*\(\mathcal{A}\)*))
+
+        # Pure literal elimination
+        while (*there is a pure literal \(l\)*) in (*\(\Phi \mid_{\mathcal{A}}\)*):
+            (*\(\mathcal{A}\)*) (*\(\leftarrow\)*) pure_literal_elimination((*\(l\)*), (*\(\mathcal{A}\)*))
+
+        # Stopping conditions
+        if (*\(\Phi \mid_{\mathcal{A}}\)*) is empty:
+            return True
+        if (*\(\Phi \mid_{\mathcal{A}}\)*) contains (*\(\square\)*):
+            return False
+
+        # DPLL recursion
+        (*\(l\)*) (*\(\leftarrow\)*) choose_literal((*\(\Phi\)*), (*\(\mathcal{A}\)*))
+        return DPLL((*\(\Phi\)*), (*\(\mathcal{A} \cup \{l\}\)*)) or DPLL((*\(\Phi\)*), (*\(\mathcal{A} \cup \{\neg l\}\)*))
+\end{lstlisting}
+
+
 
 
