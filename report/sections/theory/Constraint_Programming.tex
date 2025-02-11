@@ -125,7 +125,7 @@ We will, without much proof, simply conclude that if a clause contains a pair of
 \\
 \\
 In appendix \autoref{sec:CNF_conversion_Examp} and \autoref{sec:CNF_to_Clausal_Examp}, we give an example of CNF and Clausal Form conversion, going from
-\begin{equation*}
+\begin{equation}\label{eq:propositional_logic_example}
     \Big(
         p_1 \leftrightarrow (
             p_2 \vee \neg p_3
@@ -137,7 +137,7 @@ In appendix \autoref{sec:CNF_conversion_Examp} and \autoref{sec:CNF_to_Clausal_E
     \Big) \wedge \Big(
         p_4 \oplus p_2
     \Big),
-\end{equation*}
+\end{equation}
 to,
 \begin{equation*}
     (
@@ -159,7 +159,7 @@ to,
     )
 \end{equation*}
 all the way, to
-\begin{equation*}
+\begin{equation}\label{eq:clausal_form_example}
     \Big\{
         \{
             \neg p_1, p_2, \neg p_3
@@ -180,7 +180,7 @@ all the way, to
             \neg p_2, \neg p_4
         \}
     \Big\}.
-\end{equation*}
+\end{equation}
 
 \subsubsection{DPLL}
 The DPLL algorithm, introduced by Davis, Logemann, and Loveland in 1961~\cite{Original-DPLL-Article}, is a refinement over Davis' and Putnam's (DP) algorithm~\cite{Original-DP-Article} from the year prior. Many modern SAT solvers build off the foundation laid by the DPLL algorithm; as such, it makes for a good introduction.
@@ -192,12 +192,13 @@ As previously mentioned, the SAT problem, at its base, concerns checking whether
 \\
 Then there are the deduction mechanisms, enhancing DPLL over basic backtracking, which takes the form of the following rules applied continuously while running the algorithm.
 
-\paragraph{Unit Propagation} is a rule for \emph{Unit Clauses}. Unit Clauses are the case, where a clause contains onley a single literal. Thus \(\Phi\) can only be satisfied, if that literal is assigned its necessary truth value. DPLL starts by appending all the truth values adhering to a Unit Clause to \(\mathcal{A}\). Although Unit Propagation might seem like an obvious approach, it is nevertheless vastly superior to naive backtracking and has the potential to severely trim the search space without negatively impacting runtime.
+\paragraph{Unit Propagation} is a rule for \emph{Unit Clauses}. Unit Clauses are the case, where a clause contains onley a single literal, \(\{l\}\). Thus \(\Phi\) can only be satisfied, if that literal is assigned its necessary truth value. DPLL starts by appending all the truth values adhering to a Unit Clause to \(\mathcal{A}\). Although Unit Propagation might seem like an obvious approach, it is nevertheless vastly superior to naive backtracking and has the potential to severely trim the search space without negatively impacting runtime.
 
 \paragraph{Pure Literal Elimination} is a rule for atoms which occur in \(\Phi\) with only one polarity. Such an atom \(l^{*}\) is called a \emph{Pure Literal}, and since it occurs as only negative or positive, assigning it the proper truth value will make every clause, \(l^{*}\) occurs in, true. Although it might not be as obvious as Unit Propagation, Pure Literal Eliminations is also a quick and straightforward rule for narrowing down the search space.
 \\
 \\
 In listing \ref{lst:DPLL}, we present our interpretation of pseudocode for the DPLL algorithm. We have taken a slight liberty in that the pseudocode returns a boolean. This was done to allow for a recursive call on \texttt{DPLL}, evoking the backtracking with a \emph{short-circuiting operator} in the \texttt{return} statement. Additionally, this also serves to keep the pseudocode concise. However, one could imagine an alternate approach where we would be interested in the truth assignment \(\mathcal{A}\). We elected to simply regard this as an implementation detail.
+
 \begin{lstlisting}[caption={DPLL Algorithm (Pseudocode)}, escapeinside={(*}{*)}, label={lst:DPLL}]
     def DPLL((*\(\Phi\)*), (*\(\mathcal{A}\)*)):
         Input: (*A formula \(\Phi\) in Clausal Form and a truth assignment \(\mathcal{A}\)*)
@@ -222,6 +223,51 @@ In listing \ref{lst:DPLL}, we present our interpretation of pseudocode for the D
         return DPLL((*\(\Phi\)*), (*\(\mathcal{A} \cup \{l\}\)*)) or DPLL((*\(\Phi\)*), (*\(\mathcal{A} \cup \{\neg l\}\)*))
 \end{lstlisting}
 
+\subsubsection{DPLL: Toy example}
+Sometimes, the best way to understand an algorithm is just to see it in action. So, we will now run DPLL on \autoref{eq:clausal_form_example}. The first thing to note is that we can't use Unit Propagation on \autoref{eq:clausal_form_example}. This is largely due to it being a small example, and although we could artificially add the conjunction "\(\wedge p_4\)" to the original \autoref{eq:propositional_logic_example} without altering the satisfiability, we elected to keep it as is.
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example1.png}
+        \subcaption{Initially, no literals has been assigned any values.}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example2.png}
+        \subcaption{We start with Pure Literal Elimination on \(p_5\) making the 4th clause true.}
+    \end{subfigure}
+\end{figure}
 
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example3.png}
+        \subcaption{Then we assign \texttt{False} to \(p_4\) at random.}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example4.png}
+        \subcaption{Next, when we try to assign \texttt{False} to \(p_2\), we get a conflict.}
+    \end{subfigure}
+\end{figure}
 
-
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example5.png}
+        \subcaption{We backtrack and try \texttt{True} for \(p_2\).}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example6.png}
+        \subcaption{Finally, when we assign \texttt{True} to \(p_1\), we have a satisfying assignment.}
+    \end{subfigure}
+\end{figure}
+Note, that in this example \(p_3\) was never assigned a value. That is because for the assignment
+\begin{equation*}
+    \mathcal{A}: \{ p_1 = \text{\texttt{True}}, p_2 = \text{\texttt{True}}, p_4 = \text{\texttt{True}}, p_5 = \text{\texttt{True}} \},
+\end{equation*} 
+The formula is true and in turn \(p_3\) effectively becomes a free parameter.
