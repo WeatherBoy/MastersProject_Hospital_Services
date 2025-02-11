@@ -57,6 +57,21 @@
 \newmdtheoremenv{theorem}{Theorem}[section]
 \newmdtheoremenv{corollary}{Corollary}[section]
 
+% ## For pseudocode ##
+\usepackage{listings}
+\lstset{
+  basicstyle=\small\ttfamily,
+  numbers=left,
+  numberstyle=\tiny,
+  stepnumber=1,
+  frame=single,
+  columns=flexible,
+  keywordstyle=\bfseries\color{blue!70!black},
+  commentstyle=\itshape\color{green!40!black},
+  language=Python,
+  showstringspaces=false
+}
+
 % Formalia goes here:
 \newcommand\course{Master's Thesis} %<--- Kursus
 \newcommand\datoen{E24} %<--- Dato
