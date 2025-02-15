@@ -227,18 +227,18 @@ In listing \ref{lst:DPLL}, we present our interpretation of pseudocode for the D
 \end{lstlisting}
 
 \subsubsection{DPLL: Toy example}
-Sometimes, the best way to understand an algorithm is just to see it in action. So, we will now run DPLL on \autoref{eq:clausal_form_example}. The first thing to note is that we can't use Unit Propagation on \autoref{eq:clausal_form_example}. This is largely due to it being a small example, and although we could artificially add the conjunction "\(\wedge p_4\)" to the original \autoref{eq:propositional_logic_example} without altering the satisfiability, we elected to keep it as is.
+Sometimes, the best way to understand an algorithm is just to see it in action. So, we will now run DPLL on \autoref{eq:clausal_form_example}. The first thing to note is that we can't initially use Unit Propagation on \autoref{eq:clausal_form_example}. This is largely due to it being a small example, and although we could artificially add the conjunction "\(\wedge p_4\)" to the original \autoref{eq:propositional_logic_example} without altering the satisfiability, we still see Unit Propagation in step 3.
 \begin{figure}[H]
     \centering
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example1.png}
-        \subcaption{Initially, no literals has been assigned any values.}
+        \subcaption{Step 0: Initially, no literals has been assigned any values.}
     \end{subfigure}
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example2.png}
-        \subcaption{We start with Pure Literal Elimination on \(p_5\) making the 4th clause true.}
+        \subcaption{Step 1: We start with Pure Literal Elimination on \(p_5\) making the 4th clause true.}
     \end{subfigure}
 \end{figure}
 
@@ -247,12 +247,12 @@ Sometimes, the best way to understand an algorithm is just to see it in action. 
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example3.png}
-        \subcaption{Then we assign \texttt{False} to \(p_4\) at random.}
+        \subcaption{Step 2: Then we assign \texttt{False} to \(p_4\) at random.}
     \end{subfigure}
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example4.png}
-        \subcaption{Next, when we try to assign \texttt{False} to \(p_2\), we get a conflict.}
+        \subcaption{Step 3: Next, when we try to assign \texttt{False} to \(p_2\), we get a conflict.}
     \end{subfigure}
 \end{figure}
 
@@ -261,12 +261,12 @@ Sometimes, the best way to understand an algorithm is just to see it in action. 
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example5.png}
-        \subcaption{We backtrack and try \texttt{True} for \(p_2\).}
+        \subcaption*{Step 4: We backtrack and try \texttt{True} for \(p_2\).}
     \end{subfigure}
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example6.png}
-        \subcaption{Finally, when we assign \texttt{True} to \(p_1\), we have a satisfying assignment.}
+        \subcaption*{Step 5: Finally, when we assign \texttt{True} to \(p_1\), we have a satisfying assignment.}
     \end{subfigure}
 \end{figure}
 Note, that in this example \(p_3\) was never assigned a value. That is because for the assignment
@@ -275,4 +275,6 @@ Note, that in this example \(p_3\) was never assigned a value. That is because f
 \end{equation*} 
 The formula is true and in turn \(p_3\) effectively becomes a free parameter.
 
-\subsubsection{CDCL}
+\subsubsection{Resolution}
+
+\subsubsection{Conflict Driven Clause Learning (CDCL)}
