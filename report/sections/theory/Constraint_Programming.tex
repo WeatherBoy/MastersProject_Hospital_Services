@@ -1,7 +1,7 @@
 \subsection{Constraint Programming}
 Another approach for solving the \textit{scheduling task} is Constraint Programming (CP)\footnote{Constraint Programming is a somewhat odd nomenclature, as \textit{programming} here refers to 'the process of scheduling' rather than in the sense of a computer programming language.}. CP is concerned with problems that require a feasible solution. Often, this involves searching for a "needle within a haystack", as CP aims to arrive at a solution satisfying a complex set of constraints. As such, contrary to the GA scheme, CP isn't inherently an optimisation technique and won't even necessarily use an objective function.
 \\
-As we will argue later, the domain posed by the \textit{scheduling task} gives way to a subdomain of CP called \textit{the Boolean Satisfiability Problem} (SAT). The Boolean Satisfiability Problem concerns checking whether a boolean formula holds (is satisfiable) under some truth assignment to its variables. From the Cook-Levin theorem, produced independently by Stephen Cook\cite{cook-bool-SAT} and Leonid Levin\cite{Levin-bool-SAT}, we know that SAT is NP-complete. This means that there exist no polynomial time algorithm\footnote{As of the time of writing \textit{P versus NP}\cite{Wiki-P-vs-NP} remains unsolved.}, which can solve the \textit{scheduling task}. However, SAT solvers are explicitly made for solving such problems, so in the following sections, we will elaborate on different algorithms employed by such solvers.
+As we will argue later, the domain posed by the \textit{scheduling task} gives way to a subdomain of CP called \textit{the Boolean Satisfiability Problem} (SAT). The Boolean Satisfiability Problem concerns checking whether a boolean formula holds (is satisfiable) under some truth assignment to its variables. From the Cook-Levin theorem, produced independently by Stephen Cook~\cite{cook-bool-SAT} and Leonid Levin~\cite{Levin-bool-SAT}, we know that SAT is NP-complete. This means that there exist no polynomial time algorithm\footnote{As of the time of writing \textit{P versus NP}~\cite{Wiki-P-vs-NP} remains unsolved.}, which can solve the \textit{scheduling task}. However, SAT solvers are explicitly made for solving such problems, so in the following sections, we will elaborate on different algorithms employed by such solvers.
 
 \subsubsection{Conjunctive Normal Form}\label{sec:CNF}
 However, although not inherent to boolean satisfiability, most SAT solvers work on boolean formulas in Conjunctive Normal Form (CNF). Therefore, we will first introduce CNF.
@@ -51,7 +51,7 @@ And as per the final part of \textbf{def} \ref{def:CNF}, the negation boolean op
         \\
         A \downarrow B &\equiv \neg (A \vee B) \qquad &\text{non-disjunction/ logical NOR}.
     \end{align*}
-    \item Propagate negations inward with De Morgan's laws\cite{A-Concise-Introduction-to-Logic,Introduction-to-logic,Math-Logic-for-CompSci}:
+    \item Propagate negations inward with De Morgan's laws~\cite{A-Concise-Introduction-to-Logic,Introduction-to-logic,Math-Logic-for-CompSci}:
     \begin{align*}
         \neg (A \wedge B) &\equiv (\neg A \vee \neg B),
         \\
@@ -278,5 +278,28 @@ Sometimes, the best way to understand an algorithm is just to see it in action. 
     \end{subfigure}
 \end{figure}
 
-\subsubsection{Conflict Driven Clause Learning (CDCL)}
-\paragraph{Resolution}
+\subsubsection{Conflict Driven Clause Learning}
+Conflict Driven Clause Learning~\cite{CDCL-1, CDCL-2, CDCL-3} (CDCL) builds off of DPLL but develops on it by introducing \textit{non-chronological backtracking} and learning from conflicts, also called \textit{clause learning},  using the resolution technique. CDCL does so by retaining a \emph{guess level} and an \emph{implication graph}. The guess level tracks how often the procedure has performed an arbitrary guess rather than assigned a value implied by clause learning. The implication graph tracks which assignments of boolean variables, based on the Unit Propagation rule, lead to which \emph{implied} assignments.
+
+\paragraph{Resolution} is the technique which was first implemented in the original DP algorithm~\cite{Original-DP-Article}. Although we will refrain from describing resolution to its full extent, it can be quickly summarised as: resolution combines two clauses in order to create a new equisatisfiable clause. Ben-Ari (chapter 4)~\cite{Math-Logic-for-CompSci} gives this rule:
+\begin{definition}
+    (Resolution rule) Let \(C_1\), \(C_2\) be clauses such that \(l \in C_1\), \(\neg l \in C_2\). The clauses \(C_1\), \(C_2\) are said to be clashing clauses and to clash on the complementary pair of literals \(l\), \(\neg l\). \(C\), the resolvent of \(C_1\) and \(C_2\), is the clause:
+    \begin{equation*}
+        C = \text{\emph{Res}}(C_1, C_2) = \Big(
+            C_1 - \{l\}
+        \Big) \cup \Big(
+            C_2 - \{\neg l\}
+        \Big).
+    \end{equation*}
+    \(C_1\) and \(C_2\) are the \emph{parent clauses} of \(C\).
+\end{definition}
+Formally, for the two clauses \(\alpha = \{p_1, p_2, p_3\}\), \(\beta = \{\neg p_3, p_4, p_5\}\), we have
+\begin{equation*}
+    \text{Res}(\alpha, \beta) = \{p_1, p_2, p_4, p_5\}.
+\end{equation*}
+
+\paragraph{Non-chronological backtracking} differs from DPLL's 'chronological backtracking' in that it can jump several levels in the decision tree, whereas ordinary backtracking always simply jumps to the most immediate assignment. Whenever a conflict occurs, CDCL creates a \emph{learned clause} by running resolution on the clauses, giving rise to the conflict. If more than two clauses contribute to the conflict, CDCL continues to resolve until the learned clause includes no more than one variable assigned at the current guess level. CDCL backtracks based on the learned clause. If the learned clause is a unit clause, it backtracks to guess level \(0\); this is due to the Unit Propagation rule, from which we know that a unit clause enforces an unambiguous decision, which CDCL can implement before any guessing. Otherwise, excluding the level at which the conflict took place, CDCL backtracks to the highest level where the conflict variable from the learned clause occurred.
+
+\subsubsection{CDCL: Bigger example}
+
+
