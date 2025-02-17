@@ -274,15 +274,9 @@ Sometimes, the best way to understand an algorithm is just to see it in action. 
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example7.png}
-        \subcaption*{Step 6: Finally, when we assign \texttt{True} to \(p_1\), we have a satisfying assignment.}
+        \subcaption*{Step 6: Finally, when we assign \texttt{True} to \(p_1\), we have the satisfying assignment: \(\mathcal{A} = \{p_1 = \text{\texttt{True}}, p_2 = \text{\texttt{True}}, p_3 = \text{\texttt{True}}, p_4 = \text{\texttt{False}}, p_5 = \text{\texttt{False}}\}\).}
     \end{subfigure}
 \end{figure}
-Note, that in this example \(p_3\) was never assigned a value. That is because for the assignment
-\begin{equation*}
-    \mathcal{A}: \{ p_1 = \text{\texttt{True}}, p_2 = \text{\texttt{True}}, p_4 = \text{\texttt{False}}, p_5 = \text{\texttt{False}} \},
-\end{equation*} 
-The formula is true and in turn \(p_3\) effectively becomes a free parameter.
-
 
 \subsubsection{Conflict Driven Clause Learning (CDCL)}
 \paragraph{Resolution}
