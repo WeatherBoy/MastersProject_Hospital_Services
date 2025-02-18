@@ -303,4 +303,134 @@ Formally, for the two clauses \(\alpha = \{p_1, p_2, p_3\}\), \(\beta = \{\neg p
 \paragraph{Non-chronological backtracking} differs from DPLL's 'chronological backtracking' in that it can jump several levels in the decision tree, whereas ordinary backtracking always simply jumps to the most immediate assignment. Whenever a conflict occurs, CDCL creates a \emph{learned clause} by running resolution on the clauses, giving rise to the conflict. If more than two clauses contribute to the conflict, CDCL continues to resolve until the learned clause includes no more than one variable assigned at the current guess level. CDCL backtracks based on the learned clause. If the learned clause is a unit clause, it backtracks to guess level \(0\); this is due to the Unit Propagation rule, from which we know that a unit clause enforces an unambiguous decision, which CDCL can implement before any guessing. Otherwise, excluding the level at which the conflict took place, CDCL backtracks to the highest level where the conflict variable from the learned clause occurred.
 
 \subsubsection{CDCL: Bigger example}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/1.png}
+        \subcaption*{Step 0: Initially, no literals has been assigned any values.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/2.png}
+        \subcaption*{Step 1: We start by assigning \texttt{False} to \(p_1\) at random.}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/3.png}
+        \subcaption*{Step 2: Then we assign \texttt{False} to \(p_2\) at random.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/4.png}
+        \subcaption*{Step 3: Thirdly, we assign \texttt{False} to \(p_3\). However, this creates a conflicting implication.}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/5.png}
+        \subcaption*{Step 4: We perform resolution on clause \(2\) and \(3\) arriving at the new clause \(\{p_1, p_3\}\).}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/6.png}
+        \subcaption*{Step 5: Then we backtrack to the highest level, excluding the current, where a literal from our new learned clause occurs.}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/7.png}
+        \subcaption*{Step 6: Then we have an implied decision of \(p_3 =\) \texttt{True}, from our new learned clause.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/8.png}
+        \subcaption*{Step 7: However, this assignment creates a conflift and we perform resolution on clause \(4\) and \(5\) arriving at the new clause \(\{p_1, \neg p_2\}\).}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/9.png}
+        \subcaption*{Step 8: Alas, this isn't adequate as both \(p_1\) and \(p_2\) are assigned at the current level. Therefore we must perform resolution again, on our new clause and clause \(9\), which was used in arriving at the conflict.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/10.png}
+        \subcaption*{Step 9: The resolution yields the new clause \(\{p_1\}\), which is a unit clause, so we backtrack to level \(0\).}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/11.png}
+        \subcaption*{Step 10: At level \(0\) we have an implied decision \(p_1 =\) \texttt{True} from the Unit Clause \(10\).}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/12.png}
+        \subcaption*{Step 11: Then we assign \texttt{False} to \(p_2\) at random.}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/13.png}
+        \subcaption*{Step 12: This assignment creates a conflict and we perform resolution on clause \(1\) and \(7\) arriving at the new clause \(\{\neg p_1, p_2\}\).}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/14.png}
+        \subcaption*{Step 13: Then we backtrack to the highest level, excluding the current, where a literal from our new learned clause occurs.}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/15.png}
+        \subcaption*{Step 14: At level \(0\) we have a new implied decision \(p_2 =\) \texttt{True} from clause \(11\).}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/16.png}
+        \subcaption*{Step 15: This assignment gives way to a new implied decision \(p_3 =\) \texttt{True} from clause \(8\).}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/17.png}
+        \subcaption*{Step 16: Finally, our last assignment \(p_4 =\) \texttt{True} is an implied decision from clause \(6\) and yields the satisfying assignment:
+        \\
+        \(\mathcal{A} = \{p_1 = \text{\texttt{True}}, p_2 = \text{\texttt{True}}, p_3 = \text{\texttt{True}}, p_4 = \text{\texttt{True}}\}\).}
+    \end{subfigure}
+\end{figure}
 
