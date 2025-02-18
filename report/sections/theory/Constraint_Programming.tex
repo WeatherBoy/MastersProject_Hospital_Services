@@ -303,6 +303,36 @@ Formally, for the two clauses \(\alpha = \{p_1, p_2, p_3\}\), \(\beta = \{\neg p
 \paragraph{Non-chronological backtracking} differs from DPLL's 'chronological backtracking' in that it can jump several levels in the decision tree, whereas ordinary backtracking always simply jumps to the most immediate assignment. Whenever a conflict occurs, CDCL creates a \emph{learned clause} by running resolution on the clauses, giving rise to the conflict. If more than two clauses contribute to the conflict, CDCL continues to resolve until the learned clause includes no more than one variable assigned at the current guess level. CDCL backtracks based on the learned clause. If the learned clause is a unit clause, it backtracks to guess level \(0\); this is due to the Unit Propagation rule, from which we know that a unit clause enforces an unambiguous decision, which CDCL can implement before any guessing. Otherwise, excluding the level at which the conflict took place, CDCL backtracks to the highest level where the conflict variable from the learned clause occurred.
 
 \subsubsection{CDCL: Bigger example}
+As with DPLL, we will provide a full run of the CDCL algorithm. Here, we have elected to instead of \autoref{eq:clausal_form_example}, show the satisfiability of the following formula (in clausal form)
+\begin{equation*}
+    \Big\{
+        \{
+            \neg p_1, p_2, p_3
+        \},
+        \{
+            p_1, p_3, p_4
+        \},
+        \{
+            p_1, p_3, \neg p_4
+        \},
+        \{
+            p_1, \neg p_3, p_4
+        \},
+        \{
+            p_1, \neg p_3, \neg p_4
+        \},
+        \{
+            \neg p_2, \neg p_3, p_4
+        \},
+        \{
+            \neg p_1, p_2, \neg p_3
+        \},
+        \{
+            \neg p_1, \neg p_2, p_3
+        \}
+    \Big\}
+\end{equation*}
+We show the implication graph in the lower lefthand corner. Circular notes indicate that, at this timestep, it was a random decision, while square notes indicate that it was an implied decision.
 \begin{figure}[H]
     \centering
     \begin{subfigure}[t]{0.48\textwidth}
