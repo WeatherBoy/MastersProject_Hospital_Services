@@ -30,6 +30,7 @@ report/*.lof
 report/*.blg
 report/*.bbl
 report/*.bbl-SAVE-ERROR
+report/*.synctex(busy)
 # Report-specific ignores
 report/figures/
 
