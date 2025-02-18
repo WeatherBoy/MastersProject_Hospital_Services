@@ -232,12 +232,12 @@ Sometimes, the best way to understand an algorithm is just to see it in action. 
     \centering
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example1.png}
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example/1.png}
         \subcaption*{Step 0: Initially, no literals has been assigned any values.}
     \end{subfigure}
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example2.png}
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example/2.png}
         \subcaption*{Step 1: We start with Pure Literal Elimination on \(p_5\) making the 4th clause true.}
     \end{subfigure}
 \end{figure}
@@ -246,12 +246,12 @@ Sometimes, the best way to understand an algorithm is just to see it in action. 
     \centering
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example3.png}
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example/3.png}
         \subcaption*{Step 2: Then we assign \texttt{False} to \(p_4\) at random.}
     \end{subfigure}
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example4.png}
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example/4.png}
         \subcaption*{Step 3: Assigning \(p_4\) made the 5th clause a unit clause. Therefore we do Unit Propagation on \(p_2\) assigning it \texttt{True}.}
     \end{subfigure}
 \end{figure}
@@ -260,12 +260,12 @@ Sometimes, the best way to understand an algorithm is just to see it in action. 
     \centering
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example5.png}
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example/5.png}
         \subcaption*{Step 4: Next, when we try to assign \texttt{False} to \(p_2\), we get a conflict.}
     \end{subfigure}
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example6.png}
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example/6.png}
         \subcaption*{Step 5: We backtrack and try \texttt{True} for \(p_2\).}
     \end{subfigure}
 \end{figure}
@@ -273,7 +273,7 @@ Sometimes, the best way to understand an algorithm is just to see it in action. 
     \centering
     \begin{subfigure}[t]{0.45\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example7.png}
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example/7.png}
         \subcaption*{Step 6: Finally, when we assign \texttt{True} to \(p_1\), we have the satisfying assignment: \(\mathcal{A} = \{p_1 = \text{\texttt{True}}, p_2 = \text{\texttt{True}}, p_3 = \text{\texttt{True}}, p_4 = \text{\texttt{False}}, p_5 = \text{\texttt{False}}\}\).}
     \end{subfigure}
 \end{figure}
@@ -301,5 +301,4 @@ Formally, for the two clauses \(\alpha = \{p_1, p_2, p_3\}\), \(\beta = \{\neg p
 \paragraph{Non-chronological backtracking} differs from DPLL's 'chronological backtracking' in that it can jump several levels in the decision tree, whereas ordinary backtracking always simply jumps to the most immediate assignment. Whenever a conflict occurs, CDCL creates a \emph{learned clause} by running resolution on the clauses, giving rise to the conflict. If more than two clauses contribute to the conflict, CDCL continues to resolve until the learned clause includes no more than one variable assigned at the current guess level. CDCL backtracks based on the learned clause. If the learned clause is a unit clause, it backtracks to guess level \(0\); this is due to the Unit Propagation rule, from which we know that a unit clause enforces an unambiguous decision, which CDCL can implement before any guessing. Otherwise, excluding the level at which the conflict took place, CDCL backtracks to the highest level where the conflict variable from the learned clause occurred.
 
 \subsubsection{CDCL: Bigger example}
-
 
