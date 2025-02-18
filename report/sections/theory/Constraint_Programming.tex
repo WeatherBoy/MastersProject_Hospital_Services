@@ -279,7 +279,9 @@ Sometimes, the best way to understand an algorithm is just to see it in action. 
 \end{figure}
 
 \subsubsection{Conflict Driven Clause Learning}
-Conflict Driven Clause Learning~\cite{CDCL-1, CDCL-2, CDCL-3} (CDCL) builds off of DPLL but develops on it by introducing \textit{non-chronological backtracking} and learning from conflicts, also called \textit{clause learning},  using the resolution technique. CDCL does so by retaining a \emph{guess level} and an \emph{implication graph}. The guess level tracks how often the procedure has performed an arbitrary guess rather than assigned a value implied by clause learning. The implication graph tracks which assignments of boolean variables, based on the Unit Propagation rule, lead to which \emph{implied} assignments.
+Conflict Driven Clause Learning~\cite{CDCL-1, CDCL-2, CDCL-3} (CDCL) builds off of DPLL but develops on it by introducing \textit{non-chronological backtracking} and learning from conflicts, also called \textit{clause learning},  using the resolution technique. CDCL does so by retaining a \emph{guess level} and an \emph{implication graph}.
+\paragraph{The guess level} tracks how often the CDCL algorithm has performed an arbitrary guess rather than assigned a value implied by clause learning.
+\paragraph{The implication graph} tracks which assignments of boolean variables, based on the Unit Propagation rule, lead to which \emph{implied} assignments. In addition, the implication graph not only serves as a good visual in understanding CDCL, but it also allows easy implementation of backtracking.
 
 \paragraph{Resolution} is the technique which was first implemented in the original DP algorithm~\cite{Original-DP-Article}. Although we will refrain from describing resolution to its full extent, it can be quickly summarised as: resolution combines two clauses in order to create a new equisatisfiable clause. Ben-Ari (chapter 4)~\cite{Math-Logic-for-CompSci} gives this rule:
 \begin{definition}
