@@ -476,3 +476,40 @@ As it would be adequate for an entire thesis on its own~\cite{All-SAT-Solvers}, 
     \label{fig:DPLL_Bigger_example}
 \end{figure}
 
+\begin{lstlisting}[caption={CDCL Algorithm (Pseudocode)}, escapeinside={(*}{*)}, label={lst:CDCL}]
+    def CDCL((*\(\Phi\)*)):
+        Input: (*A formula \(\Phi\) in Clausal Form*)
+        Output: (*A truth value indicating whether \(\Phi\) is satisfiable*)
+
+        (*\(\mathcal{A}\)*) (*\(\leftarrow\)*) (*\(\emptyset\)*)               # The truth assignment
+        guessLevel (*\(\leftarrow\)*) 0       # The current guess level
+
+        while True:
+            # Unit propagation at the current level
+            conflict (*\(\leftarrow\)*) unit_propagation((*\(\Phi\)*), (*\(\mathcal{A}\)*))
+            if conflict exists:
+                if guessLevel is 0:
+                    return False
+                
+                # Analyse conflict and learn a new clause with guess level (*\(\beta\)*)
+                ((*\(\beta\)*), newClause) (*\(\leftarrow\)*) analyse_conflict(conflict, (*\(\mathcal{A}\)*))
+                (*\(\Phi\)*) (*\(\leftarrow\)*) (*\(\Phi\)*) (*\(\cup\)*) {newClause}
+
+                # Backtrack non-chronologically (jump back to guess level (*\(\beta\)*))
+                guessLevel (*\(\leftarrow\)*) (*\(\beta\)*)
+                (*\(\mathcal{A}\)*) (*\(\leftarrow\)*) backtrack((*\(\mathcal{A}\)*), (*\(\beta\)*))
+
+                # Assert the new clause's unit literal at level (*\(\beta\)*)
+                unitLiteral (*\(\leftarrow\)*) pick_unit_literal(newClause)
+                assign(unitLiteral, (*\(\mathcal{A}\)*), (*\(beta\)*))
+
+            else:
+                # Check if assignment is complete
+                if all_variables_assigned((*\(\mathcal{A}\)*)):
+                    return True
+
+                # Choose a new literal and increase guess level
+                (*\(l\)*) (*\(\leftarrow\)*) chose_literal((*\(\Phi\)*) (*\(\mathcal{A}\)*))
+                guessLevel (*\(\leftarrow\)*) guessLevel + 1
+                assign((*\(l\)*), (*\(\mathcal{A}\)*), guessLevel)
+\end{lstlisting}
