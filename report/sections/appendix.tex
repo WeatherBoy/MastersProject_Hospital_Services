@@ -343,6 +343,109 @@ Then, we replace each disjunction with the corresponding set and collect all the
 \end{equation*}
 We have put \autoref{eq:CNF_example1} into CNF and now, ultimately, also into Clausal Form.
 
+\subsubsection{DPLL: Bigger example}\label{sec:DPLL_Bigger_Example}
+In the following we show the DPLL algorithm on the formula \autoref{eq:SAT_example2}.
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/1.png}
+        \subcaption*{Step 0: Initially, no literals has been assigned any values.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/2.png}
+        \subcaption*{Step 1: We start by assigning \texttt{False} to \(p_1\) at random.}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/3.png}
+        \subcaption*{Step 2: Then we assign \texttt{False} to \(p_2\) at random.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/4.png}
+        \subcaption*{Step 3: Thirdly, we assign \texttt{False} to \(p_3\). However, Unit Propagation on clause \(2\) and \(3\) yields to a conflicting assignment.}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/5.png}
+        \subcaption*{Step 4: We backtrack and assign \texttt{True} to \(p_3\). This in turn, also yields a conlict from clause \(4\) and \(5\).}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/6.png}
+        \subcaption*{Step 5: Then we backtrack again, assigning \texttt{True} to \(p_2\).}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/7.png}
+        \subcaption*{Step 6: We now assign \texttt{False} to \(p_3\) at random. However, once more this leads to a conlfict from clause \(2\) and \(3\).}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/8.png}
+        \subcaption*{Step 7: We backtrack on \(p_3\), assigning it \texttt{True} instead, but this leads to the same prior conlfict on Clause \(4\) and \(5\).}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/9.png}
+        \subcaption*{Step 8: We backtrack and assign \texttt{True} to \(p_1\).}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/10.png}
+        \subcaption*{Step 9: Then we try to assign \texttt{False} to \(p_2\), but this now leads to a conlict from clause \(1\) and \(7\).}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/11.png}
+        \subcaption*{Step 10: We backtrack and assign \texttt{True} to \(p_2\).}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/12.png}
+        \subcaption*{Step 11: Then we have Unit Propagation from clause \(8\) and we assign \texttt{True} to \(p_3\).}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/13.png}
+        \subcaption*{Step 16: Finally, our last assignment \(p_4 =\) \texttt{True} is from Unit Propagation by clause \(6\) and yields the satisfying assignment:
+        \\
+        \(\mathcal{A} = \{p_1 = \text{\texttt{True}}, p_2 = \text{\texttt{True}}, p_3 = \text{\texttt{True}}, p_4 = \text{\texttt{True}}\}\).}
+    \end{subfigure}
+\end{figure}
+
 
 \subsection{Figures}
 \begin{figure}[H]
