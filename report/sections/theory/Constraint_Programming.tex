@@ -302,9 +302,9 @@ Formally, for the two clauses \(\alpha = \{p_1, p_2, p_3\}\), \(\beta = \{\neg p
 
 \paragraph{Non-chronological backtracking} differs from DPLL's 'chronological backtracking' in that it can jump several levels in the decision tree, whereas ordinary backtracking always simply jumps to the most immediate assignment. Whenever a conflict occurs, CDCL creates a \emph{learned clause} by running resolution on the clauses, giving rise to the conflict. If more than two clauses contribute to the conflict, CDCL continues to resolve until the learned clause includes no more than one variable assigned at the current guess level. CDCL backtracks based on the learned clause. If the learned clause is a unit clause, it backtracks to guess level \(0\); this is due to the Unit Propagation rule, from which we know that a unit clause enforces an unambiguous decision, which CDCL can implement before any guessing. Otherwise, excluding the level at which the conflict took place, CDCL backtracks to the highest level where the conflict variable from the learned clause occurred.
 
-\subsubsection{CDCL: Bigger example}
+\subsubsection{CDCL: Bigger example}\label{sec:CDCL_BIG_examp}
 As with DPLL, we will provide a full run of the CDCL algorithm. Here, we have elected to instead of \autoref{eq:clausal_form_example}, show the satisfiability of the following formula (in clausal form)
-\begin{equation*}
+\begin{equation}\label{eq:SAT_example2}
     \Big\{
         \{
             \neg p_1, p_2, p_3
@@ -331,7 +331,7 @@ As with DPLL, we will provide a full run of the CDCL algorithm. Here, we have el
             \neg p_1, \neg p_2, p_3
         \}
     \Big\}
-\end{equation*}
+\end{equation}
 We show the implication graph in the lower lefthand corner. Circular notes indicate that, at this timestep, it was a random decision, while square notes indicate that it was an implied decision.
 \begin{figure}[H]
     \centering
@@ -462,5 +462,17 @@ We show the implication graph in the lower lefthand corner. Circular notes indic
         \\
         \(\mathcal{A} = \{p_1 = \text{\texttt{True}}, p_2 = \text{\texttt{True}}, p_3 = \text{\texttt{True}}, p_4 = \text{\texttt{True}}\}\).}
     \end{subfigure}
+\end{figure}
+
+As it would be adequate for an entire thesis on its own~\cite{All-SAT-Solvers}, we won't attempt to make any estimates to quantify how CDCL is superior to DPLL. We will only show the brief comparision between CDCL and DPLL on the same example. In \autoref{fig:DPLL_Bigger_example}, is given a finalised run of the DPLL algorithm on the same example as just showed\footnote{The full run can be seen in appendix \autoref{sec:DPLL_Bigger_Example}.}. One could imagine this blowing up to a much larger scale, where it is evident that the learned clauses from CDCL would be a significant advantage. SAT is nevertheless NP-complete, so the asymptotic running time remains \(O(2^n)\).  
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/Constraint-Programming/DPLL-Example2/13.png}
+    \caption{DPLL: Bigger example}
+    \small
+    \raggedright 
+    This showcases a finished run of the DPLL algorithm on the formula \autoref{eq:SAT_example2}.
+    \label{fig:DPLL_Bigger_example}
 \end{figure}
 
