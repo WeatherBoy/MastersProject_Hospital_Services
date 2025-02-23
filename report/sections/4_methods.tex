@@ -37,3 +37,37 @@ For clarity, we would like to note that the two spreadsheets are separated purel
     A picture of the taskboard currently in place at OUH. Names and tasks have been redacted to preserve the anonymity of OUH's personnel. 
     \label{fig:Whiteboard-Taskboard}
 \end{figure}
+
+The two spreadsheets, which need to be merged in order to arrive at the correct data, consisted of a \emph{ward assignment chart}, in the form of a Microsoft Excel file and a web application made by a third party called HosInfo. A snippet of the ward assignment chart can be seen in \autoref{fig:wac-snippet}, and a snippet of the HosInfo interface can be seen in \autoref{fig:HosInfo-snippet}.
+\\
+The immediate issue was that none of the data was formatted. Additionally, the HosInfo application (which we will refer to onwards as HosInfo) didn't have an API, and it only has two access levels: surface-level access for viewing the data and full administrative control. As such, our only option was to scrape the HTML pages from HosInfo. Scraping was a wholly new endeavour for us, so we tried to start out using Python's inherent \texttt{requests} library. Here, we injected \emph{cookies} and a \emph{header} containing our login information. However, it would soon prove that what seemed to be a bug at first, was actually just not an automatic solution at all. The injected information would have to be updated regularly with a manual login for this approach to work. Therefore, we made a switch to the open-source, third-party tool \texttt{selenium}. \texttt{selenium} works by instantiating a WebDriver, which can automatically drive the browser. In short, this meant that we gave it instructions to navigate separately to the three specified text elements for login input and fed it our credentials. In \autoref{fig:HosInfo-login}, a screengrab of the HosInfo login gateway is shown. After feeding the login credentials, the WebDriver manually navigated to the login button and clicked it. This prompts a load before transitioning from the login page to the correct URL from where we could scrape the data, so we injected a manual waiting time of at most ten seconds until a unique element appeared. We simply chose a unique element at random and used its XPATH in the HTML code for identification. This is all to say that the webscraping solution is incredibly fragile and highly prone to the slightest changes made to the HosInfo application.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/Methodology/Ward-Assignment-Chart-Redacted.png}
+    \caption{Ward Assignment Chart}
+    \small
+    \raggedright 
+    A snippet of the ward assignment chart used for keeping bookeeping weekly tasks. Names and tasks have been redacted to preserve the anonymity of OUH's personnel. 
+    \label{fig:wac-snippet}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/Methodology/HosInfo-Redacted.png}
+    \caption{HosInfo interface}
+    \small
+    \raggedright 
+    A snippet of the HosInfo interface used for storing planning information at OUH. Names and tasks have been redacted to preserve the anonymity of OUH's personnel. 
+    \label{fig:HosInfo-snippet}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{figures/Methodology/HosInfo-Login.png}
+    \caption{HosInfo login gateway}
+    \small
+    \raggedright 
+    The login gateway for the HosInfo application.
+    \label{fig:HosInfo-login}
+\end{figure}
