@@ -31,7 +31,7 @@ For clarity, we would like to note that the two spreadsheets are separated purel
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{figures/Methodology/Whiteboard-Taskboard-Redacted.png}
-    \caption{Whiteboard Taskboard}
+    \caption{Whiteboard taskboard}
     \small
     \raggedright 
     A picture of the taskboard currently in place at OUH. Names and tasks have been redacted to preserve the anonymity of OUH's personnel. 
@@ -40,12 +40,12 @@ For clarity, we would like to note that the two spreadsheets are separated purel
 
 The two spreadsheets, which need to be merged in order to arrive at the correct data, consisted of a \emph{ward assignment chart}, in the form of a Microsoft Excel file and a web application made by a third party called HosInfo. A snippet of the ward assignment chart can be seen in \autoref{fig:wac-snippet}, and a snippet of the HosInfo interface can be seen in \autoref{fig:HosInfo-snippet}.
 \\
-The immediate issue was that none of the data was formatted. Additionally, the HosInfo application (which we will refer to onwards as HosInfo) didn't have an API, and it only has two access levels: surface-level access for viewing the data and full administrative control. As such, our only option was to scrape the HTML pages from HosInfo. Scraping was a wholly new endeavour for us, so we tried to start out using Python's inherent \texttt{requests} library. Here, we injected \emph{cookies} and a \emph{header} containing our login information. However, it would soon prove that what seemed to be a bug at first, was actually just not an automatic solution at all. The injected information would have to be updated regularly with a manual login for this approach to work. Therefore, we made a switch to the open-source, third-party tool \texttt{selenium}. \texttt{selenium} works by instantiating a WebDriver, which can automatically drive the browser. In short, this meant that we gave it instructions to navigate separately to the three specified text elements for login input and fed it our credentials. In \autoref{fig:HosInfo-login}, a screengrab of the HosInfo login gateway is shown. After feeding the login credentials, the WebDriver manually navigated to the login button and clicked it. This prompts a load before transitioning from the login page to the correct URL from where we could scrape the data, so we injected a manual waiting time of at most ten seconds until a unique element appeared. We simply chose a unique element at random and used its XPATH in the HTML code for identification. This is all to say that the webscraping solution is incredibly fragile and highly prone to the slightest changes made to the HosInfo application.
+The immediate issue was that the data was inaccessible. The HosInfo application (which we will refer to onwards as HosInfo) didn't have an API, and it only has two access levels: surface-level access for viewing the data and full administrative control. As such, our only option was to scrape the HTML pages from HosInfo. Scraping was a wholly new endeavour for us, so at first, we tried using Python's inherent \texttt{requests} package. Here, we injected \emph{cookies} and a \emph{header} containing our login information. However, it would soon prove that what seemed to be a bug at first, was actually just not an automatic solution at all. The injected information would have to be updated regularly with a manual login for this approach to work. Therefore, we made a switch to the open-source, third-party tool \texttt{selenium}. \texttt{selenium} works by instantiating a WebDriver, which can automatically drive the browser. In short, this meant that we gave it instructions to navigate separately to the three specified text elements for login input and fed it our credentials. In \autoref{fig:HosInfo-login}, a screengrab of the HosInfo login gateway is shown. After feeding the login credentials, the WebDriver manually navigated to the login button and clicked it. This prompts a load before transitioning from the login page to the correct URL from where we could scrape the data, so we injected a manual waiting time of at most ten seconds until a unique element appeared. We simply chose a unique element at random and used its XPATH in the HTML code for identification. This is all to say that the webscraping solution is incredibly fragile and highly prone to the slightest changes made to the HosInfo application.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{figures/Methodology/Ward-Assignment-Chart-Redacted.png}
-    \caption{Ward Assignment Chart}
+    \caption{Ward assignment chart}
     \small
     \raggedright 
     A snippet of the ward assignment chart used for keeping bookeeping weekly tasks. Names and tasks have been redacted to preserve the anonymity of OUH's personnel. 
@@ -62,6 +62,19 @@ The immediate issue was that none of the data was formatted. Additionally, the H
     \label{fig:HosInfo-snippet}
 \end{figure}
 
+By submitting our credentials and automatically navigating to the correct webpage, we could now extract it in full as an HTML file. Here, we opted for using the very standard solution of parsing the HTML file with the \texttt{bs4} package, more commonly known as \texttt{BeautifulSoup}. Parsing the HTML was, to our great luck, quite easy. Although the spreadsheet isn't formatted as an HTML \texttt{table}, every single cell, or entry, was the same division (\texttt{div}) with the class name: \emph{"single-description"}. Likewise, were the functions (the row labels) but instead with the class name: \emph{"single-function"}. As there were seven columns, one for each day of the week, we could iterate through our 1D array of entries but retain the 2D order by using the row indices:
+
+\begin{equation*}
+    \text{row\_index} = \text{entry\_index} \mod 7
+\end{equation*}
+and the column indices:
+\begin{equation*}
+    \text{column\_index} = \left\lfloor
+        \frac{\text{entry\_index}}{7}
+    \right\rfloor.
+\end{equation*}
+This doesn't exactly constitute as rocket-science; however, it was nice to be able to keep the index as some \emph{functions} (rows) didn't contain any relevant information, and others didn't change from week to week but introduced a large bug, when we attempted to include them. An example of rows that weren't relevant was the large entries describing that all units (agents) either were taking a course, had a planned vacation or another kind of time off, or that the agents were ill. When we initially tried to exclude some of these rows, we did it by their index, keeping a dictionary of the function label to index translation. Alas, the indices didn't stay fixed and could change from week to week. This also introduced a large bug to our system, which we attempted to alleviate by simply skipping rows based on their label instead. The idea behind using indices rather than labels was a hope that, although the function label might be renamed, it would retain its index. Ideally, the solution wouldn't have to skip any rows, but seeing as that wasn't an option, our program was left vulnerable to function (row) label renaming.
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.55\textwidth]{figures/Methodology/HosInfo-Login.png}
@@ -71,3 +84,99 @@ The immediate issue was that none of the data was formatted. Additionally, the H
     The login gateway for the HosInfo application.
     \label{fig:HosInfo-login}
 \end{figure}
+
+Now, with all the preprocessing of the data, we had gone from a webpage with some entries in the form of a table to a full HTML file and all the way to a manageable 2D table (a \texttt{pandas} table in Python) with string entries and row labels. Now comes the second glaring issue: HosInfo doesn't enforce any formatting of its entries. We had to try to somehow arrive at a pattern for all the string entries constituting our data. In \autoref{tab:HosInfo-example-entries}, we give an example of some of the possible entries in HosInfo. Some of the formatting is extremely simple to spot for the human eye, and for a non-technically inclined individual, some of these entries probably read just fine. However, there is still a lot of ambiguity as to how it should be interpreted. In \autoref{tab:HosInfo-good-processing}, we give an example of what could probably be considered a good interpretation, and in \autoref{tab:HosInfo-poor-processing}, we provide an example of some of all the possible pitfalls a computer program might be prone to stumble into. 
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|}
+        \hline
+        HARRYP (08:15 - 15:47) spells                                                                                                                                                          \\ \hline
+        \begin{tabular}[c]{@{}l@{}}
+            DORA\_TE (07:30 - 14:25)\\
+            PAUL\_A (07:00 - 12:00) (12:00 - 15:00) Hr. 8-12
+        \end{tabular}                                                                    
+        \\ \hline
+        \begin{tabular}[c]{@{}l@{}}
+            DAENERYS\_T (08:00 - 16:00) stormborn\\
+            STEVEN\_STUD1 (08:00 - 16:00)
+        \end{tabular}
+        \\ \hline
+        \begin{tabular}[c]{@{}l@{}}
+            THOMAS\_TT (07:30 - 15:47)\\
+            WALTERHW (08:00 - 16:12) chemistry\\
+            JESSIE\_P (07:30 - 15:30) 13-15\\
+            LEAH\_OS (07:00 - 15:43) Hr. 07:00 - 13:00
+        \end{tabular}
+        \\ \hline
+        \begin{tabular}[c]{@{}l@{}}
+            KATARA\_OTNWT (07:00 - 15:30)\\
+            SOKKA\_STUDENT (07:00 - 15:30)
+        \end{tabular}
+        \\ \hline
+        GERALT\_OR   
+        \\ \hline   
+    \end{tabular}
+    \caption{HosInfo example entries}
+    \label{tab:HosInfo-example-entries}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{Name}         & \textbf{Time} & \textbf{Extra}  \\ \hline
+        Harry P.              & 08:15 - 15:47 & spells          \\ \hline
+        Dora T. E.            & 07:30 - 14:25 &                 \\ \hline
+        Paul A.               & 07:00 - 15:00 & (8-12)          \\ \hline
+        DAENERYS T.           & 08:00 - 16:00 & stormborn       \\ \hline
+        Steven (STUD1)        & 08:00 - 16:00 &                 \\ \hline
+        Thomas T. T.          & 07:30 - 15:47 &                 \\ \hline
+        Walter H. W.          & 08:00 - 16:12 & chemistry       \\ \hline
+        Jessie P.             & 07:30 - 15:30 & (13-15)         \\ \hline
+        Leah O. S.            & 07:00 - 15:43 & (07:00 - 13:00) \\ \hline
+        Katara O. T. N. W. T. & 07:00 - 15:30 &                 \\ \hline
+        Sokka (Student)       & 07:00 - 15:30 &                 \\ \hline
+        Geralt O. R.          & -             &                 \\ \hline
+    \end{tabular}
+    \caption{HosInfo good processing}
+    \label{tab:HosInfo-good-processing}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{Name}              & \textbf{Time} & \textbf{Extra}           \\ \hline
+        Harryp                     & 08:15 - 15:47 & spells                   \\ \hline
+        Dora T. E.                 & 07:30 - 14:25 &                          \\ \hline
+        Paul A.                    & 07:00 - 12:00 & (12:00 - 15:00) Hr. 8-12 \\ \hline
+        DAENERYS T.                & 08:00 - 16:00 & stormborn                \\ \hline
+        Steven S. T. U. D. 1.      & 08:00 - 16:00 &                          \\ \hline
+        Thomas T. T.               & 07:30 - 15:47 &                          \\ \hline
+        Walterhw                   & 08:00 - 16:12 & chemistry                \\ \hline
+        Jessie P.                  & 07:30 - 15:30 & 13-15                    \\ \hline
+        Leah O. S.                 & 07:00 - 15:43 & Hr. 07:00 - 13:00        \\ \hline
+        Katara O. T. N. W. T.      & 07:00 - 15:30 &                          \\ \hline
+        Sokka S. T. U. D. E. N. T. & 07:00 - 15:30 &                          \\ \hline
+        Geralt O. R.               & -             &                          \\ \hline
+    \end{tabular}
+    \caption{HosInfo poor processing}
+    \label{tab:HosInfo-poor-processing}
+\end{table}
+
+We loathe to admit it, but in order to have any fighting chance at formatting the strings, as shown in \autoref{tab:HosInfo-example-entries}, we elected to use regular expressions (regex). More precisely we used the following regex pattern:
+\begin{verbatim}
+    ^([^\s(]+(?:_[^\s(]+)?)\s*(?:\(([^)]+)\))?\s*(.*)$
+\end{verbatim}
+This regex pattern essentially captures three groups. We will do our best to break it down. A good way to understand it is by dividing it into the following:
+\begin{verbatim}
+    ^
+        ([^\s(]+(?:_[^\s(]+)?)   # (group 1)
+        \s*
+        (?:\(([^)]+)\))?        # (group 2, optional)
+        \s*
+        (.*)                    # (group 3)
+    $
+\end{verbatim}
+Here, \verb|^| signifies the beginning of the string. \verb|([^\s(]+(?:_[^\s(]+)?)| captures \emph{group 1}. The first part, \verb|[^\s(]+| captures "one or more characters that are not whitespace \verb|\s| and are not the starting parenthesis character \verb|(|"\footnote{This is the standard formulation employed for regular expressions.}.
