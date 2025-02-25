@@ -70,6 +70,16 @@
   showstringspaces=false
 }
 
+% ## Glossaries ##
+\usepackage{glossaries}
+\makeglossaries
+
+\newglossaryentry{dictionary}
+{
+    name=dictionary,
+    description={When we refer to a dictionary, we mean a data structure which solves the dictionary problem. This can often simply be thought of as a hash map}
+}
+
 % Formalia goes here:
 \newcommand\course{Master's Thesis} %<--- Kursus
 \newcommand\datoen{F25} %<--- Dato
@@ -88,6 +98,8 @@
     \setcounter{page}{1}
     \pagenumbering{roman}
     \tableofcontents
+    \newpage
+    \printglossaries
     \newpage
 
     \setcounter{page}{1}
