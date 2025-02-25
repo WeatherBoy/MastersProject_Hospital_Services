@@ -48,7 +48,7 @@ The immediate issue was that the HosInfo data was inaccessible. The HosInfo appl
     \caption{Ward assignment chart}
     \small
     \raggedright 
-    A snippet of the ward assignment chart used for keeping bookeeping weekly tasks. Names and tasks have been redacted to preserve the anonymity of OUH's personnel. 
+    A snippet of the ward assignment chart used for bookeeping weekly tasks. Names and tasks have been redacted to preserve the anonymity of OUH's personnel. 
     \label{fig:wac-snippet}
 \end{figure}
 
@@ -85,7 +85,9 @@ This doesn't exactly constitute as rocket-science; however, it was nice to be ab
     \label{fig:HosInfo-login}
 \end{figure}
 
-Now, with all the preprocessing of the data, we had gone from a webpage with some entries in the form of a table to a full HTML file and all the way to a manageable 2D table (a \texttt{pandas} table in Python) with string entries and row labels. Now comes the second glaring issue: HosInfo doesn't enforce any formatting of its entries. We had to try to somehow arrive at a pattern for all the string entries constituting our data. In \autoref{tab:HosInfo-example-entries}, we give an example of some of the possible entries in HosInfo. Some of the formatting is extremely simple to spot for the human eye, and for a non-technically inclined individual, some of these entries probably read just fine. However, there is still a lot of ambiguity as to how it should be interpreted. In \autoref{tab:HosInfo-good-processing}, we give an example of what could probably be considered a good interpretation, and in \autoref{tab:HosInfo-poor-processing}, we provide an example of some of all the possible pitfalls a computer program might be prone to stumble into. 
+Now, with all the preprocessing of the data, we had gone from a webpage with some entries in the form of a table to a full HTML file and all the way to a manageable 2D table (a \texttt{pandas} table in Python) with string entries and row labels. This brings us to the second glaring issue: HosInfo doesn't enforce any formatting of its entries. As such, we had to somehow arrive at a pattern for all the string entries constituting our data.
+\\
+In \autoref{tab:HosInfo-example-entries}, we give an example of some of the possible entries in HosInfo. Some of the formatting is extremely simple to spot for the human eye, and for a non-technically inclined individual, some of these entries probably read just fine. However, there is still a lot of ambiguity as to how it should be interpreted. In \autoref{tab:HosInfo-good-processing}, we give an example of what could probably be considered a good interpretation, and in \autoref{tab:HosInfo-poor-processing}, we provide an example of some of all the possible pitfalls a computer program might be prone to stumble into.  
 
 \begin{table}[H]
     \centering
