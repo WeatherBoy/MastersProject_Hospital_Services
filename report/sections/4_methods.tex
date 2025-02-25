@@ -174,9 +174,20 @@ This regex pattern essentially captures three groups. We will do our best to bre
     ^
         ([^\s(]+(?:_[^\s(]+)?)   # (group 1)
         \s*
-        (?:\(([^)]+)\))?        # (group 2, optional)
+        (?:\(([^)]+)\))?         # (group 2, optional)
         \s*
-        (.*)                    # (group 3)
+        (.*)                     # (group 3)
     $
 \end{verbatim}
-Here, \verb|^| signifies the beginning of the string. \verb|([^\s(]+(?:_[^\s(]+)?)| captures \emph{group 1}. The first part, \verb|[^\s(]+| captures "one or more characters that are not whitespace \verb|\s| and are not the starting parenthesis character \verb|(|"\footnote{This is the standard formulation employed for regular expressions.}.
+Here, \verb|^| signifies the beginning of the string. \verb|([^\s(]+(?:_[^\s(]+)?)| captures \emph{group 1}. The first part, \verb|[^\s(]+|, captures "one or more characters that are not whitespace \verb|\s| and are not the character starting parenthesis \verb|(|"\footnote{This is the standard formulation employed for regular expressions.}. Then \verb|(?:_[^\s(]+)?| is a \emph{non-capturing} group, i.e. what it captures isn't a distinct group, but rather it adheres to a preexisting, in this case \emph{group 1}. It captures a group matched by the underscore character \verb|_| followed by "one or more non-whitespace, non-\verb|(| characters". However, this entire non-capturing group is optional, signified by the question mark character \verb|?|. The next line: \verb|\s*| is a standard expression which matches zero or more whitespace characters (effectively discarding them).
+\\
+Next, \verb|(?:\(([^)]+)\))?| is a second non-capturing group, which works in a somewhat peculiar way. It is also optional (again signified by the \verb|?|); however, if there is a closed parenthesis, given by a \verb|(| and a \verb|)| character, then this part of the expression \verb|([^)]+)| captures all characters which aren't the \verb|)| character, i.e. everything in the parenthesis. This is also followed by the standard: \verb|\s*|, discarding zero or more whitespace characters.
+\\
+Finally, what we have marked as \emph{group 3}: \verb|(.*)| simply captures everything else until the end of the string.
+\\
+In an attempt to explain it in a slightly more human fashion, we can classify the three groups as:
+\begin{enumerate}
+	\item Group 1: Captures the name and the initials after the underscore, if present.
+	\item Group 2: If a closed parenthesis exists, this captures its innards, i.e. this captures (the first) timeslot, if present.
+	\item Group 3: This is anything after a potential closed parenthesis, or alternatively anything after the name, i.e. this captures any trailing appendages, e.g. this could be extra information as highlighted in \autoref{tab:HosInfo-good-processing}.
+\end{enumerate}
