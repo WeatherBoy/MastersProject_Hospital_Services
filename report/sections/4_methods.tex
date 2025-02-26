@@ -204,4 +204,11 @@ The only solution is obviously a translation. We had expected that we would have
 \\
 This resulted in at least a month-long ordeal of back-and-forth. We made a simple check that stored entries from each of the two spreadsheets if they didn't have a matching pair in the other spreadsheet. This way, in collaboration with the healthcare personnel at OUH, we could figure out which labels should be renamed and which labels were meant to not have a matching pair. Because, yes, some of the \gls{function} labels from both the assignment ward data and HosInfo data included critical information, but they didn't have a matching pair in the corresponding spreadsheet. Our immediate conclusion was that they were incompatible, but the more technical answer is that they should simply have their own column.
 \\
-The HosInfo data does not include information about which ward the \gls{function} is supposed to be performed at.
+The HosInfo data does not include information about which ward the \gls{function} is supposed to be performed at. However, as the name would imply, so does the ward assignment chart. Sometimes, an entry (a ward) in the assignment chart might be flagged with \emph{'FLEX'}. This means that that ward is "flexible", i.e. multiple people may come and go throughout the day. So if ward \(m\), in the assignment chart, is flagged with \emph{'FLEX \(n\)'}, then the agent \(a\) assigned to ward \(n\) may also be using ward \(m\) throughout the day. Therefore rather than just writing
+\begin{center}
+    "\(a\) is assigned to ward \(n\)",
+\end{center}
+a more accurate description would be
+\begin{center}
+    "\(a\) is assigned to ward \(n\), (flex ward \(m\))".
+\end{center} 
