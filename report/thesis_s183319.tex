@@ -25,7 +25,7 @@
 \usepackage{wrapfig} % <-- In case you want to wrap text around figures (can look quite pro)
 \usepackage{arydshln}   % <-- For horizontal, vertical, etc. lines (for tables and matrices)
 \usepackage{subcaption} % <-- For subfigures
-\usepackage{mdframed} % <-- For frames around theorems and definitions
+\usepackage[many]{tcolorbox} % <-- For making boxes around text
 
 % ## Referencing ##
 \usepackage{fancyref}   % <-- Supposed to make referencing better, don't know where it's used
@@ -51,9 +51,31 @@
 }
 
 % For math definitions
-\newmdtheoremenv{definition}{Definition}[section]
-\newmdtheoremenv{theorem}{Theorem}[section]
-\newmdtheoremenv{corollary}{Corollary}[section]
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[section]
+\tcolorboxenvironment{definition}{
+  sharp corners,
+  boxrule=0.4pt,
+  colback=white,
+  before skip=\topsep,
+  after skip=\topsep,
+}
+\tcolorboxenvironment{theorem}{
+  sharp corners,
+  boxrule=0.4pt,
+  colback=white,
+  before skip=\topsep,
+  after skip=\topsep,
+}
+\tcolorboxenvironment{corollary}{
+  sharp corners,
+  boxrule=0.4pt,
+  colback=white,
+  before skip=\topsep,
+  after skip=\topsep,
+}
+
 
 % ## For pseudocode ##
 \usepackage{listings}
