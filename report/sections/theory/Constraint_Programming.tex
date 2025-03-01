@@ -278,7 +278,7 @@ Sometimes, the best way to understand an algorithm is just to see it in action. 
     \end{subfigure}
 \end{figure}
 
-\subsubsection{Conflict Driven Clause Learning}
+\subsubsection{Conflict Driven Clause Learning}\label{sec:CDCL}
 Conflict Driven Clause Learning~\cite{CDCL-1, CDCL-2, CDCL-3} (CDCL) builds off of DPLL but develops on it by introducing \textit{non-chronological backtracking} and learning from conflicts, also called \textit{clause learning},  using the resolution technique. CDCL does so by retaining a \emph{guess level} and an \emph{implication graph}.
 \paragraph{The guess level} is an integer counting how often the CDCL algorithm has performed an arbitrary guess rather than assigned a value implied by clause learning. The guess level starts at \(0\) which is considered the highest level for the CDCL algorithm.
 \paragraph{The implication graph} tracks which assignments of boolean variables, based on the Unit Propagation rule, lead to which \emph{implied} assignments. In addition, the implication graph not only serves as a good visual in understanding CDCL, but it also enables easy implementation of backtracking.
