@@ -242,4 +242,46 @@ The scheduling task, as we elected to dub it, consists of assigning agents to ta
 As mentioned in \autoref{sec:theory}, and as we will detail further in the following sections, the scheduling task is NP-complete - more specifically, the scheduling task can be modelled as the boolean satisfiability problem. Although we had spent a good amount of time thinking about more commonly accepted AI techniques, such as the GA scheme (see \autoref{sec:genetic-algorithms}), we ultimately ended up using constraint programming, i.e. an SAT solver (see \autoref{sec:Constraint_Programming}).
 \\
 \\
-From a mathematical and algorithmic perspective, solving the scheduling task is readily feasible. As it is NP-complete, it is a well-studied problem with a wide range of practical heuristics. In practice, we employed Google's OR-Tools~\cite{Wiki-OR-Tools} open-source software package for \texttt{Python}. OR-Tools is a suite of optimisation tools, which includes the CP-SAT solver, a state-of-the-art CP solver that uses a SAT solver as a base. The CP-SAT solver is a hybrid solver combining the strengths of CP and SAT solving by expanding upon~\cite{Lazy-Clause-Generation} the foundation lain by CDCL (see \autoref{sec:CDCL}).
+From a mathematical and algorithmic perspective, solving the scheduling task is readily feasible. As it is NP-complete, it is a well-studied problem with a wide range of practical heuristics. In practice, we employed Google's OR-Tools~\cite{Wiki-OR-Tools} open-source software package for Python. OR-Tools is a suite of optimisation tools, which includes the CP-SAT solver, a state-of-the-art CP solver that uses a SAT solver as a base. The CP-SAT solver is a hybrid solver combining the strengths of CP and SAT solving by expanding upon~\cite{Lazy-Clause-Generation} the foundation lain by CDCL (see \autoref{sec:CDCL}).
+\\
+On multiple occasions, we have jokingly stated that using Google's OR-Tools is simply a matter of running
+\begin{verbatim}
+    from Google import model
+    model.solve( )
+\end{verbatim}
+Although (obviously) not an exact representation of our codebase, it still carries a nugget of the truth. Following in the vein of boolean satisfiability, we model the scheduling task with a boolean formula. Every single boolean variable in this formula states whether an agent \(a\) is performing a task \(i\) on day \(j\). As such, all of the decision variables in our formula are going to take the form,
+\begin{equation}\label{eq:decision-variable-form}
+	a_{ij}.
+\end{equation}
+In Python with OR-Tools, this is declared using an instance of the Python \texttt{dictionary} object. This is showcased in the following code snippet where the \texttt{model} object is instantiated pretty much like the above example:
+\begin{python}
+# Decision variables
+x = {}
+for agent in agents:
+    for task in tasks:
+        for day in all_days:
+            x[(agent.name, task, day)] = model.NewBoolVar(f"x_{agent.name}_{task}_{day}")
+\end{python}
+We are sure that the reader will agree; given the information represented by the \texttt{agents}, \texttt{tasks} and \texttt{all_days} variables, arriving at working code, as showcased above, is simply an implementation detail.
+\\
+From here, all of the logic needs to be implemented. There is an abundance of rules to which the program must adhere in order for it to produce a valid solution. Due to bureaucracy and mismanagement of stakeholder interest on our part, we regrettably only ever worked on a very small subset of the greater administrative and planning effort at OUH. Despite being unable to show the complete picture of what capabilities such a software tool would require, we will nevertheless, in the following detail, the constraints we implemented in bullet points:
+\begin{itemize}
+	\item An agent can only be assigned a task to which they are qualified.
+	\item An agent cannot be assigned a task on a day when they are unavailable.
+	\item All tasks must be assigned the required amount of qualified agents (some tasks require more than one agent).
+	\item Agents can perform no more than one task a day.
+\end{itemize}
+The following rules are related to a special type of task called the \emph{"Rygvagt"} (it is Danish for \emph{"back watch"} - \emph{back} referring to the body part). It is a task that must be performed daily, even on the weekends. As such, it incurred the following two constraints:
+\begin{itemize}
+	\item If an agent is assigned to a task on either Saturday or Sunday, they are automatically assigned to both Saturday and Sunday. This is called a \emph{weekend task}.
+	\item If an agent is assigned to a weekend task, then they are mandated time off for both the previous and the following Monday (they become unavailable those days).
+\end{itemize}
+Finally, as the Google OR-Tools package makes this easily implementable, we elected to optimise over a minimal maximum number of assignments. This means that while the utmost important task of the program remains to find a valid solution, it will try to arrive at a solution where the agent who works the most shifts works as few as possible. As of the time of writing, optimising over multiple minimisations isn't integrated within OR-Tools. However, we deemed it interesting to try to run two optimisations. 
+First, we optimise over the minimal maximum of assignments for the agents and then use the found maximum as a new constraint. Second, we seek to minimise the range (the difference between the maximum and minimum) of the number of tasks assigned to any agent. This way, we would ideally arrive at the most fair assignment.
+\\
+Additionally, right now, OUH plans on a month-to-month basis. It is our understanding that they try their best to assign each month in the most fair and balanced way, yet it is on a case-to-case basis. One way to try to minimise any cumulative unbalances could be to retain a sum of how many tasks each agent has been assigned so far this year and use that count in the optimisation. Another straightforward way to balance it would be to simply plan on a long enough timescale; however, for real-world problems, such ideals aren't always possible.
+\\
+Although both ideas are enticing in theory, we were unfortunately limited on both time and data and, as such, unable to implement any of them in practice.
+\\
+\\
+
