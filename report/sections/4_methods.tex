@@ -264,7 +264,7 @@ for agent in agents:
 \end{python}
 We are sure that the reader will agree; given the information represented by the \texttt{agents}, \texttt{tasks} and \texttt{all_days} variables, arriving at working code, as showcased above, is simply an implementation detail.
 \\
-From here, all of the logic needs to be implemented. There is an abundance of rules to which the program must adhere in order for it to produce a valid solution. Due to bureaucracy and mismanagement of stakeholder interest on our part, we regrettably only ever worked on a very small subset of the greater administrative and planning effort at OUH. Despite being unable to show the complete picture of what capabilities such a software tool would require, we will nevertheless, in the following detail, the constraints we implemented in bullet points:
+From here, all of the logic needs to be implemented. There is an abundance of rules to which the program must adhere to in order for it to produce a valid solution. Due to bureaucracy and mismanagement of stakeholder interest on our part, we regrettably only ever worked on a very small subset of the greater administrative and planning effort at OUH. Despite being unable to show the complete picture of what capabilities such a software tool would require, we will nevertheless, in the following detail, the constraints we implemented in bullet points:
 \begin{itemize}
 	\item An agent can only be assigned a task to which they are qualified.
 	\item An agent cannot be assigned a task on a day when they are unavailable.
@@ -331,7 +331,7 @@ Additionally, right now, OUH plans on a month-to-month basis. It is our understa
 Although both ideas are enticing in theory, we were unfortunately limited on both time and data and, as such, unable to implement any of them in practice.
 \\
 \\
-Although feasible from an engineering perspective, we are uncertain whether a solution to the scheduling task could be in any way viable. No matter what program is implemented, it would require validation from an actual user; as such, the human aspect is crucial. It goes without saying that no end-user should translate the formal constraints into coding logic themselves. However, it would also be incredibly na\"ive to imagine a program that could sustain hardcoding all possible constraints that may arise. Therefore, a form of abstraction allowing for translation from real, informal constraints to logic is necessary. 
+Although feasible from an engineering perspective, we are uncertain whether a solution to the scheduling task could be in any way viable. No matter what program is implemented, it would require validation from an actual user; as such, the human aspect is crucial. It goes without saying that no end-user should translate the formal constraints into coding logic themselves. However, it would also be incredibly na\"ive to imagine a program that could sustain hard-coding all possible constraints that may arise. Therefore, a form of abstraction allowing for translation from real, informal constraints to logic is necessary. 
 \\
 One might argue that the above is no more than a convoluted advocate for the importance of a proper user interface, but we digress. The user interface should act as the silver platter upon which the \emph{good idea} is being served. In this case, the 'good idea' would be an abstraction that suits the needs of as many end users as possible.
 \\
@@ -432,5 +432,13 @@ An example of the four sheets can be seen in \autoref{tab:Agent-Chart}, \autoref
     Each 'x' indicates that the given task needs to be performed on the given day.
     \label{tab:Tasks}
 \end{table}
-
+These four tables aim to provide the necessary data for the decision variables, as represented in \autoref{eq:decision-variable-form}. However, they are unable to encapsulate rules, such as those concerning the "Rygvagt". Although we haven't been able to experiment with the interface, we still hypothesise that such rules would have to be hard-coded regardless.
+\\
+Furthermore, this representation does not indicate which tasks might require multiple agents nor how many. However, we are confident that this could be integrated within a stand-alone interface, not relying on Microsoft Excel as a medium.
+\\
+Additionally, OUH informed us that for this smaller subset of the problem, one task required two agents but only for one out of five days of the week. Although it is difficult to represent in the anonymised version given by \autoref{tab:Tasks}, we solved this by modelling it as two distinct tasks. The first task required one agent for four out of five days, and the second task required two agents for the remaining day. 
+\\
+Although this solution might come somewhat naturally to an individual with an engineering background, we are fully aware that it would be an unnatural change for somebody who has thought of it as a single task throughout their entire career.
+\\
+This brings us nicely to our final remark on the scheduling task. Using Microsoft Excel as a medium is clearly inadequate. It cannot, by itself, provide the necessary abstraction required for such a complex translation of everyday rules into formal logic. Furthermore, although it is possible to model many of these rules through such an interface, it ultimately begs the question: Does it actually serve the end user, or is it simply a lazy workaround?
 
