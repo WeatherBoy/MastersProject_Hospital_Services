@@ -317,7 +317,7 @@ Then, the first rule is enforced by the second \texttt{for}-loop, which dictates
 \\
 The following line just ensures that somebody actually gets assigned to the "Rygvagt" that weekend.
 \\
-The last line of code is a bit more complex and could, admittedly, be refactored in order to provide more clarity. The first variable, \texttt{works_weekend}, is just a renaming for the code to be slightly more readable. The \texttt{info} variable has \texttt{None}-entries if, as aforementioned, the Mondays before and after the weekend are outside the timeframe; this is what the \texttt{if}-statement checks. However, this ultimately fails to enforce the second rule. Better software would have some notice informing the user that the solution could not satisfy the required off days as they are outside the timeframe for the plan.
+The last block of code is a bit more complex and could, admittedly, be refactored in order to provide more clarity. The first variable, \texttt{works_weekend}, is just naming a flag for the code to be slightly more readable. The \texttt{info} variable has \texttt{None}-entries if, as aforementioned, the Mondays before and after the weekend are outside the timeframe; this is what the \texttt{if}-statement checks. However, this ultimately fails to enforce the second rule. Better software would have some notice informing the user that the solution could not satisfy the required off days as they are outside the timeframe for the plan.
 \\
 The bodies of the \texttt{if}-statements work precisely as the two previously showcased snippets of code. The main difference is that the loop over tasks has been refactored to a Python \texttt{list comprehension} instead.
 \\
