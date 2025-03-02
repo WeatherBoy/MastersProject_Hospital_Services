@@ -338,4 +338,99 @@ One might argue that the above is no more than a convoluted advocate for the imp
 Despite being an incredibly fascinating issue that we would have loved to delve deeper into, we were once more limited on time and data. In the following, we will present our initial, final, and only solution, which serves simply as a most base prototype.
 \\
 \\
+OUH is incredibly fond of Microsoft Excel. Hence, we figured that the most seamless initial interface might use Excel as a medium. This solution consisted of four 'sheets' in one Excel sheet, which could be loaded into and thus manipulated in Python. The data contained within the four sheets are here detailed in bullet points:
+\begin{itemize}
+	\item \emph{Agent Charts}: For every day \(d\) in the timeframe and every assignable agent \(a\), is shown whether anything prevents agent \(a\) from being assigned a task day \(d\).
+	\item \emph{Agents}: For  every assignable agent \(a\) and every possible qualification \(j\), is shown whether agent \(a\) has qualification \(j\).
+	\item \emph{Rolling Chart}: For our case; the preferences that each agent \(a\) has for the special task "Rygvagt".
+	\item \emph{Tasks}: For every day \(d\) and for every possible task \(i\), is shown whether task \(i\) needs to be performed on day \(d\).
+\end{itemize}
+An example of the four sheets can be seen in \autoref{tab:Agent-Chart}, \autoref{tab:Agents}, \autoref{tab:Rolling-Chart} and \autoref{tab:Tasks}.
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|l|l|l|}
+        \hline
+        \textbf{Agent Chart} & \textbf{Agent 1} & \textbf{Agent 2} & \textbf{Agent 3} & \textbf{Agent 4} \\ \hline
+        1st of January       & Morning meeting  &                  &                  &                  \\ \hline
+        2nd of January       &                  &                  & Vacation request &                  \\ \hline
+        3rd of January       &                  & Mandatory leave  &                  &                  \\ \hline
+        4th of January       &                  &                  &                  &                  \\ \hline
+        5th of January       &                  &                  &                  &                  \\ \hline
+        6th of January       &                  &                  &                  & Vacation request \\ \hline
+        7th of January       &                  &                  &                  & Vacation request \\ \hline
+        8th of January       &                  & Coursework       &                  & Vacation request \\ \hline
+        9th of January       &                  &                  &                  & Vacation request \\ \hline
+        10th of January      &                  &                  &                  & Vacation request \\ \hline
+    \end{tabular}
+    \caption{Agent Chart}
+    \small
+    \raggedright
+    Each entry indicates a reason why an agent cannot be assigned a task on a given day.
+    \label{tab:Agent-Chart}
+\end{table}
+
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|l|l|}
+        \hline
+        \textbf{Agents}  & \textbf{Task 1} & \textbf{Task 2} & \textbf{Task 2} \\ \hline
+        \textbf{Agent 1} & x               & x               & x               \\ \hline
+        \textbf{Agent 2} &                 & x               &                 \\ \hline
+        \textbf{Agent 3} & x               & x               & x               \\ \hline
+        \textbf{Agent 4} & x               & x               & x               \\ \hline
+    \end{tabular}
+    \caption{Agents}
+    \small
+    \raggedright
+    Each 'x' indicates that the agent is qualified for the given task.
+    \label{tab:Agents}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|}
+        \hline
+        \textbf{Rolling Chart} & \\ \hline
+        1st of January         & Agent 2   \\ \hline
+        2nd of January         & Agent 3   \\ \hline
+        3rd of January         & Agent 1   \\ \hline
+        4th of January         & Agent 1   \\ \hline
+        5th of January         & Agent 1   \\ \hline
+        6th of January         & Agent 3   \\ \hline
+        7th of January         & Agent 2   \\ \hline
+        8th of January         & Agent 2   \\ \hline
+        9th of January         & Agent 3   \\ \hline
+        10th of January        & Agent 2   \\ \hline
+    \end{tabular}
+    \caption{Rolling Chart}
+    \small
+    \raggedright
+    Each entry indicates the agent's preference for being assigned to the special task "Rygvagt" on the given day.
+    \label{tab:Rolling-Chart}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|l|l|}
+        \hline
+        \textbf{Tasks} & \textbf{Task 1} & \textbf{Task 2} & \textbf{Task 3} \\ \hline
+        1st of January       & x               & x               &                 \\ \hline
+        2nd of January       & x               & x               & x               \\ \hline
+        3rd of January       & x               & x               & x               \\ \hline
+        4th of January       & x               &                 &                 \\ \hline
+        5th of January       & x               &                 &                 \\ \hline
+        6th of January       & x               & x               & x               \\ \hline
+        7th of January       & x               & x               & x               \\ \hline
+        8th of January       & x               & x               &                 \\ \hline
+        9th of January       & x               & x               & x               \\ \hline
+        10th of January      & x               & x               & x               \\ \hline
+    \end{tabular}
+    \caption{Tasks}
+    \small
+    \raggedright
+    Each 'x' indicates that the given task needs to be performed on the given day.
+    \label{tab:Tasks}
+\end{table}
+
 
