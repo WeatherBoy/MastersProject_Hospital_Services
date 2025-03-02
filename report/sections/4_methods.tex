@@ -279,7 +279,7 @@ for agent in agents:
         for task in tasks:
             model.Add(x[(agent.name, task, day)] == 0)
 \end{python}
-Much like the above example, it is no more complex than a nested \texttt{for}-loop structure over tasks, days (in this case \texttt{days_off}) and tasks. By writing a simple \texttt{class} representation for our \texttt{agent} variables, we have easily readable information adhering to the specific agent, such as their unavailable days - stored in \texttt{days_off} as a \texttt{list} representation. Assigning each of these variables \(0\) is OR-Tools Python representation for setting them to false in the formula of our boolean satisfiability problem.
+Much like the above example, it is no more complex than a nested \texttt{for}-loop structure over tasks, days (in this case, the \texttt{days_off} field) and tasks. Assigning each of these variables \(0\) is OR-Tools' Python representation for setting them to false.
 \\
 \\ 
 The following rules are related to a special type of task called the \emph{"Rygvagt"} (it is Danish for \emph{"back watch"} - \emph{back} referring to the body part). It is a task that must be performed daily, even on the weekends. As such, it incurred the following two constraints:
