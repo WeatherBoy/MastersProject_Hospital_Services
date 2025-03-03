@@ -39,7 +39,8 @@ For clarity, we would like to note that the two spreadsheets are separated purel
 \end{figure}
 
 The two spreadsheets, which need to be merged in order to arrive at the correct data, consisted of a \emph{ward assignment chart}, in the form of a Microsoft Excel file and a web application made by a third party called HosInfo. A snippet of the ward assignment chart can be seen in \autoref{fig:wac-snippet}, and a snippet of the HosInfo interface can be seen in \autoref{fig:HosInfo-snippet}.
-\\
+
+\subsubsection*{Scraping and loading data from a 3rd party provider}
 The immediate issue was that the HosInfo data was inaccessible. The HosInfo application (which we will refer to onwards as just '\emph{HosInfo}') didn't have an API, and it only has two access levels: surface-level access for viewing the data and full administrative control. As such, our only option was to scrape the HTML pages from HosInfo. Scraping was a wholly new endeavour for us, so at first, we tried using Python's inherent \texttt{requests} package. Here, we injected \emph{cookies} and a \emph{header} containing our login information. However, it would soon prove that what seemed to be a bug at first, was actually just not an automatic solution at all. The injected information would have to be updated regularly with a manual login for this approach to work. Therefore, we made a switch to the open-source, third-party tool \texttt{selenium}. \texttt{selenium} works by instantiating a WebDriver, which can automatically drive the browser. In short, this meant that we gave it instructions to navigate separately to the three specified text elements for login input and fed it our credentials. In \autoref{fig:HosInfo-login}, a screengrab of the HosInfo login gateway is shown. After feeding the login credentials, the WebDriver manually navigated to the login button and clicked it. This prompts a load before transitioning from the login page to the correct URL from where we could scrape the data, so we injected a manual waiting time of at most ten seconds until a unique element appeared. We simply chose a unique element at random and used its XPATH in the HTML code for identification. This is all to say that the webscraping solution is incredibly fragile and highly prone to the slightest changes made to the HosInfo application.
 
 \begin{figure}[H]
@@ -85,6 +86,7 @@ It was helpful to keep the index as some \gls{functions} (rows) contained irrele
     \label{fig:HosInfo-login}
 \end{figure}
 
+\subsubsection*{Processing unformatted data using regular expressions}
 Now, with all the preprocessing of the data, we had gone from a webpage with some entries in the form of a table to a full HTML file and all the way to a manageable 2D table (a \texttt{pandas} table in Python) with string entries and row labels. This brings us to the second glaring issue: HosInfo doesn't enforce any formatting of its entries. As such, we had to somehow arrive at a pattern for all the string entries constituting our data.
 \\
 In \autoref{tab:HosInfo-example-entries}, we give an example of some of the possible entries in HosInfo. Some of the formatting is extremely simple to spot for the human eye, and for a non-technically inclined individual, some of these entries probably read just fine. However, there is still a lot of ambiguity as to how it should be interpreted. In \autoref{tab:HosInfo-good-processing}, we give an example of what could probably be considered a good interpretation, and in \autoref{tab:HosInfo-poor-processing}, we provide an example of some of all the possible pitfalls a computer program might be prone to stumble into.  
@@ -194,8 +196,8 @@ In an attempt to explain it in a slightly more human fashion, we can classify th
 	\item Group 3: This is anything after a potential closed parenthesis, or alternatively anything after the name, i.e. this captures any trailing appendages, e.g. this could be extra information as highlighted in \autoref{tab:HosInfo-good-processing}.
 \end{itemize}
 This way, we could separate forename from initials and a timeslot from other possible additional information. However, as showcased in \autoref{tab:HosInfo-poor-processing}, there are still a multitude of unsolved problems. Names that are contracted with their initials instead of separated by an underscore; multiple timeslots all encapsulated within closed parentheses; inconsistent formatting of timeslots; initials that are actually monikers instead of initials. We have managed to work around some of these, e.g. there weren't a lot of monikers. Hence, we simply elected to keep a \gls{dictionary} and treat it as a special case, but this would obviously also have to be regularly updated. Yet, sadly, \autoref{tab:HosInfo-poor-processing} better represents our final result than \autoref{tab:HosInfo-good-processing}.
-\\
-\\
+
+\subsubsection*{Standardising the labels of the pivot column for the datasets}
 Despite all the troubles it proved to try and process the HosInfo data, it, as previously alluded to,  still only tells half of the story. In order to show the complete picture and give the actual representation which OUH wanted, the HosInfo data needed to be merged with the data provided by a weekly ward assignment chart. The assignment chart was made with Microsoft Excel, so, in contrast to HosInfo, it was a piece of cake to simply load it into a \texttt{pandas} table, which could be manipulated in Python.
 \\
 Alas, here, the third glaring issue reared its head. Although easy to load into Python, merging the data from the assignment chart with the HosInfo data proved incredibly difficult. Firstly, the column at which the two datasets should be compatible hadn't been given a standardised naming convention. This was the \gls{function} column; the one presented as rows at HosInfo and which, as can be seen from \autoref{fig:wac-snippet} is a column in the assignment chart, which indicates what personnel are performing which tasks. An example of this incompatible naming convention could be a task in the assignment chart called \emph{'SHOULDER KIDS'}, while at HosInfo, it might be called \emph{'SHOULDER 1'}. Other times, the task had attached a timeframe in the label at one place, while not at the other, e.g. \emph{'KNEES until 14'} and simply \emph{'KNEES'}. However, the names referred to the same, but it is our understanding that different departments, or maybe more sections, at OUH had individually elected to name them. It is, in turn, also our understanding that although the naming wasn't standardised, this didn't lead to discrepancies for the healthcare staff and to them, the translation was obvious. Sometimes, it might have been because a task was accompanied by a doctor who specialised in working with kids, and therefore, that doctor performing \emph{'SHOULDER 1'} must match with the nurse in HosInfo assigned to \emph{'SHOULDER KIDS'}. Other times, it might have been because they had simply grown accustomed to a special label meaning the same as an enumeration, e.g. that \emph{'SKH HAND'} and \emph{'HAND 2'} is a match\footnote{where \emph{SKH} is an abbreviation for the danish \emph{emergency}.}.
@@ -214,6 +216,7 @@ This resulted in at least a month-long ordeal of back-and-forth. We made a simpl
     \label{fig:Final-Taskboard}
 \end{figure}
 
+\subsubsection*{Handling labels incompatible for     merging with the other dataset}
 The HosInfo data does not include information about which ward the \gls{function} is supposed to be performed at. However, as the name would imply, so does the ward assignment chart. Sometimes, an entry (a ward) in the assignment chart might be flagged with \emph{'FLEX'}. This means that that ward is "flexible", i.e. multiple people may come and go throughout the day. So if ward \(m\), in the assignment chart, is flagged with \emph{'FLEX \(n\)'}, then the agent \(a\) assigned to ward \(n\) may also be using ward \(m\) throughout the day. Therefore rather than just writing
 \begin{center}
     "\(a\) is assigned to ward \(n\)",
@@ -240,8 +243,8 @@ However unclear it was just how intricate a task it would be to merge two 2D dat
 The scheduling task, as we elected to dub it, consists of assigning agents to tasks. More precisely, we have \(N\) tasks distributed over a timeframe of \(T\) days, where usually \(T \leq N\), with \(M\) agents (in this case, the healthcare personnel) each with their own qualifications. At its base, for a valid solution, all tasks must be assigned a qualified agent, i.e., an agent who can perform the given task. However, there might be additional constraints, e.g., an agent could be qualified but inaccessible that day (because of other obligations or planned vacation), or there could be working conditions and regulations that the final plan must abide by.
 \\
 As mentioned in \autoref{sec:theory}, and as we will detail further in the following sections, the scheduling task is NP-complete - more specifically, the scheduling task can be modelled as the boolean satisfiability problem. Although we had spent a good amount of time thinking about more commonly accepted AI techniques, such as the GA scheme (see \autoref{sec:genetic-algorithms}), we ultimately ended up using constraint programming, i.e. an SAT solver (see \autoref{sec:Constraint_Programming}).
-\\
-\\
+
+\subsubsection*{The translation of informal constraints to Python implementation}
 From a mathematical and algorithmic perspective, solving the scheduling task is readily feasible. As it is NP-complete, it is a well-studied problem with a wide range of practical heuristics. In practice, we employed Google's OR-Tools~\cite{Wiki-OR-Tools} open-source software package for Python. OR-Tools is a suite of optimisation tools, which includes the CP-SAT solver, a state-of-the-art CP solver that uses a SAT solver as a base. The CP-SAT solver is a hybrid solver combining the strengths of CP and SAT solving by expanding upon~\cite{Lazy-Clause-Generation} the foundation lain by CDCL (see \autoref{sec:CDCL}).
 \\
 On multiple occasions, we have jokingly stated that using Google's OR-Tools is simply a matter of running
@@ -322,15 +325,15 @@ The last blockof code, starting at line 16, is a bit more complex and could, adm
 The bodies of the \texttt{if}-statements work precisely as the two previously showcased snippets of code. The main difference is that the loop over tasks has been refactored to a Python \texttt{list comprehension} instead.
 \\
 The \texttt{OnlyEnforceIf} method uses the \texttt{works_weekend} flag to ensure, as expected, that the given agent is only made unavailable for the two Mondays if they work the corresponding weekend task.
-\\
-\\
+
+\subsubsection*{Planning a fair schedule through choice of objective function}
 Finally, as the Google OR-Tools package makes this easily implementable, we elected to optimise over a minimal maximum number of assignments. This means that while the utmost important task of the program remains to find a valid solution, it will try to arrive at a solution where the agent who works the most shifts works as few as possible. As of the time of writing, optimising over multiple minimisations isn't integrated within OR-Tools. However, we deemed it interesting to try to run two optimisations. First, we optimise over the minimal maximum of assignments for the agents and then use the found maximum as a new constraint. Second, we seek to minimise the range (the difference between the maximum and minimum) of the number of tasks assigned to any agent. This way, we would ideally arrive at the most fair assignment.
 \\
 Additionally, right now, OUH plans on a month-to-month basis. It is our understanding that they try their best to assign each month in the most fair and balanced way, yet it is on a case-to-case basis. One way to try to minimise any cumulative unbalances could be to retain a sum of how many tasks each agent has been assigned so far this year and use that count in the optimisation. Another straightforward way to balance it would be to simply plan on a long enough timescale; however, for real-world problems, such ideals aren't always possible.
 \\
 Although both ideas are enticing in theory, we were unfortunately limited on both time and data and, as such, unable to implement any of them in practice.
-\\
-\\
+
+\subsubsection*{Modelling an adequate abstraction for an informal-constraints-to-coding-logic interface}
 Although feasible from an engineering perspective, we are uncertain whether a solution to the scheduling task could be in any way viable. No matter what program is implemented, it would require validation from an actual user; as such, the human aspect is crucial. It goes without saying that no end-user should translate the formal constraints into coding logic themselves. However, it would also be incredibly na\"ive to imagine a program that could sustain hard-coding all possible constraints that may arise. Therefore, a form of abstraction allowing for translation from real, informal constraints to logic is necessary. 
 \\
 One might argue that the above is no more than a convoluted advocate for the importance of a proper user interface, but we digress. The user interface should act as the silver platter upon which the \emph{good idea} is being served. In this case, the 'good idea' would be an abstraction that suits the needs of as many end users as possible.
@@ -441,4 +444,6 @@ Additionally, OUH informed us that for this smaller subset of the problem, one t
 Although this solution might come somewhat naturally to an individual with an engineering background, we are fully aware that it would be an unnatural change for somebody who has thought of it as a single task throughout their entire career.
 \\
 This brings us nicely to our final remark on the scheduling task. Using Microsoft Excel as a medium is clearly inadequate. It cannot, by itself, provide the necessary abstraction required for such a complex translation of everyday rules into formal logic. Furthermore, although it is possible to model many of these rules through such an interface, it ultimately begs the question: Does it actually serve the end user, or is it simply a lazy workaround?
+
+\subsection{The Automated Schedule Validator}
 
