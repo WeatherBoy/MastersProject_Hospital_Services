@@ -17,3 +17,6 @@ This formulation gives way to a Boolean Satisfiability Problem (BSAT), a subfiel
 \\
 \\
 As a last remark on the technical implementation aspect, we will quickly address the running time. As exemplified in \autoref{eq:decision-variable-form}, we will have a decision variable for each agent \(a \in [0, M]\), for each day \(i \in [0, T]\), for each task \(j \in [0, N]\). This is a nice representation, but a better and more straightforward definition is that we have a sum of \(N\) tasks over all \(T\) days. That way, we can readily define the total number of decision variables in our boolean formula as \(M \cdot N\) without having to deal with having an unequal amount of tasks for each respective day. As we have stated many times, boolean satisfiability is NP-complete. Therefore, we ultimately end up with a running time of \(2^{M \cdot N}\).
+\\
+\\
+As for The Automated Schedule Validator, as aforementioned, we are convinced that it is technically feasible. Additionally, it would seemingly fit right in with the rest of the suite of disconnected software applications; as such, it seems viable. However, we cannot help but question whether it would be a good solution or if we would just be another in a long line of software implementations that had insisted they keep on their floaties - rather than ever letting them try to swim on their own.
