@@ -86,7 +86,7 @@ It was helpful to keep the index as some \gls{functions} (rows) contained irrele
     \label{fig:HosInfo-login}
 \end{figure}
 
-\subsubsection*{Processing unformatted data using regular expressions}
+\subsubsection*{Processing unformatted data using Regular Expressions}
 Now, with all the preprocessing of the data, we had gone from a webpage with some entries in the form of a table to a full HTML file and all the way to a manageable 2D table (a \texttt{pandas} table in Python) with string entries and row labels. This brings us to the second glaring issue: HosInfo doesn't enforce any formatting of its entries. As such, we had to somehow arrive at a pattern for all the string entries constituting our data.
 \\
 In \autoref{tab:HosInfo-example-entries}, we give an example of some of the possible entries in HosInfo. Some of the formatting is extremely simple to spot for the human eye, and for a non-technically inclined individual, some of these entries probably read just fine. However, there is still a lot of ambiguity as to how it should be interpreted. In \autoref{tab:HosInfo-good-processing}, we give an example of what could probably be considered a good interpretation, and in \autoref{tab:HosInfo-poor-processing}, we provide an example of some of all the possible pitfalls a computer program might be prone to stumble into.  
