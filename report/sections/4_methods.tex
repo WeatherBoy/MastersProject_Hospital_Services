@@ -472,6 +472,36 @@ For reference, a snippet of the "lejeplan" can be seen in \autoref{fig:Lejeplan}
     \label{fig:Lejeplan}
 \end{figure}
 
+In the following, we present a quick rundown of the expected workflow for this task. First for the "Lejeplan". As the dates in the second column were compatible with Python's inherent \texttt{datetime} package, this was straightforward.
+\begin{enumerate}
+	\item Extract the dates:
+		\begin{itemize}
+			\item Loop over the second column and store every entry to an ordered \texttt{array} of days.	
+		\end{itemize}
+	\item Extract the tasks:
+		\begin{itemize}
+			\item Loop over every row and extract a task if entry is a non-empty \texttt{string}.	
+		\end{itemize}
+	\item Collect dates and tasks to an ordered \gls{dictionary} as key-value pairs, respectively.
+\end{enumerate}
+
+\newpage
+Second, the "Arbejdsplan" was less straightforward. Due to neither the dates nor the entries being formatted. 
+\begin{enumerate}
+	\item Extract the dates:
+		\begin{itemize}
+			\item Loop over the first row, and for every entry, use regex to extract the date.	
+		\end{itemize}
+	\item Extract the tasks:
+		\begin{itemize}
+			\item Loop over every column, and if it is a non-empty \texttt{string}, use regex to match whether the entry is a task or something else.
+			\item Extract the entry if it is a task.	
+		\end{itemize}
+	\item Collect dates and tasks to an ordered \gls{dictionary} as key-value pairs, respectively.
+\end{enumerate}
+Then, with both the "Lejeplan" and "Arbejdsplan" formatted the same way, it would simply be iterating over their tasks for every date and checking that everything is correct.
+\\
+However, as stated previously, we regrettably don't have anything final to show. We built the foundation but never got around to testing it with OUH's personnel as we ran out of time.     
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{figures/Methodology/Arbejdsplan-Redacted.png}
@@ -481,3 +511,8 @@ For reference, a snippet of the "lejeplan" can be seen in \autoref{fig:Lejeplan}
     A snippet of the "Arbejdsplan". Days are formatted as columns and all entries called "task" needs to correspond to an entry in the "Lejeplan". The entries below the "tasks" carried some additional information, used internally at OUH. The top row are labels for the column. In order, translated to english, they are: "Name", "Mon Week:...", "Tue Week:..." and "Wed Week:...". The "Arbejdsplan" itself is a lot bigger. There are a about \(400\) rows of entries and as can be seen in the bottom of the screengrab, there are 4 sheets, each containing data for a single week. Names and tasks have been redacted to preserve the anonymity of OUH's personnel.
     \label{fig:Arbejdsplan}
 \end{figure}
+
+\subsubsection*{Summary}
+This concludes our methodology section. We have presented the three projects we initialised: The Digital Taskboard, The Scheduling Assistant Tool and The Automated Schedule Validator, yet we didn't manage to finalise.
+\\
+Furthermore, we described the responses from the questionnaire we sent out in an attempt to map the current issues residing within the Danish healthcare sector.
