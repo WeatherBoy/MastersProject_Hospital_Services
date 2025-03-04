@@ -453,4 +453,31 @@ Although this check would obviously be inherent for a plan made with CP, we deem
 Sadly, we made next to no headway in this task, as we began too late and ended up being constrained by needing to document the process. Nonetheless, in the following, we will detail what this task would have entailed. 
 \\
 \\
+The processing vastly resembles that of \emph{the digital taskboard} task. Therefore, we were also luckily able to reuse some of our previous code. Although we haven't finalised a working prototype, this definitely streamlined the workflow. 
+\\
+It is once more a task of working on two 2D datasets (spreadsheets). However, unlike \emph{the digital taskboard}, this only concerns checking them against each other\footnote{The experienced software engineer, however, will quickly realise that this can be boiled down to another case of a "double \texttt{for}-loop".} - no merging required.
+\\
 When planning their schedules, OUH operates with a "lejeplan" and an "arbejdsplan" (a plan for bed rest allocation and a working plan, respectively). The "lejeplan" indicates what management wants to be allocated to the available bed rests - the blueprint - while the "arbejdsplan" represents the final schedule/ allocation for the healthcare personnel. 
+\\
+As such, the task is to check that every for single day in the timeframe, every single entry in the "lejeplan" also occurs on the corresponding day in the "arbejdsplan". If an entry from the "lejeplan" isn't present on the corresponding day in the "arbejdsplan", we alert the user. Otherwise, we simply inform them that the "arbejdsplan" complies with the "lejeplan".
+\\
+For reference, a snippet of the "lejeplan" can be seen in \autoref{fig:Lejeplan}, and a snippet of the "arbejdsplan" can be seen in \autoref{fig:Arbejdsplan}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/Methodology/Lejeplan-Redacted.png}
+    \caption{"Lejeplan"}
+    \small
+    \raggedright 
+    A snippet of the "Lejeplan". Days are formatted as rows and every singly entry is a task that management wants assigned. The "Lejeplan" itself is a lot bigger. There are a \(36\) additional columns in just the spreadsheet for this month. Names and tasks have been redacted to preserve the anonymity of OUH's personnel.
+    \label{fig:Lejeplan}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/Methodology/Arbejdsplan-Redacted.png}
+    \caption{"Arbejdsplan"}
+    \small
+    \raggedright 
+    A snippet of the "Arbejdsplan". Days are formatted as columns and all entries called "task" needs to correspond to an entry in the "Lejeplan". The entries below the "tasks" carried some additional information, used internally at OUH. The top row are labels for the column. In order, translated to english, they are: "Name", "Mon Week:...", "Tue Week:..." and "Wed Week:...". The "Arbejdsplan" itself is a lot bigger. There are a about \(400\) rows of entries and as can be seen in the bottom of the screengrab, there are 4 sheets, each containing data for a single week. Names and tasks have been redacted to preserve the anonymity of OUH's personnel.
+    \label{fig:Arbejdsplan}
+\end{figure}
