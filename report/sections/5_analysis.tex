@@ -1,4 +1,8 @@
 \section{Analysis}
+A good part of this project was dedicated merely to identifying what kind of problem the scheduling task posed. While working on the digital taskboard, this issue used up all of our idle "brain bandwidth". We spent the entire first month pondering commonly accepted AI optimisation techniques, such as the GA scheme. However, we kept running into dead ends. Namely, it seemed incredibly difficult to construct a suitable objective function that could teach such optimisation techniques, the underlying rules adhering naturally to the problem. After some time, it felt like designing a black box to learn the rules we already knew rather than employing them to find a solution. Thus, we came to the conclusion that we had, in all likelihood, gone about this problem in the wrong manner. As such, we had no other option but to do some research.
+\\
+If the reader, like us, isn't very well-versed in schedule planning and the field of Operations Research~\cite{Wiki-Operations-Research}, they might also had been lured into the \emph{scheduling}~\cite{Wiki-Scheduling-computing, Wiki-Optimal-job-scheduling, Wiki-Job-shop-scheduling} rabbit hole.
+
 The scheduling task is a case of the \textbf{Generalised Assignment Problem}\cite{Wiki-general-assignment-prob}, which can ultimately be expressed as a \textbf{Linear Program}\cite{Wiki-linear-programming}, specifically, a \textbf{Binary Integer Program}.
 
 However, in order to arrive at CP, we will first argue, without a complete theoretical deep dive, that the Generalised Assignment Problem can be reformulated into the binary case of an integer linear problem (ILP). A binary ILP takes the form\cite{Integer-Programming-Book} 
@@ -15,7 +19,7 @@ where $x$ is the binary decision variable.
 \\
 This formulation gives way to a Boolean Satisfiability Problem (BSAT), a subfield of CP, which we can attempt to solve with a \textit{satisfiability} (SAT) solver.
 \\
-\\
+
 As a last remark on the technical implementation aspect, we will quickly address the running time. As exemplified in \autoref{eq:decision-variable-form}, we will have a decision variable for each agent \(a \in [0, M]\), for each day \(i \in [0, T]\), for each task \(j \in [0, N]\). This is a nice representation, but a better and more straightforward definition is that we have a sum of \(N\) tasks over all \(T\) days. That way, we can readily define the total number of decision variables in our boolean formula as \(M \cdot N\) without having to deal with having an unequal amount of tasks for each respective day. As we have stated many times, boolean satisfiability is NP-complete. Therefore, we ultimately end up with a running time of \(2^{M \cdot N}\).
 \\
 \\
