@@ -247,7 +247,7 @@ The scheduling task, as we elected to dub it, consists of assigning agents to ta
 \\
 As mentioned in \autoref{sec:theory}, and as we will detail further in the following sections, the scheduling task is NP-complete - more specifically, it can be modelled as the boolean satisfiability problem. Although we had spent a good amount of time thinking about more commonly accepted AI techniques, such as the GA scheme (see \autoref{sec:genetic-algorithms}), we ultimately ended up using constraint programming, i.e. an SAT solver (see \autoref{sec:Constraint_Programming}).
 
-\subsubsection*{Translating informal constraints to a Python implementation}
+\subsubsection{Translating informal constraints to a Python implementation}\label{sec:translating-constraints}
 From a mathematical and algorithmic perspective, solving the scheduling task is readily feasible. As it is NP-complete, it is a well-studied problem with a wide range of practical heuristics. In practice, we employed Google's OR-Tools~\cite{Wiki-OR-Tools} open-source software package for Python. OR-Tools is a suite of optimisation tools, which includes the CP-SAT solver, a state-of-the-art CP solver that uses a SAT solver as a base. The CP-SAT solver is a hybrid solver combining the strengths of CP and SAT solving by expanding upon~\cite{Lazy-Clause-Generation} the foundation lain by CDCL (see \autoref{sec:CDCL}).
 \\
 On multiple occasions, we have jokingly stated that using Google's OR-Tools is simply a matter of running
