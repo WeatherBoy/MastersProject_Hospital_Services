@@ -1,8 +1,16 @@
 \section{Analysis}
 A good part of this project was dedicated merely to identifying what kind of problem the scheduling task posed. While working on the digital taskboard, this issue used up all of our idle "brain bandwidth". We spent the entire first month pondering commonly accepted AI optimisation techniques, such as the GA scheme. However, we kept running into dead ends. Namely, it seemed incredibly difficult to construct a suitable objective function that could teach such optimisation techniques, the underlying rules adhering naturally to the problem. After some time, it felt like designing a black box to learn the rules we already knew rather than employing them to find a solution. Thus, we came to the conclusion that we had, in all likelihood, gone about this problem in the wrong manner. As such, we had no other option but to do some research.
 \\
-If the reader, like us, isn't very well-versed in schedule planning and the field of Operations Research~\cite{Wiki-Operations-Research}, they might also had been lured into the \emph{scheduling}~\cite{Wiki-Scheduling-computing, Wiki-Optimal-job-scheduling, Wiki-Job-shop-scheduling} rabbit hole.
-
+If the reader, like us, isn't very well-versed in schedule planning and the field of Operations Research~\cite{Wiki-Operations-Research}, they might also had been lured into the \emph{scheduling}~\cite{Wiki-Scheduling-computing, Wiki-Optimal-job-scheduling, Wiki-Job-shop-scheduling} rabbit hole. Scheduling is a discipline that the vast majority of us enjoy on a regular basis, as it is used predominantly in CPUs. However, it is an entirely different algorithmic discipline for assigning jobs to machines. In this case, each job has a runtime, and sometimes the runtime varies based on the machine. At first, we thought this might just be an abstraction that we could still apply to our problem, but unfortunately, it isn't so simple.
+\\
+\\
+After a little more research, we found out that what we had na\"ively translated from Danish as \emph{scheduling} seemed to be modelled by the \textbf{Assignment Problem}~\cite{Wiki-assignment-prob}. The Assignment Problem can be defined as the following: Given \(N\) agents and \(N\) tasks, where the cost of assigning agent \(i\) to task \(j\) is \(c_{ij}\). Where any agent can be assigned to any task, the goal is to find an assignment which minimises the total cost of all assignments,
+\begin{equation*}
+    \min \sum_{i}^N \sum_{j}^N c_{ij}.
+\end{equation*}
+This looked promising. There are algorithmic solutions with polynomial runtimes and for all purposes, the costs could be modelled as identical. There is the issue, as we mentioned in Methodology (see \autoref{sec:scheduling-assistant}), that for \(N\) tasks and \(M\) agents, we usually have \(M \ll N\). However, we deemed this could be alleviated by solving each day individually. Then, if there was a day with more agents than tasks, we could simply substitute them with dummy tasks, which we could remove from our final solution. This would obviously add the \(T\) coefficient to a polynomial runtime, but it might still be faster than exponential for problems with many variables. It quickly became apparent, though, that for constraints posed by tasks such as the "Rygvagt" (see \autoref{sec:translating-constraints}), the solution would be infeasible at worst or, at best, non-polynomial.
+\\
+\\
 The scheduling task is a case of the \textbf{Generalised Assignment Problem}\cite{Wiki-general-assignment-prob}, which can ultimately be expressed as a \textbf{Linear Program}\cite{Wiki-linear-programming}, specifically, a \textbf{Binary Integer Program}.
 
 However, in order to arrive at CP, we will first argue, without a complete theoretical deep dive, that the Generalised Assignment Problem can be reformulated into the binary case of an integer linear problem (ILP). A binary ILP takes the form\cite{Integer-Programming-Book} 
@@ -19,7 +27,7 @@ where $x$ is the binary decision variable.
 \\
 This formulation gives way to a Boolean Satisfiability Problem (BSAT), a subfield of CP, which we can attempt to solve with a \textit{satisfiability} (SAT) solver.
 \\
-
+\\
 As a last remark on the technical implementation aspect, we will quickly address the running time. As exemplified in \autoref{eq:decision-variable-form}, we will have a decision variable for each agent \(a \in [0, M]\), for each day \(i \in [0, T]\), for each task \(j \in [0, N]\). This is a nice representation, but a better and more straightforward definition is that we have a sum of \(N\) tasks over all \(T\) days. That way, we can readily define the total number of decision variables in our boolean formula as \(M \cdot N\) without having to deal with having an unequal amount of tasks for each respective day. As we have stated many times, boolean satisfiability is NP-complete. Therefore, we ultimately end up with a running time of \(2^{M \cdot N}\).
 \\
 \\
