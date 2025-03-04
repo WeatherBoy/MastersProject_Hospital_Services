@@ -122,6 +122,9 @@ In \autoref{tab:HosInfo-example-entries}, we give an example of some of the poss
         \\ \hline   
     \end{tabular}
     \caption{HosInfo example entries}
+    \small
+    \raggedright
+    Note, these are imaginary example entries. Where 'spells', 'stormborn' and 'chemsistry' might have corresponded to additional information relevant in a clinical setting.
     \label{tab:HosInfo-example-entries}
 \end{table}
 
@@ -169,7 +172,7 @@ In \autoref{tab:HosInfo-example-entries}, we give an example of some of the poss
     \label{tab:HosInfo-poor-processing}
 \end{table}
 
-We loathe to admit it, but in order to have any fighting chance at formatting the strings, as shown in \autoref{tab:HosInfo-example-entries}, we elected to use regular expressions (regex). More precisely, we used the following regex pattern:
+We loathe to admit it, but in order to stand any fighting chance at formatting the strings, as shown in \autoref{tab:HosInfo-example-entries}, we elected to use regular expressions (regex). More precisely, we used the following regex pattern:
 \begin{verbatim}
     ^([^\s(]+(?:_[^\s(]+)?)\s*(?:\(([^)]+)\))?\s*(.*)$
 \end{verbatim}
