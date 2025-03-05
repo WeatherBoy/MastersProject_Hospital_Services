@@ -1,6 +1,8 @@
 \section{Analysis}
+\subsection{Identifying the Problem}
 A good part of this project was dedicated merely to identifying what kind of problem the scheduling task posed. While working on the digital taskboard, this issue used up all of our idle "brain bandwidth". We spent the entire first month pondering commonly accepted AI optimisation techniques, such as the GA scheme. However, we kept running into dead ends. Namely, it seemed incredibly difficult to construct a suitable objective function that could teach such optimisation techniques, the underlying rules adhering naturally to the problem. After some time, it felt like designing a black box to learn the rules we already knew rather than employing them to find a solution. Thus, we came to the conclusion that we had, in all likelihood, gone about this problem in the wrong manner. As such, we had no other option but to do some research.
-\\
+
+\subsubsection*{The Scheduling rabbit hole}
 If the reader, like us, isn't very well-versed in schedule planning and the field of Operations Research~\cite{Wiki-Operations-Research}, they might also had been lured into the \emph{Scheduling}~\cite{Wiki-Scheduling-computing, Wiki-Optimal-job-scheduling, Wiki-Job-shop-scheduling} rabbit hole. Scheduling is a discipline that the vast majority of us enjoy on a regular basis, as it is used predominantly in CPUs. However, it is an entirely different algorithmic discipline for assigning jobs to machines. In this case, each job has a runtime, and sometimes the runtime varies based on the machine. At first, we thought this might just be an abstraction that we could still apply to our problem, but unfortunately, it isn't so simple. Notice that 'Scheduling', as just described, is a discipline within computer science and differs from our problem, which we elected to call 'the scheduling task'.
 \\
 One might think of the scheduling task as a mosaic of \(i \times j\) squares in a grid, where each square can be one of \(n\) different colours. We have \(m\) stacks of tiles that can assume all \(n\) colours, but each is a distinct shape. However, we can't change the colours of the tiles we have, and for a tile to fit onto the mosaic, it must match the colour of the corresponding square. The contractor has told us that we can't have more than one of each shape for each row, or it will ruin the 'synergy' (or whatever). We want to see whether we can lay the entire mosaic using no more than the tiles we have at our disposal. However, there might be more constraints; for example, the contractor might not like to have more than two of the same shape adjacent to each other in a column.
@@ -38,8 +40,8 @@ On the other hand, we could think of Scheduling as having the weirdest mosaic ev
     \label{fig:scheduling-illustrated}
 \end{figure}
 The scheduling task and Scheduling, as illustated\footnote{We would like to apologise for these two illustrations being, by no means, colourblind-friendly. We hope that the description will suffice instead.} in \autoref{fig:the-scheduling-task-illustrated} and \autoref{fig:scheduling-illustrated} respectively\footnote{We want to state very explicitly that we in no way claim this is the optimal solution to the Scheduling problem we presented; it is merely meant as an illustration.}, are clearly related. They might even be cousins. But they could never swap social IDs for a month without anybody noticing.
-\\
-\\
+
+\subsubsection*{From Assignment Problem to Binary ILP to BSAT}
 After a little more research, we found out that, what we had na\"ively translated from Danish as, \emph{scheduling} seemed to be modelled by the \textbf{Assignment Problem}~\cite{Wiki-assignment-prob}. The Assignment Problem can be defined as the following: Given \(N\) agents and \(N\) tasks, where the cost of assigning agent \(i\) to task \(j\) is \(c_{ij}\), each agent must be assigned one and only one unique task. Any agent can be assigned to any task and the goal is to find an assignment which minimises the total cost of all assignments,
 \begin{equation*}
     \min \sum_{i}^N \sum_{j}^N c_{ij} \cdot x_{ij},
