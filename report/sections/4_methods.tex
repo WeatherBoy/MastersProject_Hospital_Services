@@ -293,7 +293,7 @@ The following rules are related to a special type of task called the \emph{"Rygv
 	\item If an agent is assigned to a task on either Saturday or Sunday, they are automatically assigned to both Saturday and Sunday. This is called a \emph{weekend task}.
 	\item If an agent is assigned to a weekend task, then they are mandated time off for both the previous and the following Monday (they become unavailable those days).
 \end{itemize}
-As a last snippet of code, we would like to show the implementation of the above two rules.
+With a last snippet of code, we would like to show the implementation of the above two rules.
 \begin{python}
 # Weekend constraints
 for info in weekend_info:
@@ -323,7 +323,7 @@ Then, the first rule is enforced by the \texttt{for}-loop starting at line 9, wh
 \\
 Line 13 just ensures that somebody actually gets assigned to the "Rygvagt" that weekend.
 \\
-The last blockof code, starting at line 16, is a bit more complex and could, admittedly, be refactored in order to provide more clarity. The first variable, \texttt{works_weekend}, is just naming a flag for the code to be slightly more readable. The \texttt{info} variable has \texttt{None}-entries if, as aforementioned, the Mondays before and after the weekend are outside the timeframe; this is what the \texttt{if}-statement checks. However, this ultimately fails to enforce the second rule. Better software would have some notice informing the user that the solution could not satisfy the required off days as they are outside the timeframe for the plan.
+The last block of code, starting at line 16, is a bit more complex and could, admittedly, be refactored in order to provide more clarity. The first variable, \texttt{works_weekend}, is just naming a flag for the code to be slightly more readable. The \texttt{info} variable has \texttt{None}-entries if, as aforementioned, the Mondays before and after the weekend are outside the timeframe; this is what the \texttt{if}-statement checks. However, this ultimately fails to enforce the second rule. Better software would have some notice informing the user that the solution could not satisfy the required off days as they are outside the timeframe for the plan.
 \\
 The bodies of the \texttt{if}-statements work precisely as the two previously showcased snippets of code. The main difference is that the loop over tasks has been refactored to a Python \texttt{list comprehension} instead.
 \\
@@ -462,7 +462,7 @@ It is once more a task of working on two 2D datasets (spreadsheets). However, un
 \\
 When planning their schedules, OUH operates with a "lejeplan" and an "arbejdsplan" (a plan for bed rest allocation and a working plan, respectively). The "lejeplan" indicates what management wants to be allocated to the available bed rests - the blueprint - while the "arbejdsplan" represents the final schedule/ allocation for the healthcare personnel. 
 \\
-As such, the task is to check that every for single day in the timeframe, every single entry in the "lejeplan" also occurs on the corresponding day in the "arbejdsplan". If an entry from the "lejeplan" isn't present on the corresponding day in the "arbejdsplan", we alert the user. Otherwise, we simply inform them that the "arbejdsplan" complies with the "lejeplan".
+As such, the task is to check that for every single day in the timeframe, every single entry in the "lejeplan" also occurs on the corresponding day in the "arbejdsplan". If an entry from the "lejeplan" isn't present on the corresponding day in the "arbejdsplan", we alert the user. Otherwise, we simply inform them that the "arbejdsplan" complies with the "lejeplan".
 \\
 For reference, a snippet of the "lejeplan" can be seen in \autoref{fig:Lejeplan}, and a snippet of the "arbejdsplan" can be seen in \autoref{fig:Arbejdsplan}.
 \begin{figure}[H]
