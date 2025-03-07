@@ -75,6 +75,16 @@ This is ultimately the reasoning behind our choice of modelling the scheduling t
 \\
 As we do not have any finished products, nor have we been able to test our prototypes with the end user, this concludes the analysis. However, we would like to give a last remark on the technical implementation aspect of the scheduling task. More precisely, we will quickly address the running time.
 \\
-As exemplified in \autoref{eq:decision-variable-form}, we will have a decision variable for each agent \(a \in [0, M]\), for each day \(i \in [0, T]\), for each task \(j \in [0, N]\). This is a nice representation, but a better and more straightforward definition is that we have a sum of \(N\) tasks over all \(T\) days. That way, we can readily define the total number of decision variables in our boolean formula as \(M \cdot N\) without having to deal with having an unequal amount of tasks for each respective day. As we have stated many times, BSAT is NP-complete. Therefore, there is no way to escape a non-polynomial asymptotic runtime, and as such, we ultimately end up with a running time of \(O(2^{M \cdot N})\).
+As exemplified in \autoref{eq:decision-variable-form}, we will have a decision variable for each agent \(a \in [1, M]\), for each day \(j \in [1, T]\), for each task \(i \in [1, N]\). As we have stated many times, BSAT is NP-complete. Therefore, there is no way to escape a non-polynomial asymptotic runtime, and as such, we ultimately end up with a running time of \(O(2^{M \cdot N \cdot T})\).
 \\
-This illustrates simply the main danger of the BSAT formulation, namely the difficulty in handling problems with many variables. In contrast, this also highlights the importance of choosing a good SAT solver.
+Although correct, the Big O is working overtime in this analysis. Because not all agents are qualified for all tasks, nor are all tasks nor agents present on all days, this asymptotic upper bound would be considered quite generous in most scheduling scenarios for a real-world hospital. 
+\\
+We can define \(Q_a\) as the set of tasks which agent \(a\) isn't qualified to perform. Furthermore, we define \(D_a\) as the set of days where agent \(a\) is unable to perform any task. Finally, we can define \(R_j\) as the set of days where task \(j\) isn't performed. From these, we can already assign a bunch of our \(M \cdot N \cdot T\) decision variables, namely
+\begin{align*}
+    &\sum_{j = 1}^T a_{qj} = 0, \quad \forall q \in Q_a, \quad \forall a \in [1, M],
+    \\
+    &\sum_{i = 1}^N a_{id} = 0, \quad \forall d \in D_a, \quad \forall a \in [1, M],
+    \\
+    &\sum_{a = 1}^M a_{rj} = 0, \quad \forall r \in R_j, \quad \forall j \in [1, N].
+\end{align*}
+This illustrates simply the main danger of the BSAT formulation, namely the difficulty in handling problems with many variables. In contrast, this also highlights the strength of the BSAT formulation, as each constraint reduces the complexity of the search space rather than increasing it.
