@@ -1,4 +1,15 @@
 \section{Discussion}
-This project serves as a testament to a slew of half-finished products. It represents six months of efforts to contribute anything positive to the Danish healthcare sector, yet falling short. As such, there is an overabundance of ways in which we could have improved and continued the work.
+We started this project by agreeing to provide OUH with a digital replacement for their current, manually transcribed taskboard (as detailed in \autoref{sec:Digital-Taskboard}). While true that this problem, on its own, couldn't provide a sufficient academic foundation for a Master's thesis in AI, we nevertheless made the grave error of underestimating just how cumbersome\footnote{Which, to her great credit, our supervisor had actually warned us about.} of a task digitalising the taskboard could be.
 \\
-The greatest obstacle for this project was undoubtedly our inability to fulfil the role of IT consultant in conjunction with the lack of technical insight at OUH.
+\\
+At a glance, digitalising the taskboard seemed no more complex than merging two 2D datasets, and we are still convinced it could have been were it not for OUH's currently in-place payroll and calendar overview system, HosInfo, serving as an ever-persistent thorn in our side. While the HosInfo implementation could be criticised plentily for its sluggish and featureless backend\footnote{Which we admittedly never had access to but only have seen in parsing when been guided through the system by the OUH staff.}, beyond the shadow of a doubt, our biggest gripe with it was its data handling or, rather, lack thereof. Not only does HosInfo make OUH's data nearly inaccessible by storing text data as pictures, but they also enforce no data formatting on their users. Additionally, rather than designing a solution capable of serving the greater planning effort at OUH, they have delivered a solution to a smaller subproblem while completely disregarding even the slightest notion of compatibility with the rest of OUH's IT environment.
+\\
+Such software makes it nigh impossible for OUH, not even to mention other external providers such as ourselves, to develop other solutions that need access to their data without forcing the end user to document everything many times over.
+\\ 
+However, HosInfo isn't the only third-party provider that is guilty of contributing to OUH's messy, tangled, and, at the same time, disconnected IT stack. We can only speculate on the reasons behind how it ends up as such. It might be due to the Danish and European procurement legislation~\cite{Udbudsloven, EU-Procurement-Legislation}, or in part due to a lack of technical insight at OUH, which limits them in seeing the greater scope of their administrative challenges. Nevertheless, it culminates in a system comprising a slew of individual IT solutions, which can't share data, nor benefit from what each provides.
+\\
+Trying to work around this constant impediment is perfectly summarised by this single response to our questionnaire, which loosely translated into English would be:
+\begin{center}
+ \textit{We have many systems that can do quite a lot, but not always in conjunction with each other, and most of the time, you have to work across several applications.}
+\end{center}
+While (our interpretation of) this statement perfectly encapsulates our immense frustration after six months of efforts of working with (or around) the Danish healthcare sector's IT, we can still scarcely imagine having to work with it on a daily basis.
