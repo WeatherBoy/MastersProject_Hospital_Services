@@ -8,7 +8,7 @@ A Genetic Algorithm, boiled down to its base parts, consists of an objective fun
 \\
 Finally, the objective function $f$ and the selection criteria are largely the crux of the GA scheme. While the phenotypes and their respective genotypes are essentially bound to the domain, the objective function and selection criteria can be modelled for better results. The objective function and selection criteria could be considered the Genetic Algorithm's counterpart to Machine Learning's (ML) hyperparameters.
 \\
-The objective function's sole criterion is that it evaluates to a scalar, usually standardised to the real interval $[0,1]$, hence $f$ doesn't need to be differentiable nor even continuous. This feature can allow for some creative objective functions specifically suited to the given problem.
+The objective function's sole criterion is that it evaluates to a scalar, usually standardised to the real interval $[0,1]$, hence $f$ does not need to be differentiable nor even continuous. This feature can allow for some creative objective functions specifically suited to the given problem.
 \\
 The selection criteria is how we pick the \textit{parents} for the next generations. The parents, a set of two phenotypes, always produce two \textit{children} to keep the population size constant throughout the iterations of the GA scheme. However, picking the parents can be a science in itself. In the following sections we present various algorithms used in the selection setp.
 
@@ -24,7 +24,7 @@ where $f_i$ is the fitness score of the $i$th phenotype.
 \\
 For the implementation, one would typically normalise the fitness scores and then create $M$ bins of cumulative ranges, each corresponding to their respective fitness scores. Then, "spinning the boule" would equate to generating a \textit{floating point} value in the range $[0,1]$ uniformly at random and performing a binary search for finding the corresponding bin. This implementation would take $O(M)$ preprocessing and $O(\log M )$ at runtime. 
 \\
-Despite its slightly inferior runtime, Fitness Proportionate Selection usually converges faster than Random Selection, as by considering the fitness scores, it will likely continually select better parents. In addition, while the probability of selecting a phenotype with a poor fitness score is lower, it isn't zero, thus allowing for a more diverse search space exploration.   
+Despite its slightly inferior runtime, Fitness Proportionate Selection usually converges faster than Random Selection, as by considering the fitness scores, it will likely continually select better parents. In addition, while the probability of selecting a phenotype with a poor fitness score is lower, it is not zero, thus allowing for a more diverse search space exploration.   
 
 \begin{figure}[H]
     \centering
@@ -49,7 +49,7 @@ Despite its slightly inferior runtime, Fitness Proportionate Selection usually c
 \subsubsection{Tournament Selection}
 Tournament Selection selects a subset of size\footnote{As with $M$, it is preferable to pick $k$ as a power of two.} $1 \leq k \leq M$, uniformly at random of the generation and elects the phenotype with the greatest fitness score, the \textit{best candidate}, within the subset as the winner (parent). Choosing $k = 1 $ is equivalent to Random Selection, while $k = M$ would only ever propagate the best candidate.
 \\
-Tournament Selection's runtime is entirely dependent on the size of the tournament, $O(k)$\footnote{Although we might sort our fitness scores in $O(M \cdot \log M)$ preprocessing time and retain the ordering when sampling the $k$ tournament-contestants, we still have to generate $k$ indices and, thus, selecting the best candidate wouldn't be reduced to constant runtime.}. Hence, it offers a nice balance between Random and Fitness Proportionate selection, with a possibly fast runtime, while still generating a diverse pool of new phenotypes.
+Tournament Selection's runtime is entirely dependent on the size of the tournament, $O(k)$\footnote{Although we might sort our fitness scores in $O(M \cdot \log M)$ preprocessing time and retain the ordering when sampling the $k$ tournament-contestants, we still have to generate $k$ indices and, thus, selecting the best candidate would not be reduced to constant runtime.}. Hence, it offers a nice balance between Random and Fitness Proportionate selection, with a possibly fast runtime, while still generating a diverse pool of new phenotypes.
 \\
 A variant~\cite{Wiki-tournament-selection} of Tournament Selection introduces a probability $p$ of electing the best candidate as the winner. Inversely, with probability $1-p$, a new tournament is held, where the best candidate is removed, leaving $k-1$ phenotypes, where once again, the best candidate of the remaining phenotypes is selected with probability $p$, and with probability $1-p$, we repeat the process. This variant can, in turn, be considered a Geometric Distribution, with each tournament being a Bernoulli Trial with probability of success $p$. Due to the properties~\cite{Wiki-geometric-distribution} of a Geometric Distribution, we can infer that the probability of picking the $k$th best candidate is
 \begin{equation*}
@@ -67,7 +67,7 @@ A variant of Truncation Selection propagates just the best candidate to the next
 As Truncation Selection picks candidates based on ranking, we must either sort the candidates or perform a search for each \(T \cdot M\) draw. Here, sorting is inarguably preferable. As such, Truncation Selection requires \(O(M \cdot \log M ) \) preprocessing, which completely eclipses the \( O( T \cdot M ) \) running time\footnote{Although, for the purpose of Truncation Selection $T$ would be a coefficient for $M$ and in asymptotic notation the runtime remains as $O(M)$.}. Therefore, Truncation Selection picks all the parents for the next generation in \(O(M \cdot \log M ) \) time.
 
 \subsubsection{Rank Selection}
-Unlike the aforementioned selection algorithms, Rank Selection isn't a selection scheme but rather a mapping. Rank Selection serves two main purposes. First, one could imagine a problem domain wherein it either isn't feasible or doesn't make sense to score every phenotype, but instead, we are only able to rank all of them against each other. Second, as argued by Whitley~\cite{Rank-Selection-Usefullness}, ranking aims to avoid premature convergence, as illustrated by \autoref{fig:GA_Rank_Selection}, where a few initially highly fit phenotypes may dominate the population early on.
+Unlike the aforementioned selection algorithms, Rank Selection is not a selection scheme but rather a mapping. Rank Selection serves two main purposes. First, one could imagine a problem domain wherein it either is not feasible or does not make sense to score every phenotype, but instead, we are only able to rank all of them against each other. Second, as argued by Whitley~\cite{Rank-Selection-Usefullness}, ranking aims to avoid premature convergence, as illustrated by \autoref{fig:GA_Rank_Selection}, where a few initially highly fit phenotypes may dominate the population early on.
 \\
 Rank Selection maps elements from a finite set of rankings $\{1, 2, 3, \hdots, M\}$ to $\mathbb{R}$, whereafter the rankings can be treated as fitness scores, and a selection algorithm can be utilised. Conversely, to achieve this second aim of Rank Selection, the fitness scores would typically be converted to ranks (integers) beforehand.
 
@@ -145,7 +145,7 @@ This method nicely captures traits from both parents while still retaining most 
     \raggedright
     \label{fig:GA_Two_Point_Crossover}
 \end{figure}
-Two-point Crossover is slightly more aggressive than Single-point Crossover, as it can shuffle the traits around more. This method can be beneficial in problems where the order of the traits isn't as important.
+Two-point Crossover is slightly more aggressive than Single-point Crossover, as it can shuffle the traits around more. This method can be beneficial in problems where the order of the traits is not as important.
 
 \paragraph{Uniform Crossover} works by iterating through the parent's genotypes and, with a probability $p$, swapping the traits. For nearly all\footnote{Cases wherein a varying probability or fixed $p \neq 0.5$ are well beyond the intent of this report and will usually be combined with much more sophisticated methods.} cases, the probability $p$ will be set to $0.5$. This method is illustrated in \autoref{fig:GA_Uniform_Crossover}.
 \begin{figure}[H]
@@ -156,7 +156,7 @@ Two-point Crossover is slightly more aggressive than Single-point Crossover, as 
     \raggedright
     \label{fig:GA_Uniform_Crossover}
 \end{figure}
-Where Two-point Crossover is a tad more aggressive than One-point, Uniform Crossover is at the opposite end of the spectrum. As this method isn't suitable for conserving sequential information, it is more beneficial in problems where the order of the traits is largely irrelevant.
+Where Two-point Crossover is a tad more aggressive than One-point, Uniform Crossover is at the opposite end of the spectrum. As this method is not suitable for conserving sequential information, it is more beneficial in problems where the order of the traits is largely irrelevant.
 
 \subsubsection{Mutation}
 Mutation is the final step in the GA scheme. It tries to prohibit convergence towards a local optimum by introducing a bit of stochasticity into the population's genotypes.
