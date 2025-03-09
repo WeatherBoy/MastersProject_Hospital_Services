@@ -77,7 +77,7 @@ As we do not have any finished products, nor have we been able to test our proto
 \\
 As exemplified in \autoref{eq:decision-variable-form}, we will have a decision variable for each agent \(a \in [1, M]\), for each day \(j \in [1, T]\), for each task \(i \in [1, N]\). As we have stated many times, BSAT is NP-complete. Therefore, there is no way to escape a non-polynomial asymptotic runtime, and as such, we ultimately end up with a running time of \(O(2^{M \cdot N \cdot T})\).
 \\
-Although correct, the Big O is working overtime in this analysis. Because not all agents are qualified for all tasks, nor are all tasks nor agents present on all days, this asymptotic upper bound would be considered quite generous in most scheduling scenarios for a real-world hospital. 
+Although correct, the Big O is working overtime in this analysis. As not all agents are qualified for all tasks, nor are all tasks nor agents present on all days, this asymptotic upper bound would be considered quite generous in most scheduling scenarios for a real-world hospital. 
 \\
 We can define \(Q_a\) as the set of tasks which agent \(a\) is not qualified to perform. Furthermore, we define \(D_a\) as the set of days where agent \(a\) is unable to perform any task. Finally, we can define \(R_j\) as the set of days where task \(j\) is not performed. From these, we can already assign a bunch of our \(M \cdot N \cdot T\) decision variables, namely
 \begin{align*}
