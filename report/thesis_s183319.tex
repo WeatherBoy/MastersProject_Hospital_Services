@@ -1,5 +1,6 @@
 \documentclass{article}
 \usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
 \usepackage[top=2cm, bottom=3cm, left=2cm, right=2cm]{geometry}
 
 % ## Inserting Code ##
@@ -92,24 +93,46 @@
 }
 
 % ## Glossaries ##
-\usepackage{glossaries}
+\usepackage[acronym]{glossaries}
 \makeglossaries
 
-\newglossaryentry{dictionary}
-{
+\newglossaryentry{dictionary} {
     name=dictionary,
     description={When we refer to a dictionary, we mean a data structure which solves the dictionary problem~\cite{Wiki-Associative-Array}. This can often simply be thought of as a hash map}
 }
-\newglossaryentry{function}
-{
+\newglossaryentry{function} {
     name=function,
     description={See \gls{functions}}
 }
-\newglossaryentry{functions}
-{
+\newglossaryentry{functions} {
     name=functions,
     description={When we refer to functions regarding the 'digital taskboard', we mean a row/ column label for the 2D data structure. This label is used to indicate data entries, which are functions/ tasks that need to be performed by the medical staff and are not to be confused with functions in the mathematical sense}
 }
+
+\newacronym{ouh}{OUH}{University Hospital of Odense}
+
+\newacronym{ga}{GA}{Genetic Algorithm}
+
+\newacronym{cp}{CP}{Constraint Programming}
+
+\newacronym{ai}{AI}{Artificial Intelligence}
+
+\newacronym{or}{OR}{Operations Research}
+
+\newacronym{bsat}{BSAT}{Boolean Satisfiability (problem)}
+
+\newacronym{sat}{SAT}{Satisfiability (problem)}
+
+\newacronym{cnf}{CNF}{Conjunctive Normal Form}
+
+\newacronym{ilp}{ILP}{Integer Linear Program}
+
+\newacronym{dtu}{DTU}{Technical University of Denmark}
+
+\newacronym{dpll}{DPLL}{Davis, Putnam, Logemann, and Loveland('s algorithm)}
+
+\newacronym{cdcl}{CDCL}{Conflict-Driven Clause Learning}
+
 
 % Formalia goes here:
 \newcommand\datoen{March 9, 2025} %<--- Dato
