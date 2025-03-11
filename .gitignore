@@ -35,6 +35,9 @@ report/*.glg
 report/*.glo
 report/*.gls
 report/*.ist
+report/*.acn
+report/*.acr
+report/*.alg
 # Report-specific ignores
 report/figures/
 
