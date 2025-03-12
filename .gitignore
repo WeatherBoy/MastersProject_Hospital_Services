@@ -13,7 +13,7 @@ TODOs/
 Notes/Personal
 
 # LaTeX-specific ignores (scoped to the report directory)
-report/*.aux
+report/**/*.aux
 report/*.log
 report/*.toc
 report/*.out
@@ -23,8 +23,23 @@ report/*.fls
 report/*.dvi
 report/*.ps
 report/*.pdf
-report/*.bak
-report/*~
+report/*.bcf
+report/*.xml
+report/*.lot
+report/*.lof
+report/*.blg
+report/*.bbl
+report/*.bbl-SAVE-ERROR
+report/*.synctex(busy)
+report/*.glg
+report/*.glo
+report/*.gls
+report/*.ist
+report/*.acn
+report/*.acr
+report/*.alg
+# Report-specific ignores
+report/figures/
 
 # General ignores for the entire repository
 # Backup files (editor-generated)

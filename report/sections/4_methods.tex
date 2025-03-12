@@ -1,0 +1,521 @@
+\section{Methodology}
+\subsection{First Steps - The Questionnaire}\label{sec:Questionnaire}
+Rather than researching some obscure nook or cranny of mathematics, this project was initially motivated by a desire to try and implement five years of education in order to assist with some current real-world problems. From prior work, we hypothesised that there might be quite a handful of such problems within the Danish healthcare sector. As such, we laid the groundwork in March of 2024 by sending out a questionnaire, which can be seen in appendix \autoref{fig:questionnaire_healthcare_personnel}, to \textbf{Rigshospitalet}, \textbf{The Hospital of Hvidovre}, \textbf{The regional Hospital of Northern Jutland}, \textbf{The University Hospital of Aalborg}, \textbf{Hospital unit Midt}, \textbf{The Hospital of Holb\ae k} and \textbf{The department of orthopaedic surgery at the University Hospital of Odense}. This was met with quite varying responses. Most deemed that answering such a questionnaire would be an abhorrent misuse of their personnel's limited time. This, admittedly, left us a bit discouraged. However, we still received a total of 39 answers from medical professionals.
+\\
+The questionnaire consisted of two questions\footnote{With the option to add your name and/or mail for possible further inquiry.}:
+\begin{itemize}
+    \item What is the biggest and most frequent problem in your daily life as a healthcare professional?
+    \item What do you think is the biggest and most frequent problem in the daily life of your patients?
+\end{itemize}
+The responses about the daily life and tasks of healthcare professionals varied significantly, but they could likely be summarised as a general dissatisfaction with the understaffed and underfunded state of the healthcare sector.
+\\
+Many complained about the intricate journaling processes - documenting the patients' treatment pathways, reading through a lot of unnecessary documentation and documenting the same thing twice. 
+\\
+There was a plethora of replies criticising the IT systems currently in place. Complaining that they either didn't work, were too slow or kept crashing. Additionally, one respondee noted that they have a lot of programs that advertise useful functionality, but because they aren't integrated with all the other individual solutions, the healthcare staff end up having to open multiple programs documenting the same data many times over.
+\\
+Some mentioned that there are a lot of wrongful queries to the emergency line that have to be redirected. It was also added that a filter or automatic redirection might save a lot of critical time.
+\\
+Finally, the vast majority of responses were aimed at a lack of resources. This included being understaffed, resulting in insufficient time to care for patients and individual staff members being assigned too many tasks. Additionally, there was a shortage of critical inventory, such as bed space and essential medical equipment. Moreover, the existing equipment was often old or outdated due to budget cuts.
+\\
+\\
+The responses regarding the everyday problems of patients weren't nearly as varied. These were mainly regarding long waiting times and a lack of transparency. Out of 39 responses, 12 mentioned that patients had expressed concerns about unclear treatment pathways. Additionally, 18 out of 39 responses indicated that patients had complained about the length of the waiting times. Lastly, a handful of respondents (approximately\footnote{The written word is up to interpretation. This is to be understood as: 'plus-minus one'.} 6) mentioned that their patients feel overlooked, which may also indicate an understaffed healthcare sector.
+\\
+\\
+After reading the responses to our questionnaire and working in tandem with the healthcare sector for roughly six months, it has become undoubtedly apparent that the healthcare sector is in dire need of a digital revolution. A lot of tasks could be expedited seamlessly without contributing additional burdens to the medical personnel if only proper digital solutions were implemented. However, we would have been unable to work on any practical application within the healthcare sector if all responses we had received were equally uninclined to collaborate. Therefore, we were overjoyed when the University Hospital of Odense (OUH) reached out with an incredibly accommodating response.
+
+\subsection{The Digital Taskboard}\label{sec:Digital-Taskboard}
+\acrshort{ouh} responded that their department of Orthopaedic surgery uses a whiteboard as a daily taskboard. The taskboard details which \textbf{tasks} (referred to throughout the rest of the section as \gls{functions}) are performed by \textbf{who}, in what \textbf{timeslot}, \textbf{where}, and any \textbf{extra} information if applicable. A picture of the current whiteboard is shown in \autoref{fig:Whiteboard-Taskboard}. However, this whiteboard is being drawn up daily by manually transcribing data from two distinct spreadsheets. \acrshort{ouh}  informed us that the process usually takes 10-20 minutes, time that could be better spent on more critical tasks by the clinical staff, and as such, they wished for a digital replacement for the whiteboard. Therefore, this thesis began with the seemingly straightforward task of merging two 2D datasets and visualising them on a screen comparable to a whiteboard.
+\\
+For clarity, we would like to note that the two spreadsheets are separated purely for administrative purposes; the separation does not add any additional dimensionality. Hence, it can still be displayed without loss of dimensionality on a plane like a whiteboard or screen. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/Methodology/Whiteboard-Taskboard-Redacted.jpg}
+    \caption{Whiteboard taskboard}
+    \small
+    \raggedright 
+    A picture of the taskboard currently in place at \acrshort{ouh}. Names and tasks have been redacted to preserve the anonymity of \acrshort{ouh}'s personnel. 
+    \label{fig:Whiteboard-Taskboard}
+\end{figure}
+
+The two spreadsheets, which need to be merged in order to arrive at the correct data, consisted of a \emph{ward assignment chart}, in the form of a Microsoft Excel file and a web application made by a third party called HosInfo. A snippet of the ward assignment chart can be seen in \autoref{fig:wac-snippet}, and a snippet of the HosInfo interface can be seen in \autoref{fig:HosInfo-snippet}.
+
+\subsubsection*{Scraping and loading data from a 3rd party provider}
+The immediate issue was that the HosInfo data was inaccessible. The HosInfo application (which we will refer to onwards as just '\emph{HosInfo}') didn't have an API, and it only has two access levels: surface-level access for viewing the data and full administrative control. As such, our only option was to scrape the HTML pages from HosInfo. Scraping was a wholly new endeavour for us, so at first, we tried using Python's inherent \texttt{requests} package. Here, we injected \emph{cookies} and a \emph{header} containing our login information. However, it would soon prove that what seemed to be a bug at first, was actually just not an automatic solution at all. The injected information would have to be updated regularly with a manual login for this approach to work. Therefore, we made a switch to the open-source, third-party tool \texttt{selenium}. \texttt{selenium} works by instantiating a WebDriver, which can automatically drive the browser. In short, this meant that we gave it instructions to navigate separately to the three specified text elements for login input and fed it our credentials. In \autoref{fig:HosInfo-login}, a screengrab of the HosInfo login gateway is shown. After feeding the login credentials, the WebDriver manually navigated to the login button and clicked it. This prompts a load before transitioning from the login page to the correct URL from where we could scrape the data, so we injected a manual waiting time of at most ten seconds until a unique element appeared. We simply chose a unique element at random and used its XPATH in the HTML code for identification. This is all to say that the webscraping solution is incredibly fragile and highly prone to the slightest changes made to the HosInfo application.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/Methodology/Ward-Assignment-Chart-Redacted.png}
+    \caption{Ward assignment chart}
+    \small
+    \raggedright 
+    A snippet of the ward assignment chart used for bookeeping weekly tasks. Names and tasks have been redacted to preserve the anonymity of \acrshort{ouh}'s personnel. 
+    \label{fig:wac-snippet}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/Methodology/HosInfo-Redacted.jpg}
+    \caption{HosInfo interface}
+    \small
+    \raggedright 
+    A snippet of the HosInfo interface used for storing planning information at \acrshort{ouh}. Names and tasks have been redacted to preserve the anonymity of \acrshort{ouh}'s personnel. 
+    \label{fig:HosInfo-snippet}
+\end{figure}
+
+By submitting our credentials and automatically navigating to the correct webpage, we could now extract it in full as an HTML file. Here, we opted for using the very standard solution of parsing the HTML file with the \texttt{bs4} package, more commonly known as \texttt{BeautifulSoup}. Parsing the HTML was, to our great luck, quite easy. Although the spreadsheet is not formatted as an HTML \texttt{table}, every single cell (or entry) was the same division (\texttt{div}) with the class name: \emph{"single-description"}. Likewise, were the \gls{functions} (the row labels) but instead with the class name: \emph{"single-function"}. As there were seven columns, one for each day of the week, we could iterate through our 1D array of entries but retain the 2D order by using the row indices:
+
+\begin{equation*}
+    \text{row\_index} = \text{entry\_index} \mod 7
+\end{equation*}
+and the column indices:
+\begin{equation*}
+    \text{column\_index} = \left\lfloor
+        \frac{\text{entry\_index}}{7}
+    \right\rfloor.
+\end{equation*}
+It was helpful to keep the index as some \gls{functions} (rows) contained irrelevant information, and others remained unchanged from week to week but introduced significant bugs when we tried to include them. An example of rows that weren't relevant was the large entries describing that all units (agents) either were taking a course, had a planned vacation or another kind of time off, or that the agents were ill. When we initially tried to exclude some of these rows, we did it by their index, keeping a \gls{dictionary} of the \gls{function} label to index translation. Unfortunately, the indices didn't stay fixed and could change from week to week. This also introduced a large bug to our system, which we attempted to alleviate by simply skipping rows based on their label instead. The idea behind using indices rather than labels was a hope that, although the \gls{function} label might be renamed, it would retain its index. Ideally, the solution would not have to skip any rows, but seeing as that wasn't an option, our program was left vulnerable to \gls{function} label renaming.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{figures/Methodology/HosInfo-Login.png}
+    \caption{HosInfo login gateway}
+    \small
+    \raggedright 
+    The login gateway for the HosInfo application.
+    \label{fig:HosInfo-login}
+\end{figure}
+
+\subsubsection*{Processing unformatted data using Regular Expressions}
+Now, with all the preprocessing of the data, we had gone from a webpage with some entries in the form of a table to a full HTML file and all the way to a manageable 2D table (a \texttt{pandas} table in Python) with string entries and row labels. This brings us to the second glaring issue: HosInfo does not enforce any formatting of its entries. As such, we had to somehow arrive at a pattern for all the string entries constituting our data.
+\\
+In \autoref{tab:HosInfo-example-entries}, we give an example of some of the possible entries in HosInfo. Some of the formatting is extremely simple to spot for the human eye, and for a non-technically inclined individual, some of these entries probably read just fine. However, there is still a lot of ambiguity as to how it should be interpreted. In \autoref{tab:HosInfo-good-processing}, we give an example of what could probably be considered a good interpretation, and in \autoref{tab:HosInfo-poor-processing}, we provide an example of some of all the possible pitfalls a computer program might be prone to stumble into.  
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|}
+        \hline
+        HARRYP (08:15 - 15:47) spells                                                                                                                                                          \\ \hline
+        \begin{tabular}[c]{@{}l@{}}
+            DORA\_TE (07:30 - 14:25)\\
+            PAUL\_A (07:00 - 12:00) (12:00 - 15:00) Hr. 8-12
+        \end{tabular}                                                                    
+        \\ \hline
+        \begin{tabular}[c]{@{}l@{}}
+            DAENERYS\_T (08:00 - 16:00) stormborn\\
+            STEVEN\_STUD1 (08:00 - 16:00)
+        \end{tabular}
+        \\ \hline
+        \begin{tabular}[c]{@{}l@{}}
+            THOMAS\_TT (07:30 - 15:47)\\
+            WALTERHW (08:00 - 16:12) chemistry\\
+            JESSIE\_P (07:30 - 15:30) 13-15\\
+            LEAH\_OS (07:00 - 15:43) Hr. 07:00 - 13:00
+        \end{tabular}
+        \\ \hline
+        \begin{tabular}[c]{@{}l@{}}
+            KATARA\_OTNWT (07:00 - 15:30)\\
+            SOKKA\_STUDENT (07:00 - 15:30)
+        \end{tabular}
+        \\ \hline
+        GERALT\_OR   
+        \\ \hline   
+    \end{tabular}
+    \caption{HosInfo example entries}
+    \small
+    \raggedright
+    Note, these are imaginary example entries. Where 'spells', 'stormborn' and 'chemsistry' might have corresponded to additional information relevant in a clinical setting.
+    \label{tab:HosInfo-example-entries}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{Name}         & \textbf{Time} & \textbf{Extra}  \\ \hline
+        Harry P.              & 08:15 - 15:47 & spells          \\ \hline
+        Dora T. E.            & 07:30 - 14:25 &                 \\ \hline
+        Paul A.               & 07:00 - 15:00 & (08:00 - 12:00)          \\ \hline
+        Daenerys T.           & 08:00 - 16:00 & stormborn       \\ \hline
+        Steven (STUD1)        & 08:00 - 16:00 &                 \\ \hline
+        Thomas T. T.          & 07:30 - 15:47 &                 \\ \hline
+        Walter H. W.          & 08:00 - 16:12 & chemistry       \\ \hline
+        Jessie P.             & 07:30 - 15:30 & (13:00 - 15:00)         \\ \hline
+        Leah O. S.            & 07:00 - 15:43 & (07:00 - 13:00) \\ \hline
+        Katara O. T. N. W. T. & 07:00 - 15:30 &                 \\ \hline
+        Sokka (Student)       & 07:00 - 15:30 &                 \\ \hline
+        Geralt O. R.          & -             &                 \\ \hline
+    \end{tabular}
+    \caption{HosInfo good processing}
+    \label{tab:HosInfo-good-processing}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{Name}              & \textbf{Time} & \textbf{Extra}           \\ \hline
+        Harryp                     & 08:15 - 15:47 & spells                   \\ \hline
+        Dora T. E.                 & 07:30 - 14:25 &                          \\ \hline
+        Paul A.                    & 07:00 - 12:00 & (12:00 - 15:00) Hr. 8-12 \\ \hline
+        Daenerys T.                & 08:00 - 16:00 & stormborn                \\ \hline
+        Steven S. T. U. D. 1.      & 08:00 - 16:00 &                          \\ \hline
+        Thomas T. T.               & 07:30 - 15:47 &                          \\ \hline
+        Walterhw                   & 08:00 - 16:12 & chemistry                \\ \hline
+        Jessie P.                  & 07:30 - 15:30 & 13-15                    \\ \hline
+        Leah O. S.                 & 07:00 - 15:43 & Hr. 07:00 - 13:00        \\ \hline
+        Katara O. T. N. W. T.      & 07:00 - 15:30 &                          \\ \hline
+        Sokka S. T. U. D. E. N. T. & 07:00 - 15:30 &                          \\ \hline
+        Geralt O. R.               & -             &                          \\ \hline
+    \end{tabular}
+    \caption{HosInfo poor processing}
+    \label{tab:HosInfo-poor-processing}
+\end{table}
+
+We loathe to admit it, but in order to stand any fighting chance at formatting the strings, as shown in \autoref{tab:HosInfo-example-entries}, we elected to use regular expressions (regex). More precisely, we used the following regex pattern:
+\begin{verbatim}
+    ^([^\s(]+(?:_[^\s(]+)?)\s*(?:\(([^)]+)\))?\s*(.*)$
+\end{verbatim}
+This regex pattern essentially captures three groups. We will do our best to break it down. A good way to understand it is by dividing it into the following:
+\begin{verbatim}
+    ^
+        ([^\s(]+(?:_[^\s(]+)?)   # (group 1)
+        \s*
+        (?:\(([^)]+)\))?         # (group 2, optional)
+        \s*
+        (.*)                     # (group 3)
+    $
+\end{verbatim}
+Here, \verb|^| signifies the beginning of the string. \verb|([^\s(]+(?:_[^\s(]+)?)| captures \emph{group 1}. The first part, \verb|[^\s(]+|, captures "one or more characters that are not whitespace \verb|\s| and are not the character starting parenthesis \verb|(|"\footnote{This is the standard formulation employed for regular expressions~\cite{Original-RegEx}.}. Then \verb|(?:_[^\s(]+)?| is a \emph{non-capturing} group, i.e. what it captures is not a distinct group, but rather it adheres to a preexisting, in this case \emph{group 1}. It captures a group matched by the underscore character \verb|_| followed by "one or more non-whitespace, non-\verb|(| characters". However, this entire non-capturing group is optional, signified by the question mark character \verb|?|. The next line: \verb|\s*| is a standard expression which matches zero or more whitespace characters (effectively discarding them).
+\\
+Next, \verb|(?:\(([^)]+)\))?| is a second non-capturing group, which works in a somewhat peculiar way. It is also optional (again signified by the \verb|?|); however, if there is a closed parenthesis, given by a \verb|(| and a \verb|)| character, then this part of the expression \verb|([^)]+)| captures all characters which aren't the \verb|)| character, i.e. everything in the parenthesis. This is also followed by the standard: \verb|\s*|, discarding zero or more whitespace characters.
+\\
+Finally, what we have marked as \emph{group 3}: \verb|(.*)| simply captures everything else until the end of the string.
+\\
+In an attempt to explain it in a slightly more human fashion, we can classify the three groups as:
+\begin{itemize}
+	\item Group 1: Captures the name and the initials after the underscore, if present.
+	\item Group 2: If a closed parenthesis exists, this captures its innards, i.e. this captures (the first) timeslot, if present.
+	\item Group 3: This is anything after a potential closed parenthesis, or alternatively anything after the name, i.e. this captures any trailing appendages, e.g. this could be extra information as highlighted in \autoref{tab:HosInfo-good-processing}.
+\end{itemize}
+This way, we could separate forename from initials and a timeslot from other possible additional information. However, as showcased in \autoref{tab:HosInfo-poor-processing}, there are still a multitude of unsolved problems. Names that are contracted with their initials instead of separated by an underscore; multiple timeslots all encapsulated within closed parentheses; inconsistent formatting of timeslots; initials that are actually monikers instead of initials. We have managed to work around some of these, e.g. there weren't a lot of monikers. Hence, we simply elected to keep a \gls{dictionary} and treat it as a special case, but this would obviously also have to be regularly updated. Yet, sadly, \autoref{tab:HosInfo-poor-processing} better represents our final result than \autoref{tab:HosInfo-good-processing}.
+
+\subsubsection*{Standardising the labels of the pivot column for the datasets}
+Despite all the troubles it proved to try and process the HosInfo data, it, as previously alluded to,  still only tells half of the story. In order to show the complete picture and give the actual representation which \acrshort{ouh} wanted, the HosInfo data needed to be merged with the data provided by a weekly ward assignment chart. The assignment chart was made with Microsoft Excel, so, in contrast to HosInfo, it was a piece of cake to simply load it into a \texttt{pandas} table, which could be manipulated in Python.
+\\
+Alas, here, the third glaring issue reared its head. Although easy to load into Python, merging the data from the assignment chart with the HosInfo data proved incredibly difficult. Firstly, the column at which the two datasets should be compatible hadn't been given a standardised naming convention. This was the \gls{function} column; the one presented as rows at HosInfo and which, as can be seen from \autoref{fig:wac-snippet} is a column in the assignment chart, which indicates what personnel are performing which tasks. An example of this incompatible naming convention could be a task in the assignment chart called \emph{'SHOULDER KIDS'}, while at HosInfo, it might be called \emph{'SHOULDER 1'}. Other times, the task had attached a timeframe in the label at one place, while not at the other, e.g. \emph{'KNEES until 14'} and simply \emph{'KNEES'}. However, the names referred to the same, but it is our understanding that different departments, or maybe more sections, at \acrshort{ouh} had individually elected to name them. It is, in turn, also our understanding that although the naming wasn't standardised, this didn't lead to discrepancies for the healthcare staff and to them, the translation was obvious. Sometimes, it might have been because a task was accompanied by a doctor who specialised in working with kids, and therefore, that doctor performing \emph{'SHOULDER 1'} must match with the nurse in HosInfo assigned to \emph{'SHOULDER KIDS'}. Other times, it might have been because they had simply grown accustomed to a special label meaning the same as an enumeration, e.g. that \emph{'SKH HAND'} and \emph{'HAND 2'} is a match\footnote{where \emph{SKH} is an abbreviation for the danish \emph{emergency}.}.
+\\
+The only\footnote{As a standardisation would require a translation.} solution is obviously a translation. We had expected that we would have to maintain a \gls{dictionary} over the translations; however, to our great pleasure, \acrshort{ouh} decided to try and standardise the naming between these two spreadsheets.
+\\
+This resulted in at least a month-long ordeal of back-and-forth. We made a simple check that stored entries from each of the two spreadsheets if they didn't have a matching pair in the other spreadsheet. This way, in collaboration with the healthcare personnel at \acrshort{ouh}, we could figure out which labels should be renamed and which labels were meant to not have a matching pair. Because, yes, some of the \gls{function} labels from both the assignment ward data and HosInfo data included critical information, but they didn't have a matching pair in the corresponding spreadsheet. Our immediate conclusion was that they were incompatible, but the more technical answer is that they should simply have their own column.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/Methodology/Final-Taskboard-Redacted.png}
+    \caption{Final visualisation of the taskboard}
+    \small
+    \raggedright 
+    The final version of our visualisation of the taskboard. Names and tasks have been redacted to preserve the anonymity of \acrshort{ouh}'s personnel. The columns translated to english are (from left to right): "Name", "\Gls{function}", "Ward", "Time", "Doctor" and "Additional notes". Note that in column two (the \Gls{function} column), the entries with a timeslot suffix are placed at the bottom of the taskboard. Additionally, as described, the "flex wards" are designated in the third column in parentheses.
+    \label{fig:Final-Taskboard}
+\end{figure}
+
+\subsubsection*{Handling labels incompatible for merging with the other dataset}
+The HosInfo data does not include information about which ward the \gls{function} is supposed to be performed at. However, as the name would imply, so does the ward assignment chart. Sometimes, an entry (a ward) in the assignment chart might be flagged with \emph{'FLEX'}. This means that that ward is "flexible", i.e. multiple people may come and go throughout the day. So if ward \(m\), in the assignment chart, is flagged with \emph{'FLEX \(n\)'}, then the agent \(a\) assigned to ward \(n\) may also be using ward \(m\) throughout the day. Therefore rather than just writing
+\begin{center}
+    "\(a\) is assigned to ward \(n\)",
+\end{center}
+a more accurate description would be
+\begin{center}
+    "\(a\) is assigned to ward \(n\), (flex ward \(m\))".
+\end{center} 
+Furthermore, a \gls{function} in HosInfo might have a timestamp or timeslot as a suffix. These were intentionally not meant to be paired with a ward from the assignment chart (unlike the rest of the \gls{functions}). However, they instead served as additional information, indicating some kind of special task to the healthcare staff\footnote{Admiteddly, at the time of writing, we have no clue what additional information this was intended to carry.}. \acrshort{ouh} desired that these special functions with a timestamp all go to the bottom of the taskboard, so naturally, we complied.
+\\
+\\
+What we have described up until now concludes the working functionality, which we have managed to incorporate within the final version of our visualisation of the taskboard. In \autoref{fig:Final-Taskboard}, we have provided one example of the culmination of these roughly three and a half months' worth of work.
+\\
+\\
+After much deliberation and back-and-forth, it seemed as though we had arrived at an adequate solution. Alas, we ran into one final major roadblock, for which we have yet to find a reasonable solution.
+\\
+\acrshort{ouh} naturally wished for the taskboard to have online update capabilities in case of possible illness or other reasons for urgent absence. Although true online\footnote{We would, maybe in all honesty not on the most substantial grounds, argue that for an algorithm to be considered truly online, it would have to update in response to a change.} update capabilities seemed infeasible; in theory, employing a scheme which mimics online updating would be quite straightforward. This would require a server which could run at set intervals, say every 5 minutes, throughout the working hours, and in that way, it could reprocess the two datasets and capture any possible updates. It seemed as though \acrshort{ouh} was willing to try out the server solution, yet we never made it that far, which brings us to the final roadblock.
+\\
+HosInfo contains information on \textbf{who} performs which \textbf{\gls{function}} within which \textbf{timeslot} and any possible additional \textbf{notes}. The ward assignment chart contains a lot of the same information. The timeslots and additional information are missing, but this is alleviated by merging with the HosInfo data. The key issue is that all the healthcare staff are indicated only by their initials in the assignment chart. The crucial detail is that absence is only marked in the assignment chart and not updated in the HosInfo data. As exemplified by \autoref{tab:HosInfo-example-entries} and \autoref{tab:HosInfo-good-processing}, we use the full first names and mark last names by their initials. Although, due to some poor architectural decisions on our behalf,  it would be a non-insignificant refactor of our codebase to extract the name from the assignment chart rather than HosInfo; in order to provide online updates, we would have to retain a \gls{dictionary} of translations from the healthcare personnel's initials to their actual names. This was the final nail in the coffin. The solution is obviously still feasible, but at this point, we deemed that we had given the digital taskboard our best shot, and instead, we attempted to move on to another problem.
+
+\subsection{The Scheduling Assistant Tool}\label{sec:scheduling-assistant}
+However unclear it was just how intricate a task it would be to merge two 2D datasets, it was equally clear that, on its own, it could not provide a sufficient academic foundation for a Master's thesis in artificial intelligence. Therefore, we tried to squeeze in an additional focus.
+\\
+The scheduling task, as we elected to dub it, consists of assigning agents to tasks. More precisely, we have \(N\) tasks, a timeframe of \(T\) days, and \(M\) agents, each with their own qualifications. Typically, we will have \(T < N\), but it is strictly \(T \leq N\); otherwise, it would not make sense to model it this way. Additionally, we will usually have \(M \ll N\), as it is modelled over multiple days, where each agent can be assigned a task once a day. At its base, for a valid solution, all tasks must be assigned a qualified agent, i.e., an agent who can perform the given task. However, there might be additional constraints, e.g., an agent could be qualified but inaccessible that day (because of other obligations or planned vacation), or there could be working conditions and regulations that the final plan must abide by.
+\\
+As mentioned in \autoref{sec:theory}, and as we will detail further in the following sections, the scheduling task is NP-complete - more specifically, it can be modelled as the boolean satisfiability problem. Although we had spent a good amount of time thinking about more commonly accepted \acrshort{ai} techniques, such as the \acrshort{ga} scheme (see \autoref{sec:genetic-algorithms}), we ultimately ended up using \acrshort{cp}, i.e. an \acrshort{sat} solver (see \autoref{sec:Constraint_Programming}).
+
+\subsubsection{Translating informal constraints to a Python implementation}\label{sec:translating-constraints}
+From a mathematical and algorithmic perspective, solving the scheduling task is readily feasible. As it is NP-complete, it is a well-studied problem with a wide range of practical heuristics. In practice, we employed Google's OR-Tools~\cite{Wiki-OR-Tools} open-source software package for Python. OR-Tools is a suite of optimisation tools, which includes the CP-SAT solver, a state-of-the-art \acrshort{cp} solver that uses a \acrshort{sat} solver as a base. The CP-SAT solver is a hybrid solver combining the strengths of \acrshort{cp} and \acrshort{sat} solving by expanding upon~\cite{Lazy-Clause-Generation} the foundation lain by CDCL (see \autoref{sec:CDCL}).
+\\
+On multiple occasions, we have jokingly stated that using Google's OR-Tools is simply a matter of running
+\begin{verbatim}
+    from Google import model
+    model.solve( )
+\end{verbatim}
+Although (obviously) not an exact representation of our codebase, it still carries a nugget of the truth. Following in the vein of boolean satisfiability, we model the scheduling task with a boolean formula. Every single boolean variable in this formula states whether an agent \(a\) is performing a task \(i\) on day \(j\). As such, all of the decision variables in our formula are going to take the form,
+\begin{equation}\label{eq:decision-variable-form}
+	a_{ij}.
+\end{equation}
+In Python with OR-Tools, this is declared using an instance of the Python \texttt{dictionary} object. This is showcased in the following code snippet where the \texttt{model} object is instantiated pretty much like the above example:
+\begin{python}
+# Decision variables
+x = {}
+for agent in agents:
+    for task in tasks:
+        for day in all_days:
+            x[(agent.name, task, day)] = model.NewBoolVar(f"x_{agent.name}_{task}_{day}")
+\end{python}
+We are sure that the reader will agree; given the information represented by the \texttt{agents}, \texttt{tasks} and \texttt{all_days} variables, arriving at working code, as showcased above, is simply an implementation detail.
+\\
+From here, all of the logic needs to be implemented. There is an abundance of rules to which the program must adhere to in order for it to produce a valid solution. Due to bureaucracy and mismanagement of stakeholder interest on our part, we regrettably only ever worked on a very small subset of the greater administrative and planning effort at \acrshort{ouh}. Despite being unable to show the complete picture of what capabilities such a software tool would require, we will nevertheless, in the following detail, the constraints we implemented in bullet points:
+\begin{itemize}
+	\item An agent can only be assigned a task to which they are qualified.
+	\item An agent cannot be assigned a task on a day when they are unavailable.
+	\item All tasks must be assigned the required amount of qualified agents (some tasks require more than one agent).
+	\item Agents can perform no more than one task a day.
+\end{itemize}
+The full code can be seen in the codebase\footnote{\href{https://github.com/WeatherBoy/MastersProject_Hospital_Services}{https://github.com/WeatherBoy/MastersProject\_Hospital\_Services}.}; therefore, we will not make a meticulous walkthrough of every single line; however, we would like to show a snippet of one of these constraints - if only to display the seamless translation of logic code using the OR-Tools package.
+\begin{python}
+# Agents cannot be assigned on unavailable days
+for agent in agents:
+    for day in agent.days_off:
+        for task in tasks:
+            model.Add(x[(agent.name, task, day)] == 0)
+\end{python}
+Much like the above example, it is no more complex than a nested \texttt{for}-loop structure over tasks, days (in this case, the \texttt{days_off} field) and tasks. Assigning each of these variables \(0\) is OR-Tools' Python representation for setting them to false.
+\\
+\\ 
+The following rules are related to a special type of task called the \emph{"Rygvagt"} (it is Danish for \emph{"back watch"} - \emph{back} referring to the body part). It is a task that must be performed daily, even on the weekends. As such, it incurred the following two constraints:
+\begin{itemize}
+	\item If an agent is assigned to a task on either Saturday or Sunday, they are automatically assigned to both Saturday and Sunday. This is called a \emph{weekend task}.
+	\item If an agent is assigned to a weekend task, then they are mandated time off for both the previous and the following Monday (they become unavailable those days).
+\end{itemize}
+With a last snippet of code, we would like to show the implementation of the above two rules.
+\begin{python}
+# Weekend constraints
+for info in weekend_info:
+    saturday = info["saturday"]
+    sunday = info["sunday"]
+    monday_before = info["monday_before"]
+    monday_after = info["monday_after"]
+
+    # Enforce the same agent works Rygvagt on both days
+    for agent in agents:
+        model.Add(x[(agent.name, "Rygvagt", saturday)] == x[(agent.name, "Rygvagt", sunday)])
+
+    # Ensure exactly one agent is assigned to Rygvagt on Saturday
+    model.AddExactlyOne(x[(agent.name, "Rygvagt", saturday)] for agent in agents if agent.qualified("Rygvagt"))
+
+    # Agents working the weekend must have corresponding Mondays off
+    for agent in agents:
+        works_weekend = x[(agent.name, "Rygvagt", saturday)]
+        if monday_before is not None:
+            model.Add(sum(x[(agent.name, task, monday_before)] for task in tasks) == 0).OnlyEnforceIf(works_weekend)
+        if monday_after is not None:
+            model.Add(sum(x[(agent.name, task, monday_after)] for task in tasks) == 0).OnlyEnforceIf(works_weekend)
+\end{python}
+The main \texttt{for}-loop, starting at line 2, loops over a predefined \texttt{list} we called \texttt{weekend_info}. This just contains all weekends within the timeframe \(T\) given as integers because days are simply enumerated in the OR-Tools' \texttt{model} representation. Furthermore, due to the second rule, each weekend is also encoded with the previous and the immediate Monday (if they are within the timeframe). 
+\\
+Then, the first rule is enforced by the \texttt{for}-loop starting at line 9, which dictates that all agents must have the same assignment value for the "Rygvagt" task on Saturday and Sunday of the same weekend. As they can either only work both days or none of the days of the weekend, this code perfectly encapsulates the first rule.
+\\
+Line 13 just ensures that somebody actually gets assigned to the "Rygvagt" that weekend.
+\\
+The last block of code, starting at line 16, is a bit more complex and could, admittedly, be refactored in order to provide more clarity. The first variable, \texttt{works_weekend}, is just naming a flag for the code to be slightly more readable. The \texttt{info} variable has \texttt{None}-entries if, as aforementioned, the Mondays before and after the weekend are outside the timeframe; this is what the \texttt{if}-statement checks. However, this ultimately fails to enforce the second rule. Better software would have some notice informing the user that the solution could not satisfy the required off days as they are outside the timeframe for the plan.
+\\
+The bodies of the \texttt{if}-statements work precisely as the two previously showcased snippets of code. The main difference is that the loop over tasks has been refactored to a Python \texttt{list comprehension} instead.
+\\
+The \texttt{OnlyEnforceIf} method uses the \texttt{works_weekend} flag to ensure, as expected, that the given agent is only made unavailable for the two Mondays if they work the corresponding weekend task.
+
+\subsubsection*{Planning a fair schedule through choice of objective function}
+Finally, as the Google OR-Tools package makes this easily implementable, we elected to optimise over a minimal maximum number of assignments. This means that while the utmost important task of the program remains to find a valid solution, it will try to arrive at a solution where the agent who works the most shifts works as few as possible. As of the time of writing, optimising over multiple minimisations is not integrated within OR-Tools. However, we deemed it interesting to try to run two optimisations. First, we optimise over the minimal maximum of assignments for the agents and then use the found maximum as a new constraint. Second, we seek to minimise the range (the difference between the maximum and minimum) of the number of tasks assigned to any agent. This way, we would ideally arrive at the most fair assignment.
+\\
+Additionally, right now, \acrshort{ouh} plans on a month-to-month basis. It is our understanding that they try their best to assign each month in the most fair and balanced way, yet it is on a case-to-case basis. One way to try to minimise any cumulative unbalances could be to retain a sum of how many tasks each agent has been assigned so far this year and use that count in the optimisation. Another straightforward way to balance it would be to simply plan on a long enough timescale; however, for real-world problems, such ideals aren't always possible.
+\\
+Although both ideas are enticing in theory, we were unfortunately limited on both time and data and, as such, unable to implement any of them in practice.
+
+\subsubsection*{Modelling an adequate abstraction for an informal-constraints-to-coding-logic interface}
+Although feasible from an engineering perspective, we are uncertain whether a solution to the scheduling task could be in any way viable. No matter what program is implemented, it would require validation from an actual user; as such, the human aspect is crucial. It goes without saying that no end-user should translate the formal constraints into coding logic themselves. However, it would also be incredibly na\"ive to imagine a program that could sustain hard-coding all possible constraints that may arise. Therefore, a form of abstraction allowing for translation from real, informal constraints to logic is necessary. 
+\\
+One might argue that the above is no more than a convoluted advocate for the importance of a proper user interface, but we digress. The user interface should act as the silver platter upon which the \emph{good idea} is being served. In this case, the 'good idea' would be an abstraction that suits the needs of as many end users as possible.
+\\
+Despite being an incredibly fascinating issue that we would have loved to delve deeper into, we were once more limited on time and data. In the following, we will present our initial, final, and only solution, which serves simply as a most base prototype.
+\\
+\\
+\acrshort{ouh} is incredibly fond of Microsoft Excel. Hence, we figured that the most seamless initial interface might use Excel as a medium. This solution consisted of four 'sheets' in one Excel sheet, which could be loaded into and thus manipulated in Python. The data contained within the four sheets are here detailed in bullet points:
+\begin{itemize}
+	\item \emph{Agent Charts}: For every day \(d\) in the timeframe and every assignable agent \(a\), is shown whether anything prevents agent \(a\) from being assigned a task day \(d\).
+	\item \emph{Agents}: For  every assignable agent \(a\) and every possible qualification \(j\), is shown whether agent \(a\) has qualification \(j\).
+	\item \emph{Rolling Chart}: For our case; the preferences that each agent \(a\) has for the special task "Rygvagt".
+	\item \emph{Tasks}: For every day \(d\) and for every possible task \(i\), is shown whether task \(i\) needs to be performed on day \(d\).
+\end{itemize}
+An example of the four sheets can be seen in \autoref{tab:Agent-Chart}, \autoref{tab:Agents}, \autoref{tab:Rolling-Chart} and \autoref{tab:Tasks}.
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|l|l|l|}
+        \hline
+        \textbf{Agent Chart} & \textbf{Agent 1} & \textbf{Agent 2} & \textbf{Agent 3} & \textbf{Agent 4} \\ \hline
+        1st of January       & Morning meeting  &                  &                  &                  \\ \hline
+        2nd of January       &                  &                  & Vacation request &                  \\ \hline
+        3rd of January       &                  & Mandatory leave  &                  &                  \\ \hline
+        4th of January       &                  &                  &                  &                  \\ \hline
+        5th of January       &                  &                  &                  &                  \\ \hline
+        6th of January       &                  &                  &                  & Vacation request \\ \hline
+        7th of January       &                  &                  &                  & Vacation request \\ \hline
+        8th of January       &                  & Coursework       &                  & Vacation request \\ \hline
+        9th of January       &                  &                  &                  & Vacation request \\ \hline
+        10th of January      &                  &                  &                  & Vacation request \\ \hline
+    \end{tabular}
+    \caption{Agent Chart}
+    \small
+    \raggedright
+    Each entry indicates a reason why an agent cannot be assigned a task on a given day.
+    \label{tab:Agent-Chart}
+\end{table}
+
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|l|l|}
+        \hline
+        \textbf{Agents}  & \textbf{Task 1} & \textbf{Task 2} & \textbf{Task 2} \\ \hline
+        \textbf{Agent 1} & x               & x               & x               \\ \hline
+        \textbf{Agent 2} &                 & x               &                 \\ \hline
+        \textbf{Agent 3} & x               & x               & x               \\ \hline
+        \textbf{Agent 4} & x               & x               & x               \\ \hline
+    \end{tabular}
+    \caption{Agents}
+    \small
+    \raggedright
+    Each 'x' indicates that the agent is qualified for the given task.
+    \label{tab:Agents}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|}
+        \hline
+        \textbf{Rolling Chart} & \\ \hline
+        1st of January         & Agent 2   \\ \hline
+        2nd of January         & Agent 3   \\ \hline
+        3rd of January         & Agent 1   \\ \hline
+        4th of January         & Agent 1   \\ \hline
+        5th of January         & Agent 1   \\ \hline
+        6th of January         & Agent 3   \\ \hline
+        7th of January         & Agent 2   \\ \hline
+        8th of January         & Agent 2   \\ \hline
+        9th of January         & Agent 3   \\ \hline
+        10th of January        & Agent 2   \\ \hline
+    \end{tabular}
+    \caption{Rolling Chart}
+    \small
+    \raggedright
+    Each entry indicates the agent's preference for being assigned to the special task "Rygvagt" on the given day.
+    \label{tab:Rolling-Chart}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|l|l|}
+        \hline
+        \textbf{Tasks} & \textbf{Task 1} & \textbf{Task 2} & \textbf{Task 3} \\ \hline
+        1st of January       & x               & x               &                 \\ \hline
+        2nd of January       & x               & x               & x               \\ \hline
+        3rd of January       & x               & x               & x               \\ \hline
+        4th of January       & x               &                 &                 \\ \hline
+        5th of January       & x               &                 &                 \\ \hline
+        6th of January       & x               & x               & x               \\ \hline
+        7th of January       & x               & x               & x               \\ \hline
+        8th of January       & x               & x               &                 \\ \hline
+        9th of January       & x               & x               & x               \\ \hline
+        10th of January      & x               & x               & x               \\ \hline
+    \end{tabular}
+    \caption{Tasks}
+    \small
+    \raggedright
+    Each 'x' indicates that the given task needs to be performed on the given day.
+    \label{tab:Tasks}
+\end{table}
+These four tables aim to provide the necessary data for the decision variables, as represented in \autoref{eq:decision-variable-form}. However, they are unable to encapsulate rules, such as those concerning the "Rygvagt". Although we haven't been able to experiment with the interface, we still hypothesise that such rules would have to be hard-coded regardless.
+\\
+Furthermore, this representation does not indicate which tasks might require multiple agents nor how many. However, we are confident that this could be integrated within a stand-alone interface, not relying on Microsoft Excel as a medium.
+\\
+Additionally, \acrshort{ouh} informed us that for this smaller subset of the problem, one task required two agents but only for one out of five days of the week. Although it is difficult to represent in the anonymised version given by \autoref{tab:Tasks}, we solved this by modelling it as two distinct tasks. The first task required one agent for four out of five days, and the second task required two agents for the remaining day. 
+\\
+Although this solution might come somewhat naturally to an individual with an engineering background, we are fully aware that it would be an unnatural change for somebody who has thought of it as a single task throughout their entire career.
+\\
+This brings us nicely to our final remark on the scheduling task. Using Microsoft Excel as a medium is clearly inadequate. It cannot, by itself, provide the necessary abstraction required for such a complex translation of everyday rules into formal logic. Furthermore, although it is possible to model many of these rules through such an interface, it ultimately begs the question: Does it actually serve the end user, or is it simply a lazy workaround?
+
+\subsection{The Automated Schedule Validator}\label{sec:schedule-validator}
+In a last-ditch effort to contribute an actual working solution that could alleviate some of the more tedious workloads at \acrshort{ouh}, we tried to implement a schedule validation tool. Currently, \acrshort{ouh} plans their tasks for upcoming months. This way, they know exactly which tasks they want to perform in the future. This plan is the blueprint with which the administrative personnel make their final schedules. However, without delving too much into the workflow of the \acrshort{ouh} planners, due to the intricacies connected with the planning process, disruptions are bound to occur. Therefore, \acrshort{ouh} has informed us that they spent considerable time simply checking whether the final schedule adheres to upper management's plan for the corresponding month. 
+\\
+Although this check would obviously be inherent for a plan made with \acrshort{cp}, we deemed it would prove good functionality regardless. It could, for example, be a nice addition if the healthcare planners wanted to swap or rearrange any assignments for a final schedule. That way, a complete scheduling assistance tool could inform the user whether the schedule still adhered to management's plan, even after any perturbations.
+\\
+Sadly, we made next to no headway in this task, as we began too late and ended up being constrained by needing to document the process. Nonetheless, in the following, we will detail what this task would have entailed. 
+\\
+\\
+The processing vastly resembles that of \emph{the digital taskboard} task. Therefore, we were also luckily able to reuse some of our previous code. Although we haven't finalised a working prototype, this definitely streamlined the workflow. 
+\\
+It is once more a task of working on two 2D datasets (spreadsheets). However, unlike \emph{the digital taskboard}, this only concerns checking them against each other\footnote{The experienced software engineer, however, will quickly realise that this can be boiled down to another case of a 'double \texttt{for}-loop'.} - no merging required.
+\\
+When planning their schedules, \acrshort{ouh} operates with a "lejeplan" and an "arbejdsplan" (a plan for bed rest allocation and a working plan, respectively). The "lejeplan" indicates what management wants to be allocated to the available bed rests - the blueprint - while the "arbejdsplan" represents the final schedule/ allocation for the healthcare personnel. 
+\\
+As such, the task is to check that for every single day in the timeframe, every single entry in the "lejeplan" also occurs on the corresponding day in the "arbejdsplan". If an entry from the "lejeplan" is not present on the corresponding day in the "arbejdsplan", we alert the user. Otherwise, we simply inform them that the "arbejdsplan" complies with the "lejeplan".
+\\
+For reference, a snippet of the "lejeplan" can be seen in \autoref{fig:Lejeplan}, and a snippet of the "arbejdsplan" can be seen in \autoref{fig:Arbejdsplan}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/Methodology/Lejeplan-Redacted.png}
+    \caption{"Lejeplan"}
+    \small
+    \raggedright 
+    A snippet of the "Lejeplan". Days are formatted as rows and every singly entry is a task that management wants assigned. The "Lejeplan" itself is a lot bigger. There are a \(36\) additional columns in just the spreadsheet for this month. Names and tasks have been redacted to preserve the anonymity of \acrshort{ouh}'s personnel.
+    \label{fig:Lejeplan}
+\end{figure}
+
+In the following, we present a quick rundown of the expected workflow for this task. First for the "Lejeplan". As the dates in the second column were compatible with Python's inherent \texttt{datetime} package, this was straightforward.
+\begin{enumerate}
+	\item Extract the dates:
+		\begin{itemize}
+			\item Loop over the second column and store every entry to an ordered \texttt{array} of days.	
+		\end{itemize}
+	\item Extract the tasks:
+		\begin{itemize}
+			\item Loop over every row and extract a task if entry is a non-empty \texttt{string}.	
+		\end{itemize}
+	\item Collect dates and tasks to an ordered \gls{dictionary} as key-value pairs, respectively.
+\end{enumerate}
+
+\newpage
+Second, the "Arbejdsplan" was less straightforward. Due to neither the dates nor the entries being formatted. 
+\begin{enumerate}
+	\item Extract the dates:
+		\begin{itemize}
+			\item Loop over the first row, and for every entry, use regex to extract the date.	
+		\end{itemize}
+	\item Extract the tasks:
+		\begin{itemize}
+			\item Loop over every column, and if it is a non-empty \texttt{string}, use regex to match whether the entry is a task or something else.
+			\item Extract the entry if it is a task.	
+		\end{itemize}
+	\item Collect dates and tasks to an ordered \gls{dictionary} as key-value pairs, respectively.
+\end{enumerate}
+Then, with both the "Lejeplan" and "Arbejdsplan" formatted the same way, it would simply be iterating over their tasks for every date and checking that everything is correct.
+\\
+However, as stated previously, we regrettably don't have anything final to show. We built the foundation but never got around to testing it with \acrshort{ouh}'s personnel as we ran out of time.     
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/Methodology/Arbejdsplan-Redacted.png}
+    \caption{"Arbejdsplan"}
+    \small
+    \raggedright 
+    A snippet of the "Arbejdsplan". Days are formatted as columns and all entries called "task" needs to correspond to an entry in the "Lejeplan". The entries below the "tasks" carried some additional information, used internally at \acrshort{ouh}. The top row are labels for the column. In order, translated to english, they are: "Name", "Mon Week:...", "Tue Week:..." and "Wed Week:...". The "Arbejdsplan" itself is a lot bigger. There are a about \(400\) rows of entries and as can be seen in the bottom of the screengrab, there are 4 sheets, each containing data for a single week. Names and tasks have been redacted to preserve the anonymity of \acrshort{ouh}'s personnel.
+    \label{fig:Arbejdsplan}
+\end{figure}
+
+\subsubsection*{Summary}
+This concludes our methodology section. We have presented the three projects we initialised: The Digital Taskboard, The Scheduling Assistant Tool and The Automated Schedule Validator, yet we didn't manage to finalise these.
+\\
+Furthermore, we described the responses from the questionnaire we sent out in an attempt to map the current issues residing within the Danish healthcare sector.

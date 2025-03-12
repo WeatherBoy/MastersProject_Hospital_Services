@@ -1,22 +1,177 @@
 \documentclass{article}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[top=2cm, bottom=3cm, left=2cm, right=2cm]{geometry}
+
+% ## Inserting Code ##
+\usepackage{pythonhighlight} % <-- for inserting Python code
+
+% ## Nice referencing ##
+\usepackage{csquotes}   % <-- for biblatex
+\usepackage{biblatex}
+\addbibresource{Bibliography.bib}
+
+% ## Math ##
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{cancel} % <-- the big slash over equations
+\usepackage{breqn}  % <-- Automatic wrapping of long equations (good stuff)
+
+% ## For the graphical aspect ##
+\usepackage{float}  % <-- superior package for figure handling
 \usepackage[dvipsnames]{xcolor}
+\usepackage{graphicx} % <-- Required for inserting images
+\usepackage{wrapfig} % <-- In case you want to wrap text around figures (can look quite pro)
+\usepackage{arydshln}   % <-- For horizontal, vertical, etc. lines (for tables and matrices)
+\usepackage{subcaption} % <-- For subfigures
+\usepackage[many]{tcolorbox} % <-- For making boxes around text
+
+% ## Referencing ##
+\usepackage{fancyref}   % <-- Supposed to make referencing better, don't know where it's used
+\usepackage{hyperref}   % <-- has \autoref{} and all kinds of other goodies
+\usepackage{url}   % <-- web addresses are handled properly when URL referencing
+
+% ## Utility ##
+\usepackage{enumitem}   % <-- enumerate, itemize and description
+\usepackage{pdfpages}   % <-- for including external PDFs
+\usepackage{titlesec}   % <-- (used for the header) section and chapter titles manipulation
+\usepackage{subfiles}   % <-- smart for BIG projects where you include multiple subfiles
+\usepackage{comment}    % <-- multi-line comments
+\usepackage{fontawesome5}   % <-- add cool logos to your report
+\usepackage{sectsty}    % <-- can help with generalising section design
+
+\usepackage{fancyhdr}   % <-- for the header and footer
+\pagestyle{fancy}   % <-- used to great extent for the title page header
+
+% Make github logo
+\usepackage{fontawesome5}
+\newcommand{\github}[1]{%
+   \href{#1}{\faGithubSquare}%
+}
+
+% For math definitions
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[section]
+\tcolorboxenvironment{definition}{
+  sharp corners,
+  boxrule=0.4pt,
+  colback=white,
+  before skip=\topsep,
+  after skip=\topsep,
+}
+\tcolorboxenvironment{theorem}{
+  sharp corners,
+  boxrule=0.4pt,
+  colback=white,
+  before skip=\topsep,
+  after skip=\topsep,
+}
+\tcolorboxenvironment{corollary}{
+  sharp corners,
+  boxrule=0.4pt,
+  colback=white,
+  before skip=\topsep,
+  after skip=\topsep,
+}
+
+
+% ## For pseudocode ##
+\usepackage{listings}
+\lstset{
+  basicstyle=\small\ttfamily,
+  numbers=left,
+  numberstyle=\tiny,
+  stepnumber=1,
+  frame=single,
+  columns=flexible,
+  keywordstyle=\bfseries\color{blue!70!black},
+  commentstyle=\itshape\color{green!40!black},
+  language=Python,
+  showstringspaces=false
+}
+
+% ## Glossaries ##
+\usepackage[acronym]{glossaries}
+\makeglossaries
+
+\newglossaryentry{dictionary} {
+    name=dictionary,
+    description={When we refer to a dictionary, we mean a data structure which solves the dictionary problem~\cite{Wiki-Associative-Array}. This can often simply be thought of as a hash map}
+}
+\newglossaryentry{function} {
+    name=function,
+    description={See \gls{functions}}
+}
+\newglossaryentry{functions} {
+    name=functions,
+    description={When we refer to functions regarding the 'digital taskboard', we mean a row/ column label for the 2D data structure. This label is used to indicate data entries, which are functions/ tasks that need to be performed by the medical staff and are not to be confused with functions in the mathematical sense}
+}
+
+\newacronym{ouh}{OUH}{University Hospital of Odense}
+
+\newacronym{ga}{GA}{Genetic Algorithm}
+
+\newacronym{cp}{CP}{Constraint Programming}
+
+\newacronym{ai}{AI}{Artificial Intelligence}
+
+\newacronym{or}{OR}{Operations Research}
+
+\newacronym{bsat}{BSAT}{Boolean Satisfiability (problem)}
+
+\newacronym{sat}{SAT}{Satisfiability (problem)}
+
+\newacronym{cnf}{CNF}{Conjunctive Normal Form}
+
+\newacronym{ilp}{ILP}{Integer Linear Program}
+
+\newacronym{dtu}{DTU}{Technical University of Denmark}
+
+\newacronym{dpll}{DPLL}{Davis, Putnam, Logemann, and Loveland('s algorithm)}
+
+\newacronym{cdcl}{CDCL}{Conflict-Driven Clause Learning}
+
+
+% Formalia goes here:
+\newcommand\datoen{March 9, 2025} %<--- Dato
+\newcommand\opgavetitel{A case study in: Digitalising the Danish healthcare sector} %<--- Navnet på opgaven
+
+
+% Make GREAT looking header and footer:
+\fancyhead[L]{Master's Thesis}
+\fancyhead[R]{\rightmark}
 
 \begin{document}
-    \input{sections/Frontpage.tex}
-    \newpage
-
-    \input{sections/0_abstract.tex}
-    \newpage
-
-    \input{sections/1_preface.tex}
-    \newpage
+    \include{sections/Frontpage.tex}
+    \include{sections/0_abstract.tex}
+    \include{sections/1_preface.tex}
 
     \setcounter{page}{1}
     \pagenumbering{roman}
     \tableofcontents
     \newpage
+    \printglossaries
+    \newpage
 
     \setcounter{page}{1}
     \pagenumbering{arabic}
-    \input{sections/2_introduction.tex}
+    \include{sections/2_introduction.tex}
+    \include{sections/3_theory.tex}
+    \include{sections/4_methods.tex}
+    \include{sections/5_analysis.tex}
+    \include{sections/6_discussion.tex}
+    \include{sections/7_conclusion.tex}
+
+    \listoffigures
+    \newpage
+
+    \listoftables
+    \newpage
+
+    \include{sections/software_versions.tex}
+    \include{sections/appendix.tex}
+
+    \printbibliography
 \end{document}

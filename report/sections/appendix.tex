@@ -1,0 +1,487 @@
+\section{Appendix}
+\subsection{Examples}
+\subsubsection{Propositional logic to Conjunctive Normal Form}\label{sec:CNF_conversion_Examp}
+In the following, we will go through the entire procedure of converting this formula
+\begin{equation}\label{eq:CNF_example1}
+    \Big(
+        p_1 \leftrightarrow (
+            p_2 \vee \neg p_3
+        )
+    \Big) \wedge \Big(
+        p_5 \rightarrow (
+            p_1 \uparrow p_4
+        )
+    \Big) \wedge \Big(
+        p_4 \oplus p_2
+    \Big),
+\end{equation}
+ to CNF.
+\\
+For easy reference, we will redeclare the logical equivalence rules from \autoref{sec:CNF}.
+\begin{equation}\label{eq:biimplication}
+    A \leftrightarrow B \equiv (A \rightarrow  B) \wedge (B \rightarrow A)
+\end{equation}
+\begin{equation}\label{eq:XOR}
+    A \oplus B \equiv \neg (A \rightarrow B) \vee \neg (B \rightarrow A)
+\end{equation}
+\begin{equation}\label{eq:implication}
+    A \rightarrow B \equiv \neg A \vee B
+\end{equation}
+\begin{equation}\label{eq:NAND}
+    A \uparrow B \equiv \neg (A \wedge B)
+\end{equation}
+\begin{equation}\label{NOR}
+    A \downarrow B \equiv \neg (A \vee B)
+\end{equation}
+Taking it step-by-step, first, we eliminate all boolean operators except for $\neg$, $\vee$ and $\wedge$.
+\\
+Using \autoref{eq:biimplication} on \autoref{eq:CNF_example1}
+\begin{equation}\label{eq:CNF_example2}
+    \bigg(
+        \Big(
+            p_1 \rightarrow (
+                p_2 \vee \neg p_3
+            )
+        \Big) \wedge \Big(
+                (
+                    p_2 \vee \neg p_3 
+                ) \rightarrow p_1 
+            \Big)
+    \bigg) \wedge \Big(
+        p_5 \rightarrow (
+            p_1 \uparrow p_4
+        )
+    \Big) \wedge \Big(
+        p_4 \oplus p_2
+    \Big).
+\end{equation}
+Using \autoref{eq:implication} on \autoref{eq:CNF_example2}
+\begin{equation}\label{eq:CNF_example3}
+    \bigg(
+        \Big(
+            \neg p_1 \vee (
+                p_2 \vee \neg p_3
+            )
+        \Big) \wedge \Big(
+                \neg (
+                    p_2 \vee \neg p_3 
+                ) \vee p_1 
+            \Big)
+    \bigg) \wedge \Big(
+        \neg p_5 \vee (
+            p_1 \uparrow p_4
+        )
+    \Big) \wedge \Big(
+        p_4 \oplus p_2
+    \Big).
+\end{equation}
+Using \autoref{eq:NAND} on on \autoref{eq:CNF_example3}
+\begin{equation}\label{eq:CNF_example4}
+    \bigg(
+        \Big(
+            \neg p_1 \vee (
+                p_2 \vee \neg p_3
+            )
+        \Big) \wedge \Big(
+                \neg (
+                    p_2 \vee \neg p_3 
+                ) \vee p_1 
+            \Big)
+    \bigg) \wedge \Big(
+        \neg p_5 \vee \neg (
+            p_1 \wedge p_4
+        )
+    \Big) \wedge \Big(
+        p_4 \oplus p_2
+    \Big).
+\end{equation}
+Using \autoref{eq:XOR} on on \autoref{eq:CNF_example4}
+\begin{equation}\label{eq:CNF_example5}
+    \bigg(
+        \Big(
+            \neg p_1 \vee (
+                p_2 \vee \neg p_3
+            )
+        \Big) \wedge \Big(
+                \neg (
+                    p_2 \vee \neg p_3 
+                ) \vee p_1 
+            \Big)
+    \bigg) \wedge \Big(
+        \neg p_5 \vee \neg (
+            p_1 \wedge p_4
+        )
+    \Big) \wedge \Big(
+        \neg (
+            p_4 \rightarrow p_2
+        ) \vee \neg (
+            p_2 \rightarrow p_4
+        )
+    \Big).
+\end{equation}
+Using \autoref{eq:implication} on on \autoref{eq:CNF_example5}
+\begin{equation}\label{eq:CNF_example6}
+    \bigg(
+        \Big(
+            \neg p_1 \vee (
+                p_2 \vee \neg p_3
+            )
+        \Big) \wedge \Big(
+                \neg (
+                    p_2 \vee \neg p_3 
+                ) \vee p_1 
+            \Big)
+    \bigg) \wedge \Big(
+        \neg p_5 \vee \neg (
+            p_1 \wedge p_4
+        )
+    \Big) \wedge \Big(
+        \neg (
+            \neg p_4 \vee p_2
+        ) \vee \neg (
+            \neg p_2 \vee p_4
+        )
+    \Big).
+\end{equation}
+Second, we propagate negations inward
+\begin{equation*}
+    \bigg(
+        \Big(
+            \neg p_1 \vee (
+                p_2 \vee \neg p_3
+            )
+        \Big) \wedge \Big(
+                (
+                    \neg p_2 \wedge \neg \neg p_3 
+                ) \vee p_1 
+            \Big)
+    \bigg) \wedge \Big(
+        \neg p_5 \vee (
+            \neg p_1 \vee \neg p_4
+        )
+    \Big) \wedge \Big(
+        (
+            \neg \neg p_4 \wedge \neg p_2
+        ) \vee (
+            \neg \neg p_2 \wedge \neg p_4
+        )
+    \Big).
+\end{equation*}
+Third, we remove any redundant double negations
+\begin{equation}\label{eq:CNF_example7}
+    \bigg(
+        \Big(
+            \neg p_1 \vee (
+                p_2 \vee \neg p_3
+            )
+        \Big) \wedge \Big(
+            (
+                \neg p_2 \wedge p_3 
+            ) \vee p_1 
+            \Big)
+    \bigg) \wedge \Big(
+        \neg p_5 \vee (
+            \neg p_1 \vee \neg p_4
+        )
+    \Big) \wedge \Big(
+        (
+            p_4 \wedge \neg p_2
+        ) \vee (
+            p_2 \wedge \neg p_4
+        )
+    \Big).
+\end{equation}
+Next, we put \autoref{eq:CNF_example7} in CNF by utilising the distributive property of boolean operators
+\begin{gather*}
+    \bigg(
+        \Big(
+            \neg p_1 \vee (
+                p_2 \vee \neg p_3
+            )
+        \Big) \wedge \Big(
+            (
+                p_1 \vee \neg p_2 
+            ) \wedge (
+                p_1 \vee p_3
+            ) 
+            \Big)
+    \bigg) \wedge \Big(
+        \neg p_5 \vee (
+            \neg p_1 \vee \neg p_4
+        )
+    \Big) \wedge \bigg(
+        \Big(
+            (
+                p_4 \wedge \neg p_2
+            ) \vee p_2
+        \Big) \vee \Big(
+            (
+                p_4 \wedge \neg p_2
+            ) \vee \neg p_4 
+        \Big)
+    \bigg)
+    \\
+    \equiv
+    \\
+    \bigg(
+        \Big(
+            \neg p_1 \vee (
+                p_2 \vee \neg p_3
+            )
+        \Big) \wedge \Big(
+            (
+                p_1 \vee \neg p_2 
+            ) \wedge (
+                p_1 \vee p_3
+            ) 
+            \Big)
+    \bigg) \wedge \Big(
+        \neg p_5 \vee (
+            \neg p_1 \vee \neg p_4
+        )
+    \Big) \wedge
+    \\
+    \bigg(
+        \Big(
+            (
+                p_2 \vee p_4
+            ) \wedge (
+                p_2 \vee \neg p_2
+            )
+        \Big) \wedge \Big(
+            (
+                p_4 \vee \neg p_4
+            ) \wedge (
+                \neg p_2 \vee \neg p_4
+            )
+        \Big)
+    \bigg).
+\end{gather*}
+Finally, we can remove redundant parentheses
+\begin{equation*}
+    (
+        \neg p_1 \vee p_2 \vee \neg p_3
+    ) \wedge (
+        p_1 \vee \neg p_2 
+    ) \wedge (
+        p_1 \vee p_3
+    ) \wedge (
+        \neg p_5 \vee \neg p_1 \vee \neg p_4
+    ) \wedge (
+        p_2 \vee p_4
+    ) \wedge (
+        p_2 \vee \neg p_2
+    ) \wedge (
+        p_4 \vee \neg p_4
+    ) \wedge (
+        \neg p_2 \vee \neg p_4
+    )
+\end{equation*}
+Thus, we have put \autoref{eq:CNF_example1} into CNF.
+
+\subsubsection{Conjunctive Normal Form to Clausal Form}\label{sec:CNF_to_Clausal_Examp}
+Continuing from \autoref{sec:CNF_conversion_Examp}, we will now convert the CNF formula
+\begin{equation*}
+    (
+        \neg p_1 \vee p_2 \vee \neg p_3
+    ) \wedge (
+        p_1 \vee \neg p_2 
+    ) \wedge (
+        p_1 \vee p_3
+    ) \wedge (
+        \neg p_5 \vee \neg p_1 \vee \neg p_4
+    ) \wedge (
+        p_2 \vee p_4
+    ) \wedge (
+        p_2 \vee \neg p_2
+    ) \wedge (
+        p_4 \vee \neg p_4
+    ) \wedge (
+        \neg p_2 \vee \neg p_4
+    ),
+\end{equation*}
+into clausal form.
+\\
+We start by removing trivial clauses, such as $p \vee \neg p$
+\begin{equation*}
+    (
+        \neg p_1 \vee p_2 \vee \neg p_3
+    ) \wedge (
+        p_1 \vee \neg p_2 
+    ) \wedge (
+        p_1 \vee p_3
+    ) \wedge (
+        \neg p_5 \vee \neg p_1 \vee \neg p_4
+    ) \wedge (
+        p_2 \vee p_4
+    ) \wedge (
+        \neg p_2 \vee \neg p_4
+    ).
+\end{equation*}
+Then, we replace each disjunction with the corresponding set and collect all the sets into a single set of clauses
+\begin{equation*}
+    \Big\{
+        \{
+            \neg p_1, p_2, \neg p_3
+        \},
+        \{
+            p_1, \neg p_2
+        \},
+        \{
+            p_1, p_3
+        \},
+        \{
+            \neg p_5, \neg p_1, \neg p_4
+        \},
+        \{
+            p_2, p_4
+        \},
+        \{
+            \neg p_2, \neg p_4
+        \}
+    \Big\}
+\end{equation*}
+We have put \autoref{eq:CNF_example1} into CNF and now, ultimately, also into Clausal Form.
+
+\subsubsection{DPLL: Bigger example}\label{sec:DPLL_Bigger_Example}
+In the following we show the DPLL algorithm on the formula \autoref{eq:SAT_example2}.
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/1.png}
+        \subcaption*{Step 0: Initially, no literals has been assigned any values.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/2.png}
+        \subcaption*{Step 1: We start by assigning \texttt{False} to \(p_1\) at random.}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/3.png}
+        \subcaption*{Step 2: Then we assign \texttt{False} to \(p_2\) at random.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/4.png}
+        \subcaption*{Step 3: Thirdly, we assign \texttt{False} to \(p_3\). However, Unit Propagation on clause \(2\) and \(3\) yields to a conflicting assignment.}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/5.png}
+        \subcaption*{Step 4: We backtrack and assign \texttt{True} to \(p_3\). This in turn, also yields a conlict from clause \(4\) and \(5\).}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/6.png}
+        \subcaption*{Step 5: Then we backtrack again, assigning \texttt{True} to \(p_2\).}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/7.png}
+        \subcaption*{Step 6: We now assign \texttt{False} to \(p_3\) at random. However, once more this leads to a conlfict from clause \(2\) and \(3\).}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/8.png}
+        \subcaption*{Step 7: We backtrack on \(p_3\), assigning it \texttt{True} instead, but this leads to the same prior conlfict on Clause \(4\) and \(5\).}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/9.png}
+        \subcaption*{Step 8: We backtrack and assign \texttt{True} to \(p_1\).}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/10.png}
+        \subcaption*{Step 9: Then we try to assign \texttt{False} to \(p_2\), but this now leads to a conlict from clause \(1\) and \(7\).}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/11.png}
+        \subcaption*{Step 10: We backtrack and assign \texttt{True} to \(p_2\).}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/12.png}
+        \subcaption*{Step 11: Then we have Unit Propagation from clause \(8\) and we assign \texttt{True} to \(p_3\).}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Example2/13.png}
+        \subcaption*{Step 16: Finally, our last assignment \(p_4 =\) \texttt{True} is from Unit Propagation by clause \(6\) and yields the satisfying assignment:
+        \\
+        \(\mathcal{A} = \{p_1 = \text{\texttt{True}}, p_2 = \text{\texttt{True}}, p_3 = \text{\texttt{True}}, p_4 = \text{\texttt{True}}\}\).}
+    \end{subfigure}
+\end{figure}
+
+
+\subsection{Figures}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Danske_Regioner__Sundhedsvæsenets_digitaliseringsrejse.png}
+    \caption{The Danish healthcare sector's road to digitalisation}
+    \medskip
+    \small
+    \raggedright
+    The Danish healthcare sector's road to digitalisation, as presented by "Danske Regioner"\cite{Den-Reg-digitalisation}.
+    \label{fig:healthcare_digitalisation}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{figures/Questionnaire_for_healthcare_sector.png}
+    \caption{Questionnaire for healthcare personnel}
+    \medskip
+    \small
+    \raggedright
+    Questionnaire sent to Danish hospitals, in the pursuit of reaching out to healthcare personnel.
+    \\
+    \textbf{Translated from Danish:}
+    \\
+    \textbf{Title}: "Engineering project in the healthcare sector"
+    \\
+    \textbf{Introduction}: "Hello, my name is Felix, I am studying to become an engineer with a focus on Artificial intelligence at DTU. At the moment I am looking for a concrete problem for my master's thesis, and I was hoping to be able to work on a project, which combines technology with healthcare, in an attempt to make a real difference. In that pursuit, I wanted to ask whether you can spare a momemnt to answer this questionnaire." 
+    \\
+    \textbf{Question 1}: "What is the biggest and most frequent problem in your daily life as a healthcare professional?"
+    \\
+    \textbf{Question 2}: "What do you think is the biggest and most frequent problem in the daily life of your patients?"
+    \\
+    \textbf{Question 3}: "Please write your email and name, if I may contact you with follow-up questions."
+    \\
+    \textbf{Question 4}: "Name (not mandatory)"
+    \\
+    \textbf{Question 5}: "Email (not mandatory)"
+    \label{fig:questionnaire_healthcare_personnel}
+\end{figure}

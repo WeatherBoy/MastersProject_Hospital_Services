@@ -1,0 +1,164 @@
+\subsection{Genetic Algorithms}\label{sec:genetic-algorithms}
+A Genetic Algorithm (GA), as popularised by John Holland~\cite{Genetic-Algorithm-original} in 1975\footnote{Though later revised in 1992.}, is a metaheuristic within primarily \textbf{Computer Science} and \textbf{Operations Research} (OR). Inspired by evolutionary theory's natural selection, a \acrshort{ga} is typically employed for \textbf{Optimisation} and \textbf{Search problems}.
+\\
+In short, inspired by natural selection, a \acrshort{ga} scheme initiates, at random, a pool of \textit{candidate solutions} called the \textit{initial generation}. It then evaluates the solutions with respect to the given domain and assigns each of them a \textit{fitness score}. Finally, utilising some selection criteria, the \acrshort{ga} scheme pairs the solutions with the best fitness, creating a new set of candidate solutions called the \textit{next generation}. However, in order to avoid converging towards some \textit{local optimum}, a bit of stochasticity (\textit{mutation}) is introduced in each generation. The \acrshort{ga} scheme then iterates this entire process, stopping when reaching some criteria, either time or a threshold on the fitness score.
+\\
+\\
+A Genetic Algorithm, boiled down to its base parts, consists of an objective function $f : \mathbb{R}^N \rightarrow [0,1]$, for some $N \in \mathbb{N}$, a \textit{selection criteria}, and a population of \textit{phenotypes} - the candidate solutions - each with its own \textit{genotype}. A population of phenotypes is formally called the $i$'th generation, where $i$ adheres to the current iteration of the \acrshort{ga} scheme. The number of phenotypes in a generation is usually chosen as a power of two, $2^N$, as this can significantly improve computer performance. The phenotypes and genotypes are domain-dependent; however, they are frequently represented as N-dimensional vectors. The genotypes will often be the actions or set of rules from which the phenotype can be derived. However, this is also largely dependent on the domain. For some problems, the genotype and phenotype are simply identical.
+\\
+Finally, the objective function $f$ and the selection criteria are largely the crux of the \acrshort{ga} scheme. While the phenotypes and their respective genotypes are essentially bound to the domain, the objective function and selection criteria can be modelled for better results. The objective function and selection criteria could be considered the Genetic Algorithm's counterpart to Machine Learning's (ML) hyperparameters.
+\\
+The objective function's sole criterion is that it evaluates to a scalar, usually standardised to the real interval $[0,1]$, hence $f$ does not need to be differentiable nor even continuous. This feature can allow for some creative objective functions specifically suited to the given problem.
+\\
+The selection criteria is how we pick the \textit{parents} for the next generations. The parents, a set of two phenotypes, always produce two \textit{children} to keep the population size constant throughout the iterations of the \acrshort{ga} scheme. However, picking the parents can be a science in itself. In the following sections we present various algorithms used in the selection setp.
+
+\subsubsection{Random Selection}
+Like its name gives way to, Random Selection simply chooses a parent uniformly at random from the entire set of $M$ phenotypes. A big advantage for Random Selection is that it finds a candidate in $O(1)$ time without preprocessing. However, it is not uncommon for Random Selection to converge slowly, as it does not take into account the fitness scores. 
+
+\subsubsection{Fitness Proportionate Selection}
+Fitness Proportionate Selection, or as it is more often and very aptly called Roulette Wheel Selection, selects a phenotype weighted by its fitness. Mathematically, we can express it as the probability $p_i$ of selecting the $i$th phenotype being
+\begin{equation*}
+    p_i = \frac{f_i}{\sum_{j = 1}^M f_j},
+\end{equation*}
+where $f_i$ is the fitness score of the $i$th phenotype.
+\\
+For the implementation, one would typically normalise the fitness scores and then create $M$ bins of cumulative ranges, each corresponding to their respective fitness scores. Then, "spinning the boule" would equate to generating a \textit{floating point} value in the range $[0,1]$ uniformly at random and performing a binary search for finding the corresponding bin. This implementation would take $O(M)$ preprocessing and $O(\log M )$ at runtime. 
+\\
+Despite its slightly inferior runtime, Fitness Proportionate Selection usually converges faster than Random Selection, as by considering the fitness scores, it will likely continually select better parents. In addition, while the probability of selecting a phenotype with a poor fitness score is lower, it is not zero, thus allowing for a more diverse search space exploration.   
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Genetic_Algorithms/Roulette_Selection.png}
+        \subcaption{Five phenotypes (A, B, C, D and E) with fitness scores $0.1$, $0.2$, $0.05$, $0.3$, $0.4$.}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Genetic_Algorithms/Roulette_Selection2.png}
+        \subcaption{Five phenotypes (A, B, C, D and E) with fitness scores $0.1$, $0.2$, $0.05$, $0.3$, $0.4$. Scaled to their fitness, with a boule for the sake of example.}
+    \end{subfigure}
+    
+    \caption{Roulette Wheel Selection - Visualisation}
+    \small
+    \raggedright
+    An attempt at visualising the idea behind Roulette Wheel Selection. First the five phenotypes, with their given fitness scores, then below, scaled to show the increased probability of the boule stopping on a phenotype with a higher fitness score. (Despite the roulette wheel here being mapped to 1D, the example still stands. As it prooved far too difficult to draw a 2D roulette wheel, we must rely on the reader's imagination.)
+    \label{fig:GA_Roulette_Selection}
+\end{figure}
+
+\subsubsection{Tournament Selection}
+Tournament Selection selects a subset of size\footnote{As with $M$, it is preferable to pick $k$ as a power of two.} $1 \leq k \leq M$, uniformly at random of the generation and elects the phenotype with the greatest fitness score, the \textit{best candidate}, within the subset as the winner (parent). Choosing $k = 1 $ is equivalent to Random Selection, while $k = M$ would only ever propagate the best candidate.
+\\
+Tournament Selection's runtime is entirely dependent on the size of the tournament, $O(k)$\footnote{Although we might sort our fitness scores in $O(M \cdot \log M)$ preprocessing time and retain the ordering when sampling the $k$ tournament-contestants, we still have to generate $k$ indices and, thus, selecting the best candidate would not be reduced to constant runtime.}. Hence, it offers a nice balance between Random and Fitness Proportionate selection, with a possibly fast runtime, while still generating a diverse pool of new phenotypes.
+\\
+A variant~\cite{Wiki-tournament-selection} of Tournament Selection introduces a probability $p$ of electing the best candidate as the winner. Inversely, with probability $1-p$, a new tournament is held, where the best candidate is removed, leaving $k-1$ phenotypes, where once again, the best candidate of the remaining phenotypes is selected with probability $p$, and with probability $1-p$, we repeat the process. This variant can, in turn, be considered a Geometric Distribution, with each tournament being a Bernoulli Trial with probability of success $p$. Due to the properties~\cite{Wiki-geometric-distribution} of a Geometric Distribution, we can infer that the probability of picking the $k$th best candidate is
+\begin{equation*}
+    P\left[ X = k \right] = (1-p)^{k-1} \cdot p.
+\end{equation*}
+For this variant of Tournament Selection, we still have to draw our $k$ contestants. However, we can simulate the possible repeat tournaments by simply sampling a number $g$ from the geometric distribution and then electing the $g$th best candidate amongst the $k$ tournament contestants. As such, the runtime of the variant on Tournament Selection remains $O(k)$.
+\\
+Recall that only a single pair of children can be derived from a pair of parents, for a generation size of $M$, thus the \acrshort{ga} scheme requires exactly $M$ parents to produce the next generation. Since Random, Fitness Proportionate and Tournament Selection only produce one parent per run; it would require $M$ runs between every generation. In order to avoid this computational bottleneck, one may opt for a selection algorithm with a runtime independent of the generation size, such as Truncation Selection.
+
+\subsubsection{Truncation Selection}
+Truncation Selection~\cite{Wiki-truncation-selection}, as utilised in Mühlenbein \& Schlierkamp-Voosen's~\cite{Truncation-Selection-Breeder-Algorithm} Breeder Genetic Algorithm\footnote{Whose explanation is beyond the intent of this report.}, is inspired by and named after a standard animal and plant breeding method. Truncation Selection is quite simple: for \(T \in [0:1]\), it selects the top $T\%$ of fitness scores among phenotypes and then mates these randomly until sufficient children have been produced.
+\\
+A variant of Truncation Selection propagates just the best candidate to the next generation. This variant does impose a slight hiccup, though. As previously mentioned, for a \acrshort{ga} scheme, it is desirable to keep $M$ as a power of two, and parents always produce children in pairs. However, this can be alleviated twofold, as will be clarified in section \ref{subsubsec:Crossover}, Crossover; one could actually withhold a single child, thereby again reaching an even population size. A more straightforward solution could be simply propagating the top two candidates to the next generation.
+\\
+As Truncation Selection picks candidates based on ranking, we must either sort the candidates or perform a search for each \(T \cdot M\) draw. Here, sorting is inarguably preferable. As such, Truncation Selection requires \(O(M \cdot \log M ) \) preprocessing, which completely eclipses the \( O( T \cdot M ) \) running time\footnote{Although, for the purpose of Truncation Selection $T$ would be a coefficient for $M$ and in asymptotic notation the runtime remains as $O(M)$.}. Therefore, Truncation Selection picks all the parents for the next generation in \(O(M \cdot \log M ) \) time.
+
+\subsubsection{Rank Selection}
+Unlike the aforementioned selection algorithms, Rank Selection is not a selection scheme but rather a mapping. Rank Selection serves two main purposes. First, one could imagine a problem domain wherein it either is not feasible or does not make sense to score every phenotype, but instead, we are only able to rank all of them against each other. Second, as argued by Whitley~\cite{Rank-Selection-Usefullness}, ranking aims to avoid premature convergence, as illustrated by \autoref{fig:GA_Rank_Selection}, where a few initially highly fit phenotypes may dominate the population early on.
+\\
+Rank Selection maps elements from a finite set of rankings $\{1, 2, 3, \hdots, M\}$ to $\mathbb{R}$, whereafter the rankings can be treated as fitness scores, and a selection algorithm can be utilised. Conversely, to achieve this second aim of Rank Selection, the fitness scores would typically be converted to ranks (integers) beforehand.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Genetic_Algorithms/Rank_selection_dominant_chromosomes_dilution.png}
+    \caption{Rank Selection - Dilution of early dominant phenotypes}
+    \small
+    \raggedright
+    This illustration aims to show how Rank selection can dilute the early dominant phenotypes. Here \textit{Chromosomes} are synonymous with what we have otherwise referred to as genotypes. (Although this illustration frequently appears throughout the genetic algorithm literature, it proved challenging to determine its origin. We suspect it might have been published first by Muhamad Azree Bin Mat Said~\cite{Rank-Selection-Illustration-Origin}.) 
+    \label{fig:GA_Rank_Selection}
+\end{figure}
+
+\paragraph{Naive Rank Selection} assigns\footnote{We found it unclear whether this specific variant of Rank Selection has a formal name. As such, we have dubbed it Naive Rank Selection.} fitness to a rank proportional to the sum of all ranks. It is formally expressed as
+\begin{equation*}
+    f_i = \frac{r_i}{\sum_{j = 1}^M r_i},
+\end{equation*}
+where $r_i$ is the rank of the $i$th phenotype. This mapping is a fast and straightforward approach to diluting greater ranks, which might have held a high fitness score compared to the other ranks while maintaining an emphasis on larger ranks.
+
+\paragraph{Linear Rank Selection} assigns fitness to a rank linearly. It introduces a parameter akin to \emph{temperature} from ML called Selection Pressure, $sp$, emphasising how much priority a greater rank has. It is formally expressed as 
+\begin{equation*}
+    f_i = 2 - sp + 2 \cdot (sp - 1) \cdot \frac{r_i - 1}{M - 1}, \qquad \text{where} \quad 1 \leq sp \leq 2.
+\end{equation*}
+
+\paragraph{Exponential Rank Selection} assigns, quite intuitively, fitness to a rank exponentially. It is formally expressed as
+\begin{equation*}
+    f_i = \frac{w^{M - r_i}}{\sum_{j = 1}^M w^{j}}, \qquad \text{where} \quad 0 \leq w \leq 1.
+\end{equation*}
+The $w$ parameter is called Weight and, as for Linear Rank Selection's Selection Pressure, it determines the importance of the greater ranks. However, the Weight parameter is inverted, as a greater weight will emphasise the lower ranks.
+\\
+The effect of varying the Selection Pressure in Linear Rank Selection and the Weight in Exponential Rank Selection is visualised in \autoref{fig:GA_Rank_Selection_Visualisation}.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Genetic_Algorithms/linear_rank_selection_selection_pressure_effect.png}
+        \subcaption{The effect of Linear Rank Selection with varying Selection Pressure.}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Genetic_Algorithms/exponential_rank_selection_weight_effect.png}
+        \subcaption{The effect of Exponential Rank Selection with varying Weight.}
+    \end{subfigure}
+
+    \caption{Rank Selection - Exponential and Linear Rank Selection}
+    \small
+    \raggedright
+    Both methods are used on the rankings $\{1, 2, \hdots , 10\}$. For Linear Rank Selection, the Selection Pressure is varied from $1$ to $2$, with $10$ equidistant values. For Exponential Rank Selection, the Weight is varied from $0$ to $1$, also with $10$ equidistant values.
+    \label{fig:GA_Rank_Selection_Visualisation}
+\end{figure}
+
+\subsubsection{Crossover}\label{subsubsec:Crossover}
+After selecting a suitable pair of candidate parents, the \acrshort{ga} scheme has to utilise these in order to produce the next generation. The process of generating children for the next generation is usually\footnote{Another alternative is cloning, also referred to as asexual reproduction, where a phenotype is propagated directly to the next generation.} achieved with crossover, which aims to mimic sexual reproduction from biology.
+\\
+Crossover works by splicing the parents' genotypes, thus creating a child that inherits traits from both parents. In the following, we will detail three standard crossover methods.
+
+\paragraph{Single-point Crossover} works by splitting the parent's genotypes at the same spot and then simply recombining them for the two permutations they allow. For a genotype of length $n$, an integer $s$ is picked uniformly at random from the set $\{1, 2, \hdots, n\}$ and the first child is made up of the bottom $n - s$ traits from its first parents and the $s$ traits from the second parents. Vice versa for the second child. This is best illustrated, as can be seen from \autoref{fig:GA_Single_Point_Crossover}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/Genetic_Algorithms/Single_Point_Crossover.png}
+    \caption{Single-Point Crossover}
+    \small
+    \raggedright
+    \label{fig:GA_Single_Point_Crossover}
+\end{figure}
+This method nicely captures traits from both parents while still retaining most of the sequential information, which could arise from problems where neighbouring traits are strongly linked.
+
+\paragraph{Two-point Crossover} works exactly like Single-point Crossover, but two splits are made instead of one. This method is illustrated in \autoref{fig:GA_Two_Point_Crossover}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/Genetic_Algorithms/Two_Point_Crossover.png}
+    \caption{Two-point Crossover}
+    \small
+    \raggedright
+    \label{fig:GA_Two_Point_Crossover}
+\end{figure}
+Two-point Crossover is slightly more aggressive than Single-point Crossover, as it can shuffle the traits around more. This method can be beneficial in problems where the order of the traits is not as important.
+
+\paragraph{Uniform Crossover} works by iterating through the parent's genotypes and, with a probability $p$, swapping the traits. For nearly all\footnote{Cases wherein a varying probability or fixed $p \neq 0.5$ are well beyond the intent of this report and will usually be combined with much more sophisticated methods.} cases, the probability $p$ will be set to $0.5$. This method is illustrated in \autoref{fig:GA_Uniform_Crossover}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/Genetic_Algorithms/Uniform_Crossover.png}
+    \caption{Uniform Crossover}
+    \small
+    \raggedright
+    \label{fig:GA_Uniform_Crossover}
+\end{figure}
+Where Two-point Crossover is a tad more aggressive than One-point, Uniform Crossover is at the opposite end of the spectrum. As this method is not suitable for conserving sequential information, it is more beneficial in problems where the order of the traits is largely irrelevant.
+
+\subsubsection{Mutation}
+Mutation is the final step in the \acrshort{ga} scheme. It tries to prohibit convergence towards a local optimum by introducing a bit of stochasticity into the population's genotypes.
+\\
+At a surface level, the procedure is eerily similar to Uniform Crossover. Mutation works by going through every trait in a genotype and "flipping a coin", where with probability $p_m$, this trait is mutated (i.e., changed). The probability of mutation,  $p_m$, is usually set relatively low. The mutation rate is domain-dependent, and it is often beneficial to experiment with different rates. The mutation rate can be set as a constant or varied throughout the iterations of the \acrshort{ga} scheme. The latter is often referred to as adaptive mutation, and it can be beneficial in problems where the search space is complex and the \acrshort{ga} is at risk of premature convergence.

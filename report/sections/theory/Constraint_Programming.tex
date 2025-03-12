@@ -1,0 +1,520 @@
+\subsection{Constraint Programming}\label{sec:Constraint_Programming}
+Another approach for solving the scheduling task is Constraint Programming (CP)\footnote{Constraint Programming is a somewhat odd nomenclature, as \textit{programming} here refers to 'the process of scheduling' rather than in the sense of a computer programming language.}. \acrshort{cp} is concerned with problems that require a feasible solution. Often, this involves searching for a "needle in a haystack", as \acrshort{cp} aims to arrive at a solution satisfying a complex set of constraints. As such, contrary to the \acrshort{ga} scheme, \acrshort{cp} is not inherently an optimisation technique and will not even necessarily use an objective function.
+\\
+As we will argue later, the domain posed by the scheduling task gives way to a subdomain of \acrshort{cp} called \textit{the Boolean Satisfiability Problem} (SAT). The Boolean Satisfiability Problem concerns checking whether a boolean formula holds (is satisfiable) under some truth assignment to its variables. From the Cook-Levin theorem, produced independently by Stephen Cook~\cite{cook-bool-SAT} and Leonid Levin~\cite{Levin-bool-SAT}, we know that \acrshort{sat} is NP-complete. This means that there exist no polynomial time algorithm\footnote{As of the time of writing \textit{P versus NP}~\cite{Wiki-P-vs-NP} remains unsolved.}, which can solve the scheduling task. However, \acrshort{sat} solvers are explicitly made for solving such problems, so in the following sections, we will elaborate on different algorithms employed by such solvers.
+
+\subsubsection{Conjunctive Normal Form}\label{sec:CNF}
+Although not inherent to boolean satisfiability, most \acrshort{sat} solvers work on boolean formulas in Conjunctive Normal Form (CNF). Therefore, we will first introduce \acrshort{cnf}.
+\\
+From Ben-Ari (chapter 4)~\cite{Math-Logic-for-CompSci} we have the following definition:
+\begin{definition}\label{def:CNF}
+    A formula is in \acrshort{cnf} if and only if it is a conjunction of disjunctions of literals.
+\end{definition}
+Here, conjunction and disjunction refer to the logical connectives (boolean operators) $\wedge$ and $\vee$, respectively. While a formula and a literal, as given by Ben-Ari (chapter 2)~\cite{Math-Logic-for-CompSci}, can be formally defined as:
+\begin{definition}\label{def:propositional_formulas}
+    A formula in propositional logic is a tree defined recursively:
+    \begin{itemize}
+        \item A formula is a leaf labeled by an atomic proposition (often shortened
+        to atoms).
+        \item A formula is a node labeled by $\neg$ with a single child that is a formula.
+        \item A formula is a node labeled by one of the boolean operators with two children both of which are formulas.
+    \end{itemize}
+\end{definition}
+\begin{definition}\label{def:propositional_atoms}
+    A literal is an atom or the negation of an atom. An atom is a positive
+    literal and the negation of an atom is a negative literal. For any atom $p$, $\{p,\neg p\}$ is a complementary pair of literals.
+    \\
+    For any formula $A$, $\{A,\neg A\}$ is a complementary pair of formulas. $A$ is the complement of $\neg A$ and $\neg A$ is the complement of $A$.
+\end{definition}
+We will now briefly discuss how to arrive at \acrshort{cnf}.
+
+\paragraph{Propositional logic to Conjunctive Normal Form}
+Ben-Ari (chapter 4)~\cite{Math-Logic-for-CompSci} gives us the following theorem:
+\begin{theorem}\label{thm:CNF_conversion}
+    Every formula in propositional logic can be transformed into an equivalent formula in \acrshort{cnf}.
+\end{theorem}
+It is accompanied by a somewhat unintuitive and seemingly inadequate proof; however, it can be boiled down to the following: using \textbf{def} \ref{def:propositional_formulas}, if we can convert every formula of another boolean operator into a logically equivalent formula using only conjunctions and disjunctions, then it is simply a question of propagating negations inwards and whether we can redistribute the conjunctions and disjunctions. We can understand this as: It is necessary but not satisfactory that all boolean operators are either disjunctions or conjunctions. \autoref{eq:non_CNF} is an example of a formula, for \(p_1\), \(p_2\), \(p_3\) being atoms as per \textbf{def} \ref{def:propositional_atoms}, of only conjunctions and disjunctions which aren't in \acrshort{cnf}
+\begin{equation}\label{eq:non_CNF}
+    p_1 \vee (p_2 \wedge p_3).
+\end{equation}
+And as per the final part of \textbf{def} \ref{def:CNF}, the negation boolean operator must apply solely to an atom, making it a literal. Hence, it is necessary to propagate negations inwards (to the atomic level).
+\begin{enumerate}
+    \item Converting all boolean operators to disjunctions and conjunctions by logical equivalent\footnote{We will let the reader verify for themselves, that these are in fact equivalent.} formulas:
+    \begin{align*}
+        A \leftrightarrow B &\equiv (A \rightarrow  B) \wedge (B \rightarrow A) \qquad &\text{biimplication},
+        \\
+        A \oplus B &\equiv \neg (A \rightarrow B) \vee \neg (B \rightarrow A) \qquad &\text{exclusive or/ logical XOR},
+        \\
+        A \rightarrow B &\equiv \neg A \vee B \qquad &\text{implication},
+        \\
+        A \uparrow B &\equiv \neg (A \wedge B) \qquad &\text{non-conjunction/ logical NAND},
+        \\
+        A \downarrow B &\equiv \neg (A \vee B) \qquad &\text{non-disjunction/ logical NOR}.
+    \end{align*}
+    \item Propagate negations inward with De Morgan's laws~\cite{A-Concise-Introduction-to-Logic,Introduction-to-logic,Math-Logic-for-CompSci}:
+    \begin{align*}
+        \neg (A \wedge B) &\equiv (\neg A \vee \neg B),
+        \\
+        \neg (A \vee B) &\equiv (\neg A \wedge \neg B).
+    \end{align*}
+    \item Remove any redundant double negations, which may arise from the previous two steps:
+    \begin{equation*}
+        \neg \neg A \equiv A.
+    \end{equation*}
+    \item Finally, we can make the formula a conjunction of disjunctions by utilising the distributive property of boolean operators:
+    \begin{align*}
+        A \vee (B \wedge C) &\equiv (A \vee B) \wedge (A \vee C),
+        \\
+        (A \wedge B) \vee C &\equiv (A \vee C) \wedge (B \vee C) \tag*{\(\blacksquare\).}
+    \end{align*}
+\end{enumerate}
+
+\subsubsection{Clausal Form}
+Before moving on to \acrshort{sat} solvers, we will give a brief yet necessary remark on the Clausal Form.
+\\
+Ben-Ari (chapter 4)~\cite{Math-Logic-for-CompSci} provides the following definition:
+\begin{definition}
+    Clausal Form adheres to the following rules:
+    \begin{itemize}
+        \item A \emph{clause} is a set of literals.
+        \item A clause is considered to be an implicit disjunction of its literals.
+        \item A \emph{unit clause} is a clause consisting of exactly one literal.
+        \item The empty set of literals is the \emph{empty clause}, denoted by \(\square\).
+        \item A formula is considered to be an implicit conjunction of its clauses.
+        \item The formula that is the \emph{empty set of clauses} is denoted by \(\emptyset\).
+    \end{itemize}
+\end{definition}
+Clausal Form is largely just a notational variant of \acrshort{cnf}. However, the significant difference is that Clausal Form is defined in terms of sets, while the standard formula definition came from a recursion using trees, \textbf{def} \ref{def:propositional_formulas}. This property eliminates the possibility of duplicate literals in Clausal Form; nevertheless, it remains logically equivalent.
+\\
+For completeness, Ben-Ari (chapter 4)~\cite{Math-Logic-for-CompSci} gives the following corollary:
+\begin{corollary}
+    Every formula \(\Phi\) in propositional logic can be transformed into a logically equivalent formula in Clausal Form.
+\end{corollary}
+Once more, the accompanying proof is somewhat unclear. However, we will show the equivalence regardless. From \textbf{thm} \ref{thm:CNF_conversion}, we have that any formula \(\Phi\) can be transformed into a logically equivalent formula \(\Phi'\) in \acrshort{cnf}, which takes the form
+\begin{equation*}
+    \Phi' = \bigwedge_{i=1}^m \bigg(
+        \bigvee_{j=1}^{n_i} l_{i,j},
+    \bigg)
+\end{equation*}
+where each \(l_{i,j}\) is a literal.
+\\
+Then, to move from \acrshort{cnf} to Clausal Form, we replace each disjunction \( (l_{i,1} \vee \ldots \vee l_{i,n_i}) \) with the \emph{set} of those literals \(\{l_{i,1}, \ldots, l_{i,n_i}\}\). Then we collect all these sets into a single \emph{set of clauses}
+\begin{equation*}
+    \Delta = \bigg\{
+        \{l_{1,1}, \ldots, l_{1,n_1}\}, \ldots, \{l_{m,1}, \ldots, l_{m,n_m}\}
+    \bigg\}.
+\end{equation*}
+By definition, this is a formula in Clausal Form (a set of clauses, each being a set of literals). Conjunction becomes the implicit “and” among these clauses, while disjunction becomes the implicit “or” within each clause.
+\\
+Now, we eliminate any duplicate litterals within a clause and any cuplicate clauses. This preserves logical equivalence, due to the idempotence property of disjunctions and conjunctions, i.e. \(l \vee l \equiv l\) and \(l \wedge l \equiv l\).
+\\
+Hence taking a conjunction of disjunctions and “collapsing” it into a set-of-sets does not alter which valuations satisfy the formula. We can then state
+\begin{equation}\label{eq:CNF_to_Clausal}
+    \Phi' \equiv \Delta.
+\end{equation}
+And finally, from \autoref{eq:CNF_to_Clausal} and \textbf{thm} \ref{thm:CNF_conversion}, we have that
+\begin{equation*}
+    \Phi \equiv \Phi' \equiv \Delta \tag*{\(\blacksquare\).}
+\end{equation*}
+
+\paragraph{Trivial Clauses} are a final way to simplify Clausal Form. From Ben-Ari (chapter 4)~\cite{Math-Logic-for-CompSci}, we have:
+\begin{definition}
+    A clause is \emph{trivial} if it contains a pair of clashing literals, i.e. the same atom but with opposite polarity (e.g. for the atom \(p\) we have \( p \vee \neg p \) ).
+\end{definition}
+We will, without much proof, simply conclude that if a clause contains a pair of clashing literals, then the clause is trivially true\footnote{Anything, without a shadow of a doubt, most certainly either \emph{is} or \emph{isn't}... aside maybe from quantum, yet that is neither here nor there.} and can be removed from the set of clauses, without altering the truth value of the entire formula.
+\\
+\\
+In appendix \autoref{sec:CNF_conversion_Examp} and \autoref{sec:CNF_to_Clausal_Examp}, we give an example of \acrshort{cnf} and Clausal Form conversion, going from
+\begin{equation}\label{eq:propositional_logic_example}
+    \Big(
+        p_1 \leftrightarrow (
+            p_2 \vee \neg p_3
+        )
+    \Big) \wedge \Big(
+        p_5 \rightarrow (
+            p_1 \uparrow p_4
+        )
+    \Big) \wedge \Big(
+        p_4 \oplus p_2
+    \Big),
+\end{equation}
+to,
+\begin{equation*}
+    (
+        \neg p_1 \vee p_2 \vee \neg p_3
+    ) \wedge (
+        p_1 \vee \neg p_2 
+    ) \wedge (
+        p_1 \vee p_3
+    ) \wedge (
+        \neg p_5 \vee \neg p_1 \vee \neg p_4
+    ) \wedge (
+        p_2 \vee p_4
+    ) \wedge (
+        p_2 \vee \neg p_2
+    ) \wedge (
+        p_4 \vee \neg p_4
+    ) \wedge (
+        \neg p_2 \vee \neg p_4
+    )
+\end{equation*}
+all the way, to
+\begin{equation}\label{eq:clausal_form_example}
+    \Big\{
+        \{
+            \neg p_1, p_2, \neg p_3
+        \},
+        \{
+            p_1, \neg p_2
+        \},
+        \{
+            p_1, p_3
+        \},
+        \{
+            \neg p_5, \neg p_1, \neg p_4
+        \},
+        \{
+            p_2, p_4
+        \},
+        \{
+            \neg p_2, \neg p_4
+        \}
+    \Big\}.
+\end{equation}
+
+\subsubsection{DPLL}
+The \acrshort{dpll} algorithm, introduced by Davis, Logemann, and Loveland in 1961~\cite{Original-DPLL-Article}, is a refinement over Davis' and Putnam's (DP) algorithm~\cite{Original-DP-Article} from the year prior. Many modern \acrshort{sat} solvers build off the foundation laid by the \acrshort{dpll} algorithm; as such, it makes for a good introduction.
+\\
+\\
+Conceptually, \acrshort{dpll} inherits from the backtracking paradigm~\cite{Wiki-backtracking}. Like other backtracking algorithms, it aims to avoid exhaustive search by immediately abandoning  'candidate solutions' that do not yield a feasible solution. However, unlike naive backtracking, \acrshort{dpll} includes additional deduction mechanisms, most notably \emph{unit propagation} and \emph{pure literal elimination}, that prune the search space more aggressively.
+\\
+As previously mentioned, the \acrshort{sat} problem, at its base, concerns checking whether there exists a truth assignment (valuation) \(\mathcal{A}\) such that a given Boolean formula \(\Phi\), expressed in \acrshort{cnf}, is satisfied (i.e., \(\mathcal{A} \models \Phi\)). In practice, \acrshort{dpll} accomplishes this by selecting a literal \(\ell\), assigning a truth value to it (thus extending \(\mathcal{A}\)), and then simplifying \(\Phi\) accordingly. Then, the simplified formula is checked for satisfiability, and if no conflict arises, the algorithm continues recursively. If a contradiction occurs, \acrshort{dpll} backtracks and tries the opposite assignment for \(\ell\). This process continues until either \(\Phi\) is deemed satisfiable under \(\mathcal{A}\), or the search has been exhausted and \(\Phi\) is deemed unsatisfiable.
+\\
+Then there are the deduction mechanisms, enhancing \acrshort{dpll} over basic backtracking, which takes the form of the following rules applied continuously while running the algorithm.
+
+\paragraph{Unit Propagation} is a rule for \emph{Unit Clauses}. Unit Clauses are the case, where a clause contains only a single literal, \(\{l\}\). Thus \(\Phi\) can only be satisfied, if that literal is assigned its necessary truth value. \acrshort{dpll} starts by appending all the truth values adhering to a Unit Clause to \(\mathcal{A}\). Although Unit Propagation might seem like an obvious approach, it is nevertheless vastly superior to naive backtracking and has the potential to severely trim the search space without negatively impacting runtime.
+
+\paragraph{Pure Literal Elimination} is a rule for atoms which occur in \(\Phi\) with only one polarity. Such an atom \(l^{*}\) is called a \emph{Pure Literal}, and since it occurs as only negative or positive, assigning it the proper truth value will make every clause, \(l^{*}\) occurs in, true. Although it might not be as obvious as Unit Propagation, Pure Literal Eliminations is also a quick and straightforward rule for narrowing down the search space.
+\\
+\\
+Despite the \acrshort{dpll} algorithm's clever application of deduction mechanics, it is still inherently a backtracking algorithm. As such, it retains a running time of \(O(2^n)\), where \(n\) is the number of atoms in \(\Phi\). This, however, is to be expected for an NP-complete problem.
+\\
+\\
+In listing \ref{lst:DPLL}, we present our interpretation of pseudocode for the \acrshort{dpll} algorithm. We have taken a slight liberty in that the pseudocode returns a boolean. This was done to allow for a recursive call on \texttt{DPLL}, evoking the backtracking with a \emph{short-circuiting operator} in the \texttt{return} statement. Additionally, this also serves to keep the pseudocode concise. However, one could imagine an alternate approach where we would be interested in the truth assignment \(\mathcal{A}\). We elected to simply regard this as an implementation detail.
+
+\begin{lstlisting}[caption={DPLL Algorithm (Pseudocode)}, escapeinside={(*}{*)}, label={lst:DPLL}]
+    def DPLL((*\(\Phi\)*), (*\(\mathcal{A}\)*)):
+        Input: (*A formula \(\Phi\) in Clausal Form and a truth assignment \(\mathcal{A}\)*)
+        Output: (*A truth value indicating whether \(\Phi\) is satisfiable*)
+
+        # Unit propagation
+        while (*there is a unit clause \(\{l\}\)*) in (*\(\Phi \mid_{\mathcal{A}}\)*):
+            (*\(\mathcal{A}\)*) (*\(\leftarrow\)*) unit_propagation((*\(\{l\}\)*), (*\(\mathcal{A}\)*))
+
+        # Pure literal elimination
+        while (*there is a pure literal \(l\)*) in (*\(\Phi \mid_{\mathcal{A}}\)*):
+            (*\(\mathcal{A}\)*) (*\(\leftarrow\)*) pure_literal_elimination((*\(l\)*), (*\(\mathcal{A}\)*))
+
+        # Stopping conditions
+        if (*\(\Phi \mid_{\mathcal{A}}\)*) is empty:
+            return True
+        if (*\(\Phi \mid_{\mathcal{A}}\)*) contains (*\(\square\)*):
+            return False
+
+        # DPLL recursion
+        (*\(l\)*) (*\(\leftarrow\)*) choose_literal((*\(\Phi\)*), (*\(\mathcal{A}\)*))
+        return DPLL((*\(\Phi\)*), (*\(\mathcal{A} \cup \{l\}\)*)) or DPLL((*\(\Phi\)*), (*\(\mathcal{A} \cup \{\neg l\}\)*))
+\end{lstlisting}
+
+\subsubsection{DPLL: Toy example}
+Sometimes, the best way to understand an algorithm is just to see it in action. So, we will now run \acrshort{dpll} on \autoref{eq:clausal_form_example}. The first thing to note is that we cannot initially use Unit Propagation on \autoref{eq:clausal_form_example}. This is largely due to it being a small example, and although we could artificially add the conjunction "\(\wedge p_4\)" to the original \autoref{eq:propositional_logic_example} without altering the satisfiability, we still see Unit Propagation throughout the example. In the example we have used a yellow circle and a green checkmark to the left of a formula to indicate whether it is \texttt{True} or \texttt{False} under the current valuation \(\mathcal{A}\), respectively.
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example/1.png}
+        \subcaption*{Step 0: Initially, no literals has been assigned any values.}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example/2.png}
+        \subcaption*{Step 1: We start with Pure Literal Elimination on \(p_5\) making the 4th clause true.}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example/3.png}
+        \subcaption*{Step 2: Then we assign \texttt{False} to \(p_4\) at random.}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example/4.png}
+        \subcaption*{Step 3: Assigning \(p_4\) made the 5th clause a unit clause. Therefore we do Unit Propagation on \(p_2\) assigning it \texttt{True}.}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example/5.png}
+        \subcaption*{Step 4: Next, when we try to assign \texttt{False} to \(p_2\), we get a conflict.}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example/6.png}
+        \subcaption*{Step 5: We backtrack and try \texttt{True} for \(p_2\).}
+    \end{subfigure}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/DPLL-Toy-Example/7.png}
+        \subcaption*{Step 6: Finally, when we assign \texttt{True} to \(p_1\), we have the satisfying assignment: \(\mathcal{A} = \{p_1 = \text{\texttt{True}}, p_2 = \text{\texttt{True}}, p_3 = \text{\texttt{True}}, p_4 = \text{\texttt{False}}, p_5 = \text{\texttt{False}}\}\).}
+    \end{subfigure}
+\end{figure}
+
+\subsubsection{Conflict Driven Clause Learning}\label{sec:CDCL}
+Conflict Driven Clause Learning~\cite{CDCL-1, CDCL-2, CDCL-3} (CDCL) builds off of \acrshort{dpll} but develops on it by introducing \textit{non-chronological backtracking} and learning from conflicts, also called \textit{clause learning},  using the resolution technique. \acrshort{cdcl} does so by retaining a \emph{guess level} and an \emph{implication graph}.
+\paragraph{The guess level} is an integer counting how often the \acrshort{cdcl} algorithm has performed an arbitrary guess rather than assigned a value implied by clause learning. The guess level starts at \(0\) which is considered the highest level for the \acrshort{cdcl} algorithm.
+\paragraph{The implication graph} tracks which assignments of boolean variables, based on the Unit Propagation rule, lead to which \emph{implied} assignments. In addition, the implication graph not only serves as a good visual in understanding \acrshort{cdcl}, but it also enables easy implementation of backtracking.
+
+\paragraph{Resolution} is the technique which was first implemented in the original DP algorithm~\cite{Original-DP-Article}. Although we will refrain from describing resolution to its full extent, it can be quickly summarised as: resolution combines two clauses in order to create a new equisatisfiable clause. Ben-Ari (chapter 4)~\cite{Math-Logic-for-CompSci} gives this rule:
+\begin{definition}
+    (Resolution rule) Let \(C_1\), \(C_2\) be clauses such that \(l \in C_1\), \(\neg l \in C_2\). The clauses \(C_1\), \(C_2\) are said to be clashing clauses and to clash on the complementary pair of literals \(l\), \(\neg l\). \(C\), the resolvent of \(C_1\) and \(C_2\), is the clause:
+    \begin{equation*}
+        C = \text{\emph{Res}}(C_1, C_2) = \Big(
+            C_1 - \{l\}
+        \Big) \cup \Big(
+            C_2 - \{\neg l\}
+        \Big).
+    \end{equation*}
+    \(C_1\) and \(C_2\) are the \emph{parent clauses} of \(C\).
+\end{definition}
+Formally, for the two clauses \(\alpha = \{p_1, p_2, p_3\}\), \(\beta = \{\neg p_3, p_4, p_5\}\), we have
+\begin{equation*}
+    \text{Res}(\alpha, \beta) = \{p_1, p_2, p_4, p_5\}.
+\end{equation*}
+
+\paragraph{Non-chronological backtracking} differs from \acrshort{dpll}'s 'chronological backtracking' in that it can jump several levels in the decision tree, whereas ordinary backtracking always simply jumps to the most immediate assignment. Whenever a conflict occurs, \acrshort{cdcl} creates a \emph{learned clause} by running resolution on the clauses, giving rise to the conflict. If more than two clauses contribute to the conflict, \acrshort{cdcl} continues to resolve until the learned clause includes no more than one variable assigned at the current guess level. \acrshort{cdcl} backtracks based on the learned clause. If the learned clause is a unit clause, it backtracks to guess level \(0\); this is due to the Unit Propagation rule, from which we know that a unit clause enforces an unambiguous decision, which \acrshort{cdcl} can implement before any guessing. Otherwise, excluding the level at which the conflict took place, \acrshort{cdcl} backtracks to the highest level where the conflict variable from the learned clause occurred.
+\\
+\\
+In listing \ref{lst:CDCL}, we present our interpretation of pseudocode for the \acrshort{cdcl} algorithm. It should be noted that it differs quite a lot from listing \ref{lst:DPLL}, in particular, due to the non-chronological nature of \acrshort{cdcl}, which prevents the code from having a recursive structure. Additionally, we would like to cement that we intend that the \texttt{assign( )} function picks a polarity, at random, for its first argument (the boolean variable). This was stated explicitly in \acrshort{dpll} from the recursive call in listing \ref{lst:DPLL}. 
+
+\begin{lstlisting}[caption={CDCL Algorithm (Pseudocode)}, escapeinside={(*}{*)}, label={lst:CDCL}]
+    def CDCL((*\(\Phi\)*)):
+        Input: (*A formula \(\Phi\) in Clausal Form*)
+        Output: (*A truth value indicating whether \(\Phi\) is satisfiable*)
+
+        (*\(\mathcal{A}\)*) (*\(\leftarrow\)*) (*\(\emptyset\)*)               # The truth assignment
+        guessLevel (*\(\leftarrow\)*) 0       # The current guess level
+
+        while True:
+            # Unit propagation at the current level
+            conflict (*\(\leftarrow\)*) unit_propagation((*\(\Phi\)*), (*\(\mathcal{A}\)*))
+            if conflict exists:
+                if guessLevel is 0:
+                    return False
+                
+                # Analyse conflict and learn a new clause with guess level (*\(\beta\)*)
+                ((*\(\beta\)*), newClause) (*\(\leftarrow\)*) analyse_conflict(conflict, (*\(\mathcal{A}\)*))
+                (*\(\Phi\)*) (*\(\leftarrow\)*) (*\(\Phi\)*) (*\(\cup\)*) {newClause}
+
+                # Backtrack non-chronologically (jump back to guess level (*\(\beta\)*))
+                guessLevel (*\(\leftarrow\)*) (*\(\beta\)*)
+                (*\(\mathcal{A}\)*) (*\(\leftarrow\)*) backtrack((*\(\mathcal{A}\)*), guessLevel)
+
+                # Assert the new clause's unit literal at level (*\(\beta\)*)
+                unitLiteral (*\(\leftarrow\)*) pick_unit_literal(newClause)
+                assign(unitLiteral, (*\(\mathcal{A}\)*), guessLevel)
+
+            else:
+                # Check if assignment is complete
+                if all_variables_assigned((*\(\mathcal{A}\)*)):
+                    return True
+
+                # Choose a new literal and increase guess level
+                (*\(l\)*) (*\(\leftarrow\)*) choose_literal((*\(\Phi\)*) (*\(\mathcal{A}\)*))
+                guessLevel (*\(\leftarrow\)*) guessLevel + 1
+                assign((*\(l\)*), (*\(\mathcal{A}\)*), guessLevel)
+\end{lstlisting}
+
+\subsubsection{CDCL: Bigger example}\label{sec:CDCL_BIG_examp}
+As with \acrshort{dpll}, we will provide a full run of the \acrshort{cdcl} algorithm. Here, we have elected to instead of \autoref{eq:clausal_form_example}, show the satisfiability of the following formula (in clausal form)
+\begin{equation}\label{eq:SAT_example2}
+    \Big\{
+        \{
+            \neg p_1, p_2, p_3
+        \},
+        \{
+            p_1, p_3, p_4
+        \},
+        \{
+            p_1, p_3, \neg p_4
+        \},
+        \{
+            p_1, \neg p_3, p_4
+        \},
+        \{
+            p_1, \neg p_3, \neg p_4
+        \},
+        \{
+            \neg p_2, \neg p_3, p_4
+        \},
+        \{
+            \neg p_1, p_2, \neg p_3
+        \},
+        \{
+            \neg p_1, \neg p_2, p_3
+        \}
+    \Big\}
+\end{equation}
+We show the implication graph in the lower lefthand corner. Circular notes indicate that, at this timestep, it was a random decision, while square notes indicate that it was an implied decision.
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/1.png}
+        \subcaption*{Step 0: Initially, no literals has been assigned any values.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/2.png}
+        \subcaption*{Step 1: We start by assigning \texttt{False} to \(p_1\) at random.}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/3.png}
+        \subcaption*{Step 2: Then we assign \texttt{False} to \(p_2\) at random.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/4.png}
+        \subcaption*{Step 3: Thirdly, we assign \texttt{False} to \(p_3\). However, this creates a conflicting implication.}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/5.png}
+        \subcaption*{Step 4: We perform resolution on clause \(2\) and \(3\) arriving at the new clause \(\{p_1, p_3\}\).}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/6.png}
+        \subcaption*{Step 5: Then we backtrack to the highest level, excluding the current, where a literal from our new learned clause occurs.}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/7.png}
+        \subcaption*{Step 6: Then we have an implied decision of \(p_3 =\) \texttt{True}, from our new learned clause.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/8.png}
+        \subcaption*{Step 7: However, this assignment creates a conflift and we perform resolution on clause \(4\) and \(5\) arriving at the new clause \(\{p_1, \neg p_2\}\).}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/9.png}
+        \subcaption*{Step 8: Alas, this is not adequate as both \(p_1\) and \(p_2\) are assigned at the current level. Therefore we must perform resolution again, on our new clause and clause \(9\), which was used in arriving at the conflict.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/10.png}
+        \subcaption*{Step 9: The resolution yields the new clause \(\{p_1\}\), which is a unit clause, so we backtrack to level \(0\).}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/11.png}
+        \subcaption*{Step 10: At level \(0\) we have an implied decision \(p_1 =\) \texttt{True} from the Unit Clause \(10\).}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/12.png}
+        \subcaption*{Step 11: Then we assign \texttt{False} to \(p_2\) at random.}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/13.png}
+        \subcaption*{Step 12: This assignment creates a conflict and we perform resolution on clause \(1\) and \(7\) arriving at the new clause \(\{\neg p_1, p_2\}\).}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/14.png}
+        \subcaption*{Step 13: Then we backtrack to the highest level, excluding the current, where a literal from our new learned clause occurs.}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/15.png}
+        \subcaption*{Step 14: At level \(0\) we have a new implied decision \(p_2 =\) \texttt{True} from clause \(11\).}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/16.png}
+        \subcaption*{Step 15: This assignment gives way to a new implied decision \(p_3 =\) \texttt{True} from clause \(8\).}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/Constraint-Programming/CDCL-Example/17.png}
+        \subcaption*{Step 16: Finally, our last assignment \(p_4 =\) \texttt{True} is an implied decision from clause \(6\) and yields the satisfying assignment:
+        \\
+        \(\mathcal{A} = \{p_1 = \text{\texttt{True}}, p_2 = \text{\texttt{True}}, p_3 = \text{\texttt{True}}, p_4 = \text{\texttt{True}}\}\).}
+    \end{subfigure}
+\end{figure}
+
+As it would be adequate for an entire thesis on its own~\cite{All-SAT-Solvers}, we will not attempt to make any estimates to quantify how \acrshort{cdcl} is superior to \acrshort{dpll}. We will only show the brief comparision between \acrshort{cdcl} and \acrshort{dpll} on the same example. In \autoref{fig:DPLL_Bigger_example}, is given a finalised run of the \acrshort{dpll} algorithm on the same example as just showed\footnote{The full run can be seen in appendix \autoref{sec:DPLL_Bigger_Example}.}. One could imagine this blowing up to a much larger scale, where it is evident that the learned clauses from \acrshort{cdcl} would be a significant advantage. \acrshort{sat} is nevertheless NP-complete, so the asymptotic running time remains \(O(2^n)\).  
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/Constraint-Programming/DPLL-Example2/13.png}
+    \caption{DPLL: Bigger example}
+    \small
+    \raggedright 
+    This showcases a finished run of the \acrshort{dpll} algorithm on the formula \autoref{eq:SAT_example2}.
+    \label{fig:DPLL_Bigger_example}
+\end{figure}
+
+
